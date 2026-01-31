@@ -28,7 +28,7 @@ public class StackBackPack : MonoBehaviour
             acquiredResources[0].rotation = Quaternion.Lerp(acquiredResources[0].rotation, backPackPos.rotation, Time.deltaTime * 10f);
         }
 
-        for(int i = 1; i < acquiredResources.Count; i++)
+        for (int i = 1; i < acquiredResources.Count; i++)
         {
             Transform currentAcquired = acquiredResources[i];
             Transform previousAcquired = acquiredResources[i - 1];
@@ -41,23 +41,35 @@ public class StackBackPack : MonoBehaviour
     }
     public void AddResources(GameObject resources)
     {
-        if(resources == null) return;
+        if (resources == null) return;
 
         acquiredResources.Add(resources.transform);
 
         resources.transform.SetParent(backPackPos, true);
 
         Collider col = resources.GetComponent<Collider>();
-        if(col) col.enabled = false;
+        if (col) col.enabled = false;
 
         Destroy(resources.GetComponent<Rigidbody>());
     }
-    private void OnTriggerEnter(Collider other)
+
+    //TODO: 자원 획득 트리거를 테이블에 있는 자원을 트리거하는방식으로 Stay변경 예정 
+    private void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("Resources")) //TODO: 자원에서 창고로 쓰이는 테이블 Tag, Layer 로 체인지
         {
             if (acquiredResources.Count >= maxCapacity) return; //가방이 지정한 갯수만큼 꽉 찼으면 리턴
-            AddResources(other.gameObject);
+
+            ResourceTable table = other.GetComponent<ResourceTable>();
+            if (table != null)
+            {
+                GameObject item = table.GiveItem();
+
+                if (item != null)
+                {
+                    AddResources(item);
+                }
+            }
         }
     }
 }
