@@ -16,6 +16,7 @@ MonoBehaviour:
   mineralName: 
   mineralType: 1
   price: 0
-  muneralPrefab: {fileID: 0}
+  muneralPrefab: {fileID: 8040812975119883514, guid: 3e841ff90b0d33c458fca99afa28759a,
+    type: 3}
   icon: {fileID: 0}
   processedResult: {fileID: 0}

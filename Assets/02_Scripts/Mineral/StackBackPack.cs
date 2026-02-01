@@ -9,6 +9,7 @@ public class StackBackPack : MonoBehaviour
     public float itemHeight = 0.3f; //아이템 높이 간격
 
     [SerializeField] private int maxCapacity = 10; //최대 수용량
+    public bool IsFullBackPack() => acquiredResources.Count >= maxCapacity;
 
     private void Start()
     {
@@ -39,6 +40,7 @@ public class StackBackPack : MonoBehaviour
             currentAcquired.rotation = Quaternion.Lerp(currentAcquired.rotation, backPackPos.rotation, Time.deltaTime * 10f);
         }
     }
+    //테이블에서 자원 받기
     public void AddResources(GameObject resources)
     {
         if (resources == null) return;
@@ -53,7 +55,31 @@ public class StackBackPack : MonoBehaviour
         Destroy(resources.GetComponent<Rigidbody>());
     }
 
-    //TODO: 자원 획득 트리거를 테이블에 있는 자원을 트리거하는방식으로 Stay변경 예정 
+    public GameObject MinusResource()
+    {
+        if (acquiredResources.Count == 0) return null;
+
+        int lastIndex = acquiredResources.Count - 1;
+        GameObject item = acquiredResources[lastIndex].gameObject;
+        acquiredResources.RemoveAt(lastIndex);
+
+        item.transform.SetParent(null);        
+
+        return item;
+    }
+
+    public GameObject PeekResource()
+    {
+        if (acquiredResources.Count == 0) return null;
+
+        int lastIndex = acquiredResources.Count - 1;
+
+        GameObject item = acquiredResources[lastIndex].gameObject;
+
+        return item;
+    }
+
+    //자원 테이블에 닿아 있을 때
     private void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("Resources")) //TODO: 자원에서 창고로 쓰이는 테이블 Tag, Layer 로 체인지
