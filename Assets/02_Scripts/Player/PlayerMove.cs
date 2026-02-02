@@ -22,8 +22,8 @@ public class PlayerMove : MonoBehaviour
     private void FixedUpdate()
     {
         // 게임이 일시정지 상태면 이동 불가
-        if (!GameManager.Instance.IsPlaying())
-            return;
+        //if (!GameManager.Instance.IsPlaying())
+        //    return;
 
         Move();
     }
