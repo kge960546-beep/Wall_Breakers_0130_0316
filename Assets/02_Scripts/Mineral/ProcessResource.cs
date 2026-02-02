@@ -42,6 +42,8 @@ public class ProcessResource : MonoBehaviour
 
     public bool CanProcess(GameObject itemObj)
     {
+        if (itemObj == null) return false;
+
         MineralItem mineralItem = itemObj.GetComponent<MineralItem>();
 
         if (mineralItem == null || mineralItem.mineralData == null) return false;
@@ -63,7 +65,6 @@ public class ProcessResource : MonoBehaviour
     public void StartProcessing(GameObject rawMaterial)
     {
         if (isProcessing) return;
-
 
         MineralItem item = rawMaterial.GetComponent<MineralItem>();
         if (item != null && item.mineralData.processedResult != null)
@@ -132,6 +133,24 @@ public class ProcessResource : MonoBehaviour
                 return;
             }
 
+            GameObject topPlayerItem = backPack.PeekResource();            
+
+            bool canProc = CanProcess(topPlayerItem);           
+
+            if (topPlayerItem != null)
+            {
+                if (canProc)
+                {
+                    GameObject playerItem = backPack.MinusResource();
+
+                    if (playerItem != null)
+                    {
+                        AddStock(playerItem);
+                        return;
+                    }
+                }               
+            }
+
             if (processingTable.Count > 0 && !backPack.IsFullBackPack())
             {
                 GameObject item = GiveProcessedItem();
@@ -139,27 +158,7 @@ public class ProcessResource : MonoBehaviour
                 {
                     backPack.AddResources(item);
                 }
-            }
-
-            GameObject topPlayerItem = backPack.PeekResource();
-
-            if (topPlayerItem == null)
-            {
-                return;
-            }
-
-            bool canProc = CanProcess(topPlayerItem);
-
-            if (topPlayerItem != null && canProc)
-            {
-
-                GameObject playerItem = backPack.MinusResource();
-
-                if (playerItem != null)
-                {
-                    AddStock(playerItem);
-                }
-            }
+            }            
         }
     }
 }

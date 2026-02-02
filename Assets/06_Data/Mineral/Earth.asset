@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fea5f741f25bd6e4bae21769a75f0f2b, type: 3}
   m_Name: Earth
   m_EditorClassIdentifier: 
-  Id: 1
+  Id: 0
   mineralName: "\uD759"
   mineralType: 0
   price: 10
