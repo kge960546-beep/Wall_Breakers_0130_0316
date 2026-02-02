@@ -12,6 +12,7 @@ public class PlayerMove : MonoBehaviour
 
     private Rigidbody rb;
     private Vector3 moveDirection;
+    public Vector3 MoveDirection => moveDirection;
 
     private void Awake()
     {
