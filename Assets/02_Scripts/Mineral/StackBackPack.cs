@@ -18,6 +18,7 @@ public class StackBackPack : MonoBehaviour
             backPackPos = GameObject.Find("BackPackPos").transform;
         }
     }
+        
     private void Update()
     {
         if (acquiredResources.Count == 0) return;
@@ -52,7 +53,7 @@ public class StackBackPack : MonoBehaviour
         Collider col = resources.GetComponent<Collider>();
         if (col) col.enabled = false;
 
-        Destroy(resources.GetComponent<Rigidbody>());
+        Destroy(resources.GetComponent<Rigidbody>());       
     }
 
     public GameObject MinusResource()

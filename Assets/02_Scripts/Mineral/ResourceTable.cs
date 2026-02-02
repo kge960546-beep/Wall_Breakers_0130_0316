@@ -31,6 +31,8 @@ public class ResourceTable : MonoBehaviour
             currentAcquired.rotation = Quaternion.Lerp(currentAcquired.rotation, tablePos.rotation, Time.deltaTime * 10f);
         }
     }
+
+    //플레이어한테서(채굴하는 곳) 자원 받기
     public void AddResources(GameObject resources)
     {
         if (resources == null) return;
@@ -44,6 +46,7 @@ public class ResourceTable : MonoBehaviour
 
         Destroy(resources.GetComponent<Rigidbody>());
     }
+
     //플레이어에게 자원 주기
     public GameObject GiveItem()
     {

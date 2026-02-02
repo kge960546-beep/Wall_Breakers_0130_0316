@@ -81,6 +81,9 @@ public class ProcessResource : MonoBehaviour
         yield return new WaitForSeconds(delay);
         Destroy(rawMaterial);
 
+        ResourcesManager.instance.ChangeAmount(data, -1);
+        Debug.Log($" 가공 시작! 원재료: {data.mineralName} 보유량: {ResourcesManager.instance.GetCurrentAmount(data.Id)}");
+
         if (data.processedResult != null && data.processedResult.muneralPrefab != null)
         {
             //TODO: 풀링으로 변경 예정
@@ -89,6 +92,19 @@ public class ProcessResource : MonoBehaviour
             processingTable.Add(processedItem.transform);
 
             processedItem.transform.SetParent(processingPoint, true);
+
+            if(data.processedResult != null)
+            {
+                ResourcesManager.instance.ChangeAmount(data.processedResult, 1);
+                Debug.Log($"가공완료! 가공자원: {data.processedResult.mineralName} 보유량: {ResourcesManager.instance.GetCurrentAmount(data.processedResult.Id)}");
+            }
+            else
+            {
+                if (data.processedResult == null)
+                    Debug.LogError($"{data.mineralName}의 Processed Result가 SO에 등록되지 않았습니다!");
+                else if (data.processedResult.muneralPrefab == null)
+                    Debug.LogError($"{data.processedResult.mineralName} SO에 프리팹이 연결되지 않았습니다!");
+            }
         }
 
         isProcessing = false;

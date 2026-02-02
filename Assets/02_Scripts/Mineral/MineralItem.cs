@@ -1,7 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+
+//아이템 SO 연결고리
 public class MineralItem : MonoBehaviour
 {
     public MineralSO mineralData;
