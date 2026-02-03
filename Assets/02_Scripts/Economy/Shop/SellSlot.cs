@@ -4,14 +4,14 @@ using UnityEngine;
 [System.Serializable]
 public class SellSlot
 {
-    public MineralData mineral;
+    public ItemData item;
     public int amount;
 
-    public void Set(MineralData mineral, int amount)
+    public void Set(ItemData item, int amount)
     {
-        this.mineral = mineral;
+        this.item = item;
         this.amount = amount;
     }
 
-    public bool IsEmpty => mineral == null || amount == 0;
+    public bool IsEmpty => item == null || amount <= 0;
 }
