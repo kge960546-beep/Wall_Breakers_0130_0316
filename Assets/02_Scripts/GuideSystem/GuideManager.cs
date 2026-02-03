@@ -67,4 +67,14 @@ public class GuideManager : MonoBehaviour
             guidePanel.Show(CurrentStep, currentCount);
         });
     }
+
+    // 현재 스텝 몇단계인지 파악하는 메서드
+    public bool IsCurrentStep(GuideStepSO step)
+    {
+        if (currentIndex < 0 || currentIndex >= guideSteps.Count)
+            return false;
+
+        return guideSteps[currentIndex] == step;
+    }
+
 }
