@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour
@@ -7,9 +8,9 @@ public class PlayerInventory : MonoBehaviour
     public static PlayerInventory Instance { get; private set; }
 
     [SerializeField] private List<InventoryItem> items = new List<InventoryItem>();
-    [SerializeField] private int credits = 0;
 
-    public int Credits => credits;
+    private CreditService creditService;
+
     public List<InventoryItem> Items => items;
 
     private void Awake()
@@ -22,6 +23,8 @@ public class PlayerInventory : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        creditService = GameManager.Instance.GetService<CreditService>();
     }
 
     // 아이템 추가
@@ -59,11 +62,18 @@ public class PlayerInventory : MonoBehaviour
         return false;
     }
 
-    // 크레딧 추가
+    // 크레딧 추가 - CreditService 사용
     public void AddCredits(int amount)
     {
-        credits += amount;
-        Debug.Log($"Credits added: {amount}. Total: {credits}");
+        if (creditService != null)
+        {
+            creditService.AddCredit(amount);
+            Debug.Log($"Credits added: {amount}. Total: {creditService.credits}");
+        }
+        else
+        {
+            Debug.LogError("CreditService is null!");
+        }
     }
 
     // 가장 비싼 아이템 가져오기
