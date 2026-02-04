@@ -132,6 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 199947708}
+  - component: {fileID: 199947709}
   - component: {fileID: 199947707}
   - component: {fileID: 199947706}
   m_Layer: 0
@@ -172,7 +173,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   items: []
-  credits: 0
 --- !u!4 &199947708
 Transform:
   m_ObjectHideFlags: 0
@@ -188,6 +188,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &199947709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 199947705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b92debd52e1f89d42a0d2b99189cfe1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &235497020
 GameObject:
   m_ObjectHideFlags: 0
@@ -2571,12 +2583,12 @@ SceneRoots:
   m_Roots:
   - {fileID: 1283330731}
   - {fileID: 235497023}
-  - {fileID: 1299314825}
-  - {fileID: 1180122076}
+  - {fileID: 199947708}
   - {fileID: 1748189627}
   - {fileID: 553710722}
   - {fileID: 1550757937}
   - {fileID: 2058127565}
   - {fileID: 1577832200}
   - {fileID: 443260254}
-  - {fileID: 199947708}
+  - {fileID: 1299314825}
+  - {fileID: 1180122076}
