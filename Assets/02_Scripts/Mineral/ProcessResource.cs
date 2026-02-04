@@ -30,7 +30,7 @@ public class ProcessResource : MonoBehaviour
             if (stockingTable.Count >= mineralItem.mineralData.inputAmountPerProcess)
             {
                 StartProcessing(gameObject);
-            }            
+            }
         }
     }
 
@@ -85,10 +85,10 @@ public class ProcessResource : MonoBehaviour
 
         int resourceQuantity = data.inputAmountPerProcess;
 
-        if(resourceQuantity <= 0) resourceQuantity = 1;
+        if (resourceQuantity <= 0) resourceQuantity = 1;
 
         List<GameObject> destroyResources = new List<GameObject>();
-        for(int i = 0; i< resourceQuantity; i++)
+        for (int i = 0; i < resourceQuantity; i++)
         {
             if (stockingTable.Count > 0)
             {
@@ -97,7 +97,7 @@ public class ProcessResource : MonoBehaviour
                 destroyResources.Add(obj);
             }
         }
-       
+
         //stockingTable.Remove(rawMaterial.transform);
         yield return new WaitForSeconds(delay);
         foreach (var obj in destroyResources)
@@ -112,13 +112,14 @@ public class ProcessResource : MonoBehaviour
         if (data.processedResult != null && data.processedResult.muneralPrefab != null)
         {
             //TODO: 풀링으로 변경 예정
-            GameObject processedItem = Instantiate(data.processedResult.muneralPrefab, processingPoint.position, processingPoint.rotation);
+            GameObject processedItem = PoolManager.instance.Get(data.processedResult.muneralPrefab, processingPoint.position, Quaternion.identity);
+            processedItem.transform.SetParent(processingPoint);
 
             processingTable.Add(processedItem.transform);
 
             processedItem.transform.SetParent(processingPoint, true);
 
-            if(data.processedResult != null)
+            if (data.processedResult != null)
             {
                 ResourcesManager.instance.ChangeAmount(data.processedResult, 1);
                 Debug.Log($"가공완료! 가공자원: {data.processedResult.mineralName} 보유량: {ResourcesManager.instance.GetCurrentAmount(data.processedResult.Id)}");
@@ -157,9 +158,9 @@ public class ProcessResource : MonoBehaviour
                 return;
             }
 
-            GameObject topPlayerItem = backPack.PeekResource();            
+            GameObject topPlayerItem = backPack.PeekResource();
 
-            bool canProc = CanProcess(topPlayerItem);           
+            bool canProc = CanProcess(topPlayerItem);
 
             if (topPlayerItem != null)
             {
@@ -172,7 +173,7 @@ public class ProcessResource : MonoBehaviour
                         AddStock(playerItem);
                         return;
                     }
-                }               
+                }
             }
 
             if (processingTable.Count > 0 && !backPack.IsFullBackPack())
@@ -182,7 +183,7 @@ public class ProcessResource : MonoBehaviour
                 {
                     backPack.AddResources(item);
                 }
-            }            
+            }
         }
     }
 }
