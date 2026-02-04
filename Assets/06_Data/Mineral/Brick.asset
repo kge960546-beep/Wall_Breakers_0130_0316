@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fea5f741f25bd6e4bae21769a75f0f2b, type: 3}
   m_Name: Brick
   m_EditorClassIdentifier: 
-  Id: 2
-  mineralName: 
+  Id: 1
+  mineralName: "\uBCBD\uB3CC"
   mineralType: 1
   price: 0
   muneralPrefab: {fileID: 8040812975119883514, guid: 3e841ff90b0d33c458fca99afa28759a,
