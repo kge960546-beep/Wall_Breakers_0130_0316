@@ -25,7 +25,12 @@ public class ProcessResource : MonoBehaviour
         if (!isProcessing && stockingTable.Count > 0)
         {
             GameObject gameObject = stockingTable[0].gameObject;
-            StartProcessing(gameObject);
+
+            var mineralItem = gameObject.GetComponent<MineralItem>();
+            if (stockingTable.Count >= mineralItem.mineralData.inputAmountPerProcess)
+            {
+                StartProcessing(gameObject);
+            }            
         }
     }
 
@@ -78,11 +83,30 @@ public class ProcessResource : MonoBehaviour
     {
         isProcessing = true;
 
-        stockingTable.Remove(rawMaterial.transform);
-        yield return new WaitForSeconds(delay);
-        Destroy(rawMaterial);
+        int resourceQuantity = data.inputAmountPerProcess;
 
-        ResourcesManager.instance.ChangeAmount(data, -1);
+        if(resourceQuantity <= 0) resourceQuantity = 1;
+
+        List<GameObject> destroyResources = new List<GameObject>();
+        for(int i = 0; i< resourceQuantity; i++)
+        {
+            if (stockingTable.Count > 0)
+            {
+                GameObject obj = stockingTable[0].gameObject;
+                stockingTable.RemoveAt(0);
+                destroyResources.Add(obj);
+            }
+        }
+       
+        //stockingTable.Remove(rawMaterial.transform);
+        yield return new WaitForSeconds(delay);
+        foreach (var obj in destroyResources)
+        {
+            Destroy(obj);
+        }
+        //Destroy(rawMaterial);
+
+        ResourcesManager.instance.ChangeAmount(data, -destroyResources.Count);
         Debug.Log($" 가공 시작! 원재료: {data.mineralName} 보유량: {ResourcesManager.instance.GetCurrentAmount(data.Id)}");
 
         if (data.processedResult != null && data.processedResult.muneralPrefab != null)

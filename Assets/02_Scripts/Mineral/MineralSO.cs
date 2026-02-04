@@ -17,5 +17,6 @@ public class MineralSO : ScriptableObject
     public GameObject muneralPrefab;
     public Sprite icon;
 
+    public int inputAmountPerProcess; //가공시 필요한 원재료 수량
     public MineralSO processedResult; //이 광물을 가공했을시 나오는 가공품SO
 }
