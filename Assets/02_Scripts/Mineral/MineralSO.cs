@@ -12,7 +12,7 @@ public class MineralSO : ScriptableObject
     public int Id;
     public string mineralName;
     public MineralType mineralType;
-    public int price;
+    public int price;                   //판매시 가격(안써도 무방)
 
     public GameObject muneralPrefab;
     public Sprite icon;
