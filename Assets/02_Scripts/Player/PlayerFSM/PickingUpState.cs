@@ -6,6 +6,7 @@ public class PickingUpState : IPlayerState
     public PlayerStateType StateType => PlayerStateType.PickingUp;
 
     private PlayerFSM fsm;
+    private bool picked; // 픽업 완료 여부 (1회성 보호)
 
     public PickingUpState(PlayerFSM fsm)
     {
@@ -15,28 +16,30 @@ public class PickingUpState : IPlayerState
     public void Enter()
     {
         Debug.Log("PickingUpState 시작");
+        picked = false;
         fsm.RaisePickingUpStarted();
     }
 
     public void Update()
     {
-        // 종료 조건:
-        // 1. 백팩이 가득 찼다
-        // 2. 픽업 대상에 더 이상 가져올 자원이 없다
-
         StackBackPack backPack = fsm.GetComponent<StackBackPack>();
         if (backPack == null)
             return;
 
-        // 1. 지게가 가득 찼으면 종료
+        // 1 백팩이 가득 찼으면 종료
         if (backPack.IsFullBackPack())
         {
             fsm.ExitPickingUp();
             return;
         }
 
-        // 2. 픽업 대상이 비었으면 종료
-        // 여기에 리소스테이블이 비었다면 종료 조건 추가
+        // 2 실제 픽업은 ProcessResource에서 이미 완료됨
+        // 상태는 연출용으로 한 프레임만 유지
+        if (!picked)
+        {
+            picked = true;
+            fsm.ExitPickingUp();
+        }
     }
 
     public void Exit()
