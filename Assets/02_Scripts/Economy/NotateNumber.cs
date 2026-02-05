@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class NotateNumber : MonoBehaviour
+public class NotateNumber
 {
     public static string ChangeNumber(long originNumber)
     {

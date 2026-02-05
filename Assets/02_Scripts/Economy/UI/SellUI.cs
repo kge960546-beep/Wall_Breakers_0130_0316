@@ -92,10 +92,16 @@ public class SellUI : MonoBehaviour
             return;
         }
 
-        itemIcon.enabled = true;
-        itemIcon.sprite = item.itemData.icon;
+        if (itemIcon != null)
+        {
+            itemIcon.enabled = true;
+            itemIcon.sprite = item.itemData.icon;
+        }
+
         itemNameText.text = $"{item.itemData.itemName} x{item.quantity}";
-        priceText.text = $"+{item.itemData.sellPrice} Credits";
+
+        string formattedPrice = NotateNumber.ChangeNumber(item.itemData.sellPrice);
+        priceText.text = $"+{formattedPrice}";
         progressBar.fillAmount = 0f;
     }
 
@@ -108,11 +114,8 @@ public class SellUI : MonoBehaviour
     {
         if (creditService != null && totalCreditsText != null)
         {
-            totalCreditsText.text = $"Total Credits: {creditService.credits}";
-        }
-        else if(totalCreditsText != null)
-        {
-            totalCreditsText.text = "Total Credits: ...";
+            string formattedCredits = NotateNumber.ChangeNumber(creditService.credits);
+            totalCreditsText.text = $"Total: {formattedCredits}";
         }
     }
 }
