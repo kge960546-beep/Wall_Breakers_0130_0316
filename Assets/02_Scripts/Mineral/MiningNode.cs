@@ -53,6 +53,7 @@ public class MiningNode : MonoBehaviour
     {
         // 채굴 결과 생성
         GameObject item = PoolManager.instance.Get(mineralData.muneralPrefab, spawnPoint.position, Quaternion.identity);
+        ResourcesManager.instance.ChangeAmount(mineralData, 1);
         item.transform.SetParent(spawnPoint);
 
         // 채굴 결과를 창고(ResourceTable)에 적재

@@ -150,40 +150,65 @@ public class ProcessResource : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (!other.CompareTag("Player"))
+            return;
+
+        PlayerFSM fsm = other.GetComponent<PlayerFSM>();
+        StackBackPack backPack = other.GetComponent<StackBackPack>();
+
+        if (fsm == null || backPack == null)
+            return;
+
+        // ===== 1 드롭 우선 =====
+        if (TryDrop(backPack))
         {
-            StackBackPack backPack = other.GetComponent<StackBackPack>();
-            if (backPack == null)
-            {
-                return;
-            }
-
-            GameObject topPlayerItem = backPack.PeekResource();
-
-            bool canProc = CanProcess(topPlayerItem);
-
-            if (topPlayerItem != null)
-            {
-                if (canProc)
-                {
-                    GameObject playerItem = backPack.MinusResource();
-
-                    if (playerItem != null)
-                    {
-                        AddStock(playerItem);
-                        return;
-                    }
-                }
-            }
-
-            if (processingTable.Count > 0 && !backPack.IsFullBackPack())
-            {
-                GameObject item = GiveProcessedItem();
-                if (item != null)
-                {
-                    backPack.AddResources(item);
-                }
-            }
+            // 실제 드롭이 발생했을 때 상태 전환 요청
+            fsm.EnterDropping(DropType.Process);
+            return;
         }
+
+        // ===== 2 픽업 =====
+        if (TryPickUp(backPack))
+        {
+            // 실제 픽업이 발생했을 때 상태 전환 요청
+            fsm.EnterPickingUp(PickupType.ProcessedItem);
+            return;
+        }
+    }
+
+    // =========================
+    // 드롭 처리
+    // =========================
+    bool TryDrop(StackBackPack backPack)
+    {
+        GameObject topItem = backPack.PeekResource();
+        if (!CanProcess(topItem))
+            return false;
+
+        GameObject item = backPack.MinusResource();
+        if (item == null)
+            return false;
+
+        AddStock(item);
+        return true;
+    }
+
+    // =========================
+    // 픽업 처리
+    // =========================
+    bool TryPickUp(StackBackPack backPack)
+    {
+        if (processingTable.Count == 0)
+            return false;
+
+        if (backPack.IsFullBackPack())
+            return false;
+
+        GameObject item = GiveProcessedItem();
+        if (item == null)
+            return false;
+
+        backPack.AddResources(item);
+        return true;
     }
 }
