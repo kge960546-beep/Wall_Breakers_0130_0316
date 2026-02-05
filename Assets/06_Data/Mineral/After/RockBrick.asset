@@ -10,13 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fea5f741f25bd6e4bae21769a75f0f2b, type: 3}
-  m_Name: Brick
+  m_Name: RockBrick
   m_EditorClassIdentifier: 
-  Id: 1
-  mineralName: "\uBCBD\uB3CC"
+  Id: 3
+  mineralName: "\uB300\uB9AC\uC11D\uBCBD\uB3CC"
   mineralType: 1
   price: 0
-  muneralPrefab: {fileID: 8040812975119883514, guid: 3e841ff90b0d33c458fca99afa28759a,
+  muneralPrefab: {fileID: 919132149155446097, guid: 281ba7c5e7c63a74697889790e03f008,
     type: 3}
   icon: {fileID: 0}
+  inputAmountPerProcess: 0
   processedResult: {fileID: 0}
