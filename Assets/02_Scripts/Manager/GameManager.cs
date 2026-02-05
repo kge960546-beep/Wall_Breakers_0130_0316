@@ -1,5 +1,7 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
+using UnityEngine.Rendering.Universal;
 
 /// <summary>
 /// GameManager
@@ -9,6 +11,8 @@ using System;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+
+    private Dictionary<Type, object> services = new Dictionary<Type, object>();
 
     public enum GameState
     {
@@ -32,6 +36,8 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        RegisterServices();
     }
 
     private void Start()
@@ -71,4 +77,32 @@ public class GameManager : MonoBehaviour
         // 상태 변경 이벤트 전달
         OnGameStateChanged?.Invoke(CurrentState);
     }
+    #region Service
+    private void RegisterServices()
+    {
+        RegisterService(new CreditService());
+    }
+    private void RegisterService<T>(T service)
+    {
+        var type = typeof(T);
+
+        if(services.ContainsKey(type))
+        {
+            Debug.LogWarning($"[GameManager] Service already registed: {type}");
+            return;
+        }
+
+        services.Add(type, service);
+    }
+    public T GetService<T>()
+    {
+        var type = typeof(T);
+
+        if(services.TryGetValue(type, out var service))
+            return (T)service;
+
+        Debug.LogError($"[GameManger] Service not found : {type}");
+        return default;
+    }
+    #endregion
 }
