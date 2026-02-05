@@ -25,7 +25,12 @@ public class ProcessResource : MonoBehaviour
         if (!isProcessing && stockingTable.Count > 0)
         {
             GameObject gameObject = stockingTable[0].gameObject;
-            StartProcessing(gameObject);
+
+            var mineralItem = gameObject.GetComponent<MineralItem>();
+            if (stockingTable.Count >= mineralItem.mineralData.inputAmountPerProcess)
+            {
+                StartProcessing(gameObject);
+            }
         }
     }
 
@@ -78,23 +83,43 @@ public class ProcessResource : MonoBehaviour
     {
         isProcessing = true;
 
-        stockingTable.Remove(rawMaterial.transform);
-        yield return new WaitForSeconds(delay);
-        Destroy(rawMaterial);
+        int resourceQuantity = data.inputAmountPerProcess;
 
-        ResourcesManager.instance.ChangeAmount(data, -1);
+        if (resourceQuantity <= 0) resourceQuantity = 1;
+
+        List<GameObject> destroyResources = new List<GameObject>();
+        for (int i = 0; i < resourceQuantity; i++)
+        {
+            if (stockingTable.Count > 0)
+            {
+                GameObject obj = stockingTable[0].gameObject;
+                stockingTable.RemoveAt(0);
+                destroyResources.Add(obj);
+            }
+        }
+
+        //stockingTable.Remove(rawMaterial.transform);
+        yield return new WaitForSeconds(delay);
+        foreach (var obj in destroyResources)
+        {
+            Destroy(obj);
+        }
+        //Destroy(rawMaterial);
+
+        ResourcesManager.instance.ChangeAmount(data, -destroyResources.Count);
         Debug.Log($" 가공 시작! 원재료: {data.mineralName} 보유량: {ResourcesManager.instance.GetCurrentAmount(data.Id)}");
 
         if (data.processedResult != null && data.processedResult.muneralPrefab != null)
         {
             //TODO: 풀링으로 변경 예정
-            GameObject processedItem = Instantiate(data.processedResult.muneralPrefab, processingPoint.position, processingPoint.rotation);
+            GameObject processedItem = PoolManager.instance.Get(data.processedResult.muneralPrefab, processingPoint.position, Quaternion.identity);
+            processedItem.transform.SetParent(processingPoint);
 
             processingTable.Add(processedItem.transform);
 
             processedItem.transform.SetParent(processingPoint, true);
 
-            if(data.processedResult != null)
+            if (data.processedResult != null)
             {
                 ResourcesManager.instance.ChangeAmount(data.processedResult, 1);
                 Debug.Log($"가공완료! 가공자원: {data.processedResult.mineralName} 보유량: {ResourcesManager.instance.GetCurrentAmount(data.processedResult.Id)}");
@@ -125,40 +150,65 @@ public class ProcessResource : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (!other.CompareTag("Player"))
+            return;
+
+        PlayerFSM fsm = other.GetComponent<PlayerFSM>();
+        StackBackPack backPack = other.GetComponent<StackBackPack>();
+
+        if (fsm == null || backPack == null)
+            return;
+
+        // ===== 1 드롭 우선 =====
+        if (TryDrop(backPack))
         {
-            StackBackPack backPack = other.GetComponent<StackBackPack>();
-            if (backPack == null)
-            {
-                return;
-            }
-
-            GameObject topPlayerItem = backPack.PeekResource();            
-
-            bool canProc = CanProcess(topPlayerItem);           
-
-            if (topPlayerItem != null)
-            {
-                if (canProc)
-                {
-                    GameObject playerItem = backPack.MinusResource();
-
-                    if (playerItem != null)
-                    {
-                        AddStock(playerItem);
-                        return;
-                    }
-                }               
-            }
-
-            if (processingTable.Count > 0 && !backPack.IsFullBackPack())
-            {
-                GameObject item = GiveProcessedItem();
-                if (item != null)
-                {
-                    backPack.AddResources(item);
-                }
-            }            
+            // 실제 드롭이 발생했을 때 상태 전환 요청
+            fsm.EnterDropping(DropType.Process);
+            return;
         }
+
+        // ===== 2 픽업 =====
+        if (TryPickUp(backPack))
+        {
+            // 실제 픽업이 발생했을 때 상태 전환 요청
+            fsm.EnterPickingUp(PickupType.ProcessedItem);
+            return;
+        }
+    }
+
+    // =========================
+    // 드롭 처리
+    // =========================
+    bool TryDrop(StackBackPack backPack)
+    {
+        GameObject topItem = backPack.PeekResource();
+        if (!CanProcess(topItem))
+            return false;
+
+        GameObject item = backPack.MinusResource();
+        if (item == null)
+            return false;
+
+        AddStock(item);
+        return true;
+    }
+
+    // =========================
+    // 픽업 처리
+    // =========================
+    bool TryPickUp(StackBackPack backPack)
+    {
+        if (processingTable.Count == 0)
+            return false;
+
+        if (backPack.IsFullBackPack())
+            return false;
+
+        GameObject item = GiveProcessedItem();
+        if (item == null)
+            return false;
+
+        backPack.AddResources(item);
+        return true;
     }
 }

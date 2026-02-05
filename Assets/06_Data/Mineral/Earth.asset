@@ -16,7 +16,8 @@ MonoBehaviour:
   mineralName: "\uD759"
   mineralType: 0
   price: 10
-  muneralPrefab: {fileID: 6374657864144819106, guid: b5fd31b43fd0aa54f86e185704337d95,
+  muneralPrefab: {fileID: 919132149155446097, guid: 1169c24d3318fb340bc2f0b906e69831,
     type: 3}
   icon: {fileID: 0}
+  inputAmountPerProcess: 3
   processedResult: {fileID: 11400000, guid: f32a852b09b104b49be67697754618f8, type: 2}
