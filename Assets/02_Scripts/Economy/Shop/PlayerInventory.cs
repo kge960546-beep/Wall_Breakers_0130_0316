@@ -47,7 +47,7 @@ public class PlayerInventory : MonoBehaviour
     }
 
     // 아이템 추가
-    public void AddItem(ItemData itemData, int quantity)
+    public void AddItem(ItemDataSO itemData, int quantity)
     {
         var existingItem = items.Find(i => i.itemData == itemData);
 
@@ -62,7 +62,7 @@ public class PlayerInventory : MonoBehaviour
     }
 
     // 아이템 제거
-    public bool RemoveItem(ItemData itemData, int quantity)
+    public bool RemoveItem(ItemDataSO itemData, int quantity)
     {
         var item = items.Find(i => i.itemData == itemData);
 

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 public class Inventory
 {
-    public Dictionary<ItemData, int> Items { get; } = new();
+    public Dictionary<ItemDataSO, int> Items { get; } = new();
 
     public int TotalCount
     {
@@ -15,7 +15,7 @@ public class Inventory
         }
     }
 
-    public void AddInventory(ItemData item, int amount)
+    public void AddInventory(ItemDataSO item, int amount)
     {
         if (!Items.ContainsKey(item))
             Items[item] = 0;
@@ -23,7 +23,7 @@ public class Inventory
         Items[item] += amount;
     }
 
-    public void Remove(ItemData item, int amount)
+    public void Remove(ItemDataSO item, int amount)
     {
         if (!Items.ContainsKey(item))
             return;

@@ -20,25 +20,25 @@ public class ResourcesManager : MonoBehaviour
         mineralAmounts = new int[mineralsDataList.Count];
     }
 
-    [SerializeField] List<MineralSO> mineralsDataList = new List<MineralSO>(); //자원과 수량을 담는 리스트
+    [SerializeField] List<ItemDataSO> mineralsDataList = new List<ItemDataSO>(); //자원과 수량을 담는 리스트
     private int[] mineralAmounts; //각 자원의 수량을 담는 배열
 
-    private event Action<MineralSO, int> onMineralChanged;
+    private event Action<ItemDataSO, int> onMineralChanged;
 
     //구독
-    public void SubscribeonMineralChanged(Action<MineralSO, int> action)
+    public void SubscribeonMineralChanged(Action<ItemDataSO, int> action)
     {
         onMineralChanged += action;
     }
 
     //구독 해제
-    public void UnsubscribeonMineralChanged(Action<MineralSO, int> action)
+    public void UnsubscribeonMineralChanged(Action<ItemDataSO, int> action)
     {
         onMineralChanged -= action;
     }
 
     //자원 수량 변경
-    public void ChangeAmount(MineralSO data, int amount)
+    public void ChangeAmount(ItemDataSO data, int amount)
     {
         if (data == null) return;
 
@@ -54,7 +54,7 @@ public class ResourcesManager : MonoBehaviour
         onMineralChanged?.Invoke(data, mineralAmounts[index]);
 
 #if UNITY_EDITOR
-        Debug.Log($"자원 {data.mineralName} 수량이 {mineralAmounts[index]}로 변경되었습니다.");
+        Debug.Log($"자원 {data.itemName} 수량이 {mineralAmounts[index]}로 변경되었습니다.");
 #endif
 
         //TODO: UI 업데이트

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ProcessResource : MonoBehaviour
 {
-    [SerializeField] List<MineralSO> processableMinerals = new List<MineralSO>(); //가공 가능한 자원 리스트
+    [SerializeField] List<ItemDataSO> processableMinerals = new List<ItemDataSO>(); //가공 가능한 자원 리스트
 
     [SerializeField] List<Transform> stockingTable = new List<Transform>();     //창고 테이블
     [SerializeField] List<Transform> processingTable = new List<Transform>();   //가공 테이블
@@ -79,7 +79,7 @@ public class ProcessResource : MonoBehaviour
 
     }
     //생성 로직을 타이밍 설정을 위한 코루틴
-    IEnumerator SuccessProcessed(GameObject rawMaterial, MineralSO data)
+    IEnumerator SuccessProcessed(GameObject rawMaterial, ItemDataSO data)
     {
         isProcessing = true;
 
@@ -107,7 +107,7 @@ public class ProcessResource : MonoBehaviour
         //Destroy(rawMaterial);
 
         ResourcesManager.instance.ChangeAmount(data, -destroyResources.Count);
-        Debug.Log($" 가공 시작! 원재료: {data.mineralName} 보유량: {ResourcesManager.instance.GetCurrentAmount(data.Id)}");
+        Debug.Log($" 가공 시작! 원재료: {data.itemName} 보유량: {ResourcesManager.instance.GetCurrentAmount(data.Id)}");
 
         if (data.processedResult != null && data.processedResult.muneralPrefab != null)
         {
@@ -122,14 +122,14 @@ public class ProcessResource : MonoBehaviour
             if (data.processedResult != null)
             {
                 ResourcesManager.instance.ChangeAmount(data.processedResult, 1);
-                Debug.Log($"가공완료! 가공자원: {data.processedResult.mineralName} 보유량: {ResourcesManager.instance.GetCurrentAmount(data.processedResult.Id)}");
+                Debug.Log($"가공완료! 가공자원: {data.processedResult.itemName} 보유량: {ResourcesManager.instance.GetCurrentAmount(data.processedResult.Id)}");
             }
             else
             {
                 if (data.processedResult == null)
-                    Debug.LogError($"{data.mineralName}의 Processed Result가 SO에 등록되지 않았습니다!");
+                    Debug.LogError($"{data.itemName}의 Processed Result가 SO에 등록되지 않았습니다!");
                 else if (data.processedResult.muneralPrefab == null)
-                    Debug.LogError($"{data.processedResult.mineralName} SO에 프리팹이 연결되지 않았습니다!");
+                    Debug.LogError($"{data.processedResult.itemName} SO에 프리팹이 연결되지 않았습니다!");
             }
         }
 

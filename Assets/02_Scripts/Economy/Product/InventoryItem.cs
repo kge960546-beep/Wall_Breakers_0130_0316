@@ -3,10 +3,10 @@ using System;
 [Serializable]
 public class InventoryItem
 {
-    public ItemData itemData;
+    public ItemDataSO itemData;
     public int quantity;
 
-    public InventoryItem(ItemData data, int qty)
+    public InventoryItem(ItemDataSO data, int qty)
     {
         itemData = data;
         quantity = qty;

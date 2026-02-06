@@ -4,10 +4,10 @@ using UnityEngine;
 [System.Serializable]
 public class SellSlot
 {
-    public ItemData item;
+    public ItemDataSO item;
     public int amount;
 
-    public void Set(ItemData item, int amount)
+    public void Set(ItemDataSO item, int amount)
     {
         this.item = item;
         this.amount = amount;
