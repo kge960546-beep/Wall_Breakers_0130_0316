@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: 3
   itemName: "\uB300\uB9AC\uC11D \uBCBD\uB3CC"
-  itemType: 1
+  itemType: 5
   sellPrice: 100
   sellDuration: 3
   muneralPrefab: {fileID: 919132149155446097, guid: 19f1374e48e56a145926c0068869b407,
