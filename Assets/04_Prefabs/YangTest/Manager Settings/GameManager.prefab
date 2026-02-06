@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6273740027223912551
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 795856394187338767}
+  - component: {fileID: 5974398098917332696}
+  - component: {fileID: 35481171786494972}
+  - component: {fileID: 605171770023496966}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &795856394187338767
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6273740027223912551}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 645.8413, y: 640.5596, z: -20.952034}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5974398098917332696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6273740027223912551}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b92debd52e1f89d42a0d2b99189cfe1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &35481171786494972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6273740027223912551}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95819eddbdbf26743b3d6cfdec030902, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  items: []
+--- !u!114 &605171770023496966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6273740027223912551}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f44cee0aa2d56244d9e7e3397594a1a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  iron: {fileID: 11400000, guid: dd593e5739bf2634595d4eb87ab17870, type: 2}
+  copper: {fileID: 11400000, guid: 575faaf103cf7394d8d19c818357e296, type: 2}
+  silver: {fileID: 11400000, guid: a5947a4d0126bfc418c10108b1c3ab28, type: 2}
+  ironIngot: {fileID: 11400000, guid: 6c3f948bd66e8d44792fb88acff70554, type: 2}
+  copperIngot: {fileID: 11400000, guid: 62c7ed4e5602f224bace277de4c4f35c, type: 2}
+  silverIngot: {fileID: 11400000, guid: 98b0d4060a568fa46bfb62d42af27cd7, type: 2}
