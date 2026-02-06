@@ -10,12 +10,41 @@ public class SellManager : MonoBehaviour
     [Header("References")]
     [SerializeField] private ShopLevelData shopData;
     [SerializeField] private SellUI sellUI;
+    [SerializeField] private CreditSpawner creditSpawner;
 
     [Header("Events")]
     public UnityEvent<InventoryItem, int> OnItemSold; // 아이템, 획득 크레딧
 
     private bool isSelling = false;
     private Coroutine sellCoroutine;
+
+    private void Start()
+    {
+        // 초기 설정 확인
+        ValidateSetup();
+    }
+
+    private void ValidateSetup()
+    {
+        if (shopData == null)
+        {
+            Debug.LogError("[SellManager] ShopData is NOT assigned!");
+        }
+
+        if (sellUI == null)
+        {
+            Debug.LogError("[SellManager] SellUI is NOT assigned!");
+        }
+
+        if (creditSpawner == null)
+        {
+            Debug.LogError("[SellManager] CreditSpawner is NOT assigned!");
+        }
+        else
+        {
+            Debug.Log("[SellManager] CreditSpawner is properly assigned");
+        }
+    }
 
     public void StartSelling()
     {
@@ -79,7 +108,9 @@ public class SellManager : MonoBehaviour
             // 아이템 판매 완료
             if (PlayerInventory.Instance.RemoveItem(itemToSell.itemData, 1))
             {
-                PlayerInventory.Instance.AddCredits(earnedCredits);
+                // 크레딧을 직접 추가하지 않고 오브젝트로 생성
+                creditSpawner.SpawnCredit(earnedCredits);
+
                 OnItemSold?.Invoke(itemToSell, earnedCredits);
 
                 Debug.Log($"Sold {itemToSell.itemData.itemName} for {earnedCredits} credits");

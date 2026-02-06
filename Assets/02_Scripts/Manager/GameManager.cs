@@ -37,7 +37,10 @@ public class GameManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
+        // 즉시 서비스 등록
         RegisterServices();
+
+        Debug.Log("GameManager initailized and service registered");
     }
 
     private void Start()
@@ -81,6 +84,7 @@ public class GameManager : MonoBehaviour
     private void RegisterServices()
     {
         RegisterService(new CreditService());
+        Debug.Log("[GameManager] CreditService registed successfully");
     }
     private void RegisterService<T>(T service)
     {

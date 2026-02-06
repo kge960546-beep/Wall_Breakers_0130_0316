@@ -15,16 +15,35 @@ public class PlayerInventory : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+
+        InitializeCreditService();
+    }
+
+    private void InitializeCreditService()
+    {
+        if (GameManager.Instance == null)
+        {
+            Invoke(nameof(InitializeCreditService), 0.1f);
+            return;
         }
 
         creditService = GameManager.Instance.GetService<CreditService>();
+
+        if (creditService != null)
+        {
+            Debug.Log("[CreditCollector] CreditService successfully initialized");
+        }
+        else
+        {
+            Invoke(nameof(InitializeCreditService), 0.1f);
+        }
     }
 
     // 아이템 추가
