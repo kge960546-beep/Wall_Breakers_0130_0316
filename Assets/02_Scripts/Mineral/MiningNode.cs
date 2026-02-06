@@ -14,7 +14,7 @@ using UnityEngine;
 public class MiningNode : MonoBehaviour
 {
     [Header("채굴 설정")]
-    [SerializeField] private MineralSO mineralData;   // 채굴 결과 SO
+    [SerializeField] private ItemDataSO mineralData;   // 채굴 결과 SO
     [SerializeField] private float mineInterval = 1f; // 채굴 주기 (초)
 
     [Header("연결 대상")]
@@ -68,7 +68,7 @@ public class MiningNode : MonoBehaviour
         }
 
 #if UNITY_EDITOR
-        Debug.Log($"[MiningNode] {mineralData.mineralName} 채굴 → ResourceTable 적재");
+        Debug.Log($"[MiningNode] {mineralData.itemName} 채굴 → ResourceTable 적재");
 #endif
     }
 }

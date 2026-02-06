@@ -96,4 +96,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fa0ef1067e4aac47bd63d77a4437e7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mineralData: {fileID: 11400000, guid: 148d67763a878e1488dd10910a204e0d, type: 2}
+  mineralData: {fileID: 11400000, guid: 98b0d4060a568fa46bfb62d42af27cd7, type: 2}

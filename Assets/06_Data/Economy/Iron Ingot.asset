@@ -12,8 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 348f6c8908c66824c9f705203cd222ba, type: 3}
   m_Name: Iron Ingot
   m_EditorClassIdentifier: 
-  itemName: Iron Ingot
-  itemType: 3
+  Id: 7
+  itemName: "\uCCA0 \uC8FC\uAD34"
+  itemType: 1
   sellPrice: 50
   sellDuration: 2
+  muneralPrefab: {fileID: 919132149155446097, guid: edaf623bc56565c42909a29c34755c1e,
+    type: 3}
   icon: {fileID: 21300018, guid: 1eaee135ce037439d925cee5e41ce026, type: 3}
+  inputAmountPerProcess: 0
+  processedResult: {fileID: 0}
