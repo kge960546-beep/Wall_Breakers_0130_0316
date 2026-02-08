@@ -102,15 +102,18 @@ public class ProcessResource : MonoBehaviour
 
         foreach (var obj in destroyResources)
         {
-            Destroy(obj);
+            if (data.mineralPrefab != null)
+            {
+                PoolManager.instance.ReturnIt(data.mineralPrefab, obj);
+            }
         }
 
         yield return new WaitForSeconds(delay);
 
-        if (data.processedResult != null && data.processedResult.muneralPrefab != null)
+        if (data.processedResult != null && data.processedResult.mineralPrefab != null)
         {
             //TODO: 풀링으로 변경 예정
-            GameObject processedItem = PoolManager.instance.Get(data.processedResult.muneralPrefab, processingPoint.position, Quaternion.identity);            
+            GameObject processedItem = PoolManager.instance.Get(data.processedResult.mineralPrefab, processingPoint.position, Quaternion.identity);            
 
             processingTable.Add(processedItem.transform);
             processedItem.transform.SetParent(processingPoint, true);
@@ -141,7 +144,7 @@ public class ProcessResource : MonoBehaviour
 
         if (fsm == null || backPack == null)
             return;
-
+        
         // ===== 1 드롭 우선 =====
         if (TryDrop(backPack))
         {

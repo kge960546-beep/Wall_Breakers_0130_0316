@@ -67,7 +67,13 @@ public class StackBackPack : MonoBehaviour
         Collider col = resourcesObj.GetComponent<Collider>();
         if (col) col.enabled = false;
 
-        Destroy(resourcesObj.GetComponent<Rigidbody>());       
+        Rigidbody rb = resourcesObj.GetComponent<Rigidbody>();
+
+        if(rb != null)
+        {
+            rb.isKinematic = true;
+            rb.useGravity = false;
+        }
     }
 
     public GameObject MinusResource()

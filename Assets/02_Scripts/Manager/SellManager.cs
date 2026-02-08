@@ -23,6 +23,11 @@ public class SellManager : MonoBehaviour
 
     private void Start()
     {
+        if (stackBackPack == null)
+        {
+            stackBackPack = FindObjectOfType<StackBackPack>();
+        }
+
         // 초기 설정 확인
         ValidateSetup();
     }
@@ -82,15 +87,27 @@ public class SellManager : MonoBehaviour
         {
             //var itemToSell = PlayerInventory.Instance.GetMostExpensiveItem();            
 
-            ItemDataSO itemData = PlayerInventory.Instance.GetItem();
+            //ItemDataSO itemData = PlayerInventory.Instance.GetItem();
 
-            if (itemData == null) //전 itemToSell == null
+            //if (itemData == null) //전 itemToSell == null
+            //{
+            //    // 판매할 아이템이 없으면 대기
+            //    sellUI.UpdateDisplay(null, 0);
+            //    yield return new WaitForSeconds(0.5f);
+            //    continue;
+            //}
+
+            GameObject topItem = stackBackPack.PeekResource();
+            if (topItem == null)
             {
                 // 판매할 아이템이 없으면 대기
                 sellUI.UpdateDisplay(null, 0);
                 yield return new WaitForSeconds(0.5f);
                 continue;
             }
+
+            MineralItem mineral = topItem.GetComponent<MineralItem>();
+            ItemDataSO itemData = mineral.mineralData;
 
             // 판매 시간 계산 (상점 레벨에 따른 배수 적용)
             float sellDuration = itemData.sellDuration * shopData.GetSpeedMultiplier(); //전 itemToSell.itemData.sellDuration
@@ -110,8 +127,10 @@ public class SellManager : MonoBehaviour
                 yield return null;
             }
 
+            GameObject soldItem = stackBackPack.MinusResource();
+
             // 아이템 판매 완료
-            if (PlayerInventory.Instance.RemoveItem(itemData, 1)) //전 itemToSell.itemData
+            if (soldItem != null) //전 PlayerInventory.Instance.RemoveItem(itemToSell.itemData, 1)
             {
                 // 크레딧을 직접 추가하지 않고 오브젝트로 생성
                 creditSpawner.SpawnCredit(earnedCredits);
@@ -119,6 +138,15 @@ public class SellManager : MonoBehaviour
                 OnItemSold?.Invoke(itemData, earnedCredits); //전 itemToSell
 
                 Debug.Log($"Sold {itemData.itemName} for {earnedCredits} credits"); //전 itemToSell
+
+                if(itemData.mineralPrefab != null)
+                {
+                    PoolManager.instance.ReturnIt(itemData.mineralPrefab, soldItem);
+                }
+                else
+                {
+                    Destroy(soldItem);
+                }
             }
 
             // 다음 판매 사이클까지 짧은 대기

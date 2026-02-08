@@ -125,7 +125,6 @@ public class PlayerInventory : MonoBehaviour
     //        .OrderByDescending(i => i.itemData.sellPrice)
     //        .FirstOrDefault();
     //}
-
     public ItemDataSO GetItem()
     {
         foreach (var item in inventory.Items)
