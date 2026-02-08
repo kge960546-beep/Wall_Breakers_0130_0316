@@ -13,6 +13,9 @@ public class PlayerInventory : MonoBehaviour
 
     public List<InventoryItem> Items => items;
 
+    [Header("Kwen추가")]
+    public Inventory inventory = new Inventory();
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -49,37 +52,56 @@ public class PlayerInventory : MonoBehaviour
     // 아이템 추가
     public void AddItem(ItemDataSO itemData, int quantity)
     {
-        var existingItem = items.Find(i => i.itemData == itemData);
+        inventory.AddInventory(itemData, quantity);
+#if UNITY_EDITOR
+        Debug.Log($"획득  이름: {itemData.itemName} 갯수 {quantity} 총: {inventory.Items[itemData]}");
+#endif
 
-        if (existingItem != null)
-        {
-            existingItem.quantity += quantity;
-        }
-        else
-        {
-            items.Add(new InventoryItem(itemData, quantity));
-        }
+        //var existingItem = items.Find(i => i.itemData == itemData);
+        //
+        //if (existingItem != null)
+        //{
+        //    existingItem.quantity += quantity;
+        //}
+        //else
+        //{
+        //    items.Add(new InventoryItem(itemData, quantity));
+        //}
     }
 
     // 아이템 제거
     public bool RemoveItem(ItemDataSO itemData, int quantity)
     {
-        var item = items.Find(i => i.itemData == itemData);
-
-        if (item != null && item.quantity >= quantity)
+        if(!inventory.Items.ContainsKey(itemData))
         {
-            item.quantity -= quantity;
-
-            if (item.quantity <= 0)
-            {
-                items.Remove(item);
-            }
-
-            return true;
+            return false;
         }
 
-        return false;
-    }
+        if (inventory.Items[itemData] < quantity)
+        {
+            return false;
+        }
+
+        inventory.Remove(itemData, quantity);
+
+        return true;
+
+        //var item = items.Find(i => i.itemData == itemData);
+        //
+        //if (item != null && item.quantity >= quantity)
+        //{
+        //    item.quantity -= quantity;
+        //
+        //    if (item.quantity <= 0)
+        //    {
+        //        items.Remove(item);
+        //    }
+        //
+        //    return true;
+        //}
+        //
+        //return false;
+    }    
 
     // 크레딧 추가 - CreditService 사용
     public void AddCredits(int amount)
@@ -96,11 +118,33 @@ public class PlayerInventory : MonoBehaviour
     }
 
     // 가장 비싼 아이템 가져오기
-    public InventoryItem GetMostExpensiveItem()
+    //public InventoryItem GetMostExpensiveItem()
+    //{
+    //    return items
+    //        .Where(i => i.quantity > 0)
+    //        .OrderByDescending(i => i.itemData.sellPrice)
+    //        .FirstOrDefault();
+    //}
+    public ItemDataSO GetItem()
     {
-        return items
-            .Where(i => i.quantity > 0)
-            .OrderByDescending(i => i.itemData.sellPrice)
-            .FirstOrDefault();
+        foreach (var item in inventory.Items)
+        {
+            if(item.Value > 0)
+            {
+                return item.Key;
+            }            
+        }
+
+        return null;
+    }
+
+    //갯수 확인
+    public int GetItemCount(ItemDataSO itemData)
+    {
+        if (inventory.Items.ContainsKey(itemData))
+        {
+            return inventory.Items[itemData];
+        }
+        return 0;
     }
 }

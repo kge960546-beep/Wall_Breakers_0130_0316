@@ -27,6 +27,7 @@ public class ProcessResource : MonoBehaviour
             GameObject gameObject = stockingTable[0].gameObject;
 
             var mineralItem = gameObject.GetComponent<MineralItem>();
+
             if (stockingTable.Count >= mineralItem.mineralData.inputAmountPerProcess)
             {
                 StartProcessing(gameObject);
@@ -78,6 +79,7 @@ public class ProcessResource : MonoBehaviour
         }
 
     }
+
     //생성 로직을 타이밍 설정을 위한 코루틴
     IEnumerator SuccessProcessed(GameObject rawMaterial, ItemDataSO data)
     {
@@ -98,39 +100,23 @@ public class ProcessResource : MonoBehaviour
             }
         }
 
-        //stockingTable.Remove(rawMaterial.transform);
-        yield return new WaitForSeconds(delay);
         foreach (var obj in destroyResources)
         {
-            Destroy(obj);
+            if (data.mineralPrefab != null)
+            {
+                PoolManager.instance.ReturnIt(data.mineralPrefab, obj);
+            }
         }
-        //Destroy(rawMaterial);
 
-        ResourcesManager.instance.ChangeAmount(data, -destroyResources.Count);
-        Debug.Log($" 가공 시작! 원재료: {data.itemName} 보유량: {ResourcesManager.instance.GetCurrentAmount(data.Id)}");
+        yield return new WaitForSeconds(delay);
 
-        if (data.processedResult != null && data.processedResult.muneralPrefab != null)
+        if (data.processedResult != null && data.processedResult.mineralPrefab != null)
         {
             //TODO: 풀링으로 변경 예정
-            GameObject processedItem = PoolManager.instance.Get(data.processedResult.muneralPrefab, processingPoint.position, Quaternion.identity);
-            processedItem.transform.SetParent(processingPoint);
+            GameObject processedItem = PoolManager.instance.Get(data.processedResult.mineralPrefab, processingPoint.position, Quaternion.identity);            
 
             processingTable.Add(processedItem.transform);
-
             processedItem.transform.SetParent(processingPoint, true);
-
-            if (data.processedResult != null)
-            {
-                ResourcesManager.instance.ChangeAmount(data.processedResult, 1);
-                Debug.Log($"가공완료! 가공자원: {data.processedResult.itemName} 보유량: {ResourcesManager.instance.GetCurrentAmount(data.processedResult.Id)}");
-            }
-            else
-            {
-                if (data.processedResult == null)
-                    Debug.LogError($"{data.itemName}의 Processed Result가 SO에 등록되지 않았습니다!");
-                else if (data.processedResult.muneralPrefab == null)
-                    Debug.LogError($"{data.processedResult.itemName} SO에 프리팹이 연결되지 않았습니다!");
-            }
         }
 
         isProcessing = false;
@@ -158,7 +144,7 @@ public class ProcessResource : MonoBehaviour
 
         if (fsm == null || backPack == null)
             return;
-
+        
         // ===== 1 드롭 우선 =====
         if (TryDrop(backPack))
         {
@@ -175,10 +161,8 @@ public class ProcessResource : MonoBehaviour
             return;
         }
     }
-
-    // =========================
-    // 드롭 처리
-    // =========================
+    
+    // 드롭 처리    
     bool TryDrop(StackBackPack backPack)
     {
         GameObject topItem = backPack.PeekResource();
@@ -192,10 +176,8 @@ public class ProcessResource : MonoBehaviour
         AddStock(item);
         return true;
     }
-
-    // =========================
-    // 픽업 처리
-    // =========================
+    
+    // 픽업 처리    
     bool TryPickUp(StackBackPack backPack)
     {
         if (processingTable.Count == 0)

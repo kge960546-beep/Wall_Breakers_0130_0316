@@ -10,7 +10,7 @@ public class ItemDataSO : ScriptableObject
     public int sellPrice;
     public float sellDuration = 1f; // 기본 판매 시간
 
-    public GameObject muneralPrefab;
+    public GameObject mineralPrefab;
     public Sprite icon;
 
     public int inputAmountPerProcess; //가공시 필요한 원재료 수량

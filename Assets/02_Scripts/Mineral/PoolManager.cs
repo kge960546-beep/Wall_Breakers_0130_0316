@@ -13,6 +13,25 @@ public class PoolManager : MonoBehaviour
         else Destroy(gameObject);
     }
 
+    public void CreatePool(GameObject prefab, int count)
+    {
+        if (prefab == null) return;
+
+        if(!poolDictionary.ContainsKey(prefab))
+        {
+            poolDictionary.Add(prefab, new Queue<GameObject>());
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            GameObject obj = Instantiate(prefab);
+            obj.SetActive(false);
+            obj.transform.SetParent(this.transform);
+
+            poolDictionary[prefab].Enqueue(obj);
+        }
+    }
+
     public GameObject Get(GameObject poolPrefab, Vector3 position, Quaternion rotation)
     {
         if (!poolDictionary.ContainsKey(poolPrefab))
