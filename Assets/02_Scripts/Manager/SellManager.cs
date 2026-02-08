@@ -13,10 +13,13 @@ public class SellManager : MonoBehaviour
     [SerializeField] private CreditSpawner creditSpawner;
 
     [Header("Events")]
-    public UnityEvent<InventoryItem, int> OnItemSold; // 아이템, 획득 크레딧
+    public UnityEvent<ItemDataSO, int> OnItemSold; // 아이템, 획득 크레딧, 전: InventoryItem
 
     private bool isSelling = false;
     private Coroutine sellCoroutine;
+
+    [Header("kwen 추가")]
+    [SerializeField] StackBackPack stackBackPack;
 
     private void Start()
     {
@@ -77,9 +80,11 @@ public class SellManager : MonoBehaviour
     {
         while (isSelling)
         {
-            var itemToSell = PlayerInventory.Instance.GetMostExpensiveItem();
+            //var itemToSell = PlayerInventory.Instance.GetMostExpensiveItem();            
 
-            if (itemToSell == null)
+            ItemDataSO itemData = PlayerInventory.Instance.GetItem();
+
+            if (itemData == null) //전 itemToSell == null
             {
                 // 판매할 아이템이 없으면 대기
                 sellUI.UpdateDisplay(null, 0);
@@ -88,11 +93,11 @@ public class SellManager : MonoBehaviour
             }
 
             // 판매 시간 계산 (상점 레벨에 따른 배수 적용)
-            float sellDuration = itemToSell.itemData.sellDuration * shopData.GetSpeedMultiplier();
-            int earnedCredits = itemToSell.itemData.sellPrice;
+            float sellDuration = itemData.sellDuration * shopData.GetSpeedMultiplier(); //전 itemToSell.itemData.sellDuration
+            int earnedCredits = itemData.sellPrice;
 
             // UI 업데이트 (판매 시작)
-            sellUI.UpdateDisplay(itemToSell, sellDuration);
+            sellUI.UpdateDisplay(itemData, sellDuration); //전 itemToSell
 
             // 판매 진행 시간
             float elapsedTime = 0f;
@@ -106,14 +111,14 @@ public class SellManager : MonoBehaviour
             }
 
             // 아이템 판매 완료
-            if (PlayerInventory.Instance.RemoveItem(itemToSell.itemData, 1))
+            if (PlayerInventory.Instance.RemoveItem(itemData, 1)) //전 itemToSell.itemData
             {
                 // 크레딧을 직접 추가하지 않고 오브젝트로 생성
                 creditSpawner.SpawnCredit(earnedCredits);
 
-                OnItemSold?.Invoke(itemToSell, earnedCredits);
+                OnItemSold?.Invoke(itemData, earnedCredits); //전 itemToSell
 
-                Debug.Log($"Sold {itemToSell.itemData.itemName} for {earnedCredits} credits");
+                Debug.Log($"Sold {itemData.itemName} for {earnedCredits} credits"); //전 itemToSell
             }
 
             // 다음 판매 사이클까지 짧은 대기

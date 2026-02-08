@@ -42,18 +42,32 @@ public class StackBackPack : MonoBehaviour
         }
     }
     //테이블에서 자원 받기
-    public void AddResources(GameObject resources)
+    public void AddResources(GameObject resourcesObj)
     {
-        if (resources == null) return;
+        if (resourcesObj == null) return;
+        
+        MineralItem mineralItem = resourcesObj.GetComponent<MineralItem>();
 
-        acquiredResources.Add(resources.transform);
+        if(mineralItem == null || mineralItem.mineralData == null)
+        {
+            Debug.LogWarning("없습니다 MineralItem 또는 mineralData.");
 
-        resources.transform.SetParent(backPackPos, true);
+            Destroy(resourcesObj);
+            return;
+        }
+        
+        if(mineralItem!= null && mineralItem.mineralData != null)
+        {
+            PlayerInventory.Instance.AddItem(mineralItem.mineralData, 1);
+        }
 
-        Collider col = resources.GetComponent<Collider>();
+        acquiredResources.Add(resourcesObj.transform);
+        resourcesObj.transform.SetParent(backPackPos, true);
+
+        Collider col = resourcesObj.GetComponent<Collider>();
         if (col) col.enabled = false;
 
-        Destroy(resources.GetComponent<Rigidbody>());       
+        Destroy(resourcesObj.GetComponent<Rigidbody>());       
     }
 
     public GameObject MinusResource()
@@ -61,12 +75,18 @@ public class StackBackPack : MonoBehaviour
         if (acquiredResources.Count == 0) return null;
 
         int lastIndex = acquiredResources.Count - 1;
-        GameObject item = acquiredResources[lastIndex].gameObject;
+        GameObject itemObj = acquiredResources[lastIndex].gameObject;
+
+        MineralItem mineralItem = itemObj.GetComponent<MineralItem>();
+        if(mineralItem != null && mineralItem.mineralData != null)
+        {
+            PlayerInventory.Instance.RemoveItem(mineralItem.mineralData, 1);
+        }
+
         acquiredResources.RemoveAt(lastIndex);
+        itemObj.transform.SetParent(null);        
 
-        item.transform.SetParent(null);        
-
-        return item;
+        return itemObj;
     }
 
     public GameObject PeekResource()
