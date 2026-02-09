@@ -49,7 +49,7 @@ public class StackBackPack : MonoBehaviour
             Vector3 targetPos = previousAcquired.position + Vector3.up * itemHeight;
 
             Quaternion targetRot = backPackPos.rotation;
-            MineralItem mineralItem = acquiredResources[0].GetComponent<MineralItem>();
+            MineralItem mineralItem = currentAcquired.GetComponent<MineralItem>();
 
             if (mineralItem != null && mineralItem.mineralData != null)
             {
