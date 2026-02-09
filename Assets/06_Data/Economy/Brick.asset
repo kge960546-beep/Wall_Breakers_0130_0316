@@ -17,7 +17,7 @@ MonoBehaviour:
   itemType: 1
   sellPrice: 35
   sellDuration: 1
-  muneralPrefab: {fileID: 2831869848581557307, guid: b983ee4ad77ea674d84c01d57a1ec806,
+  mineralPrefab: {fileID: 2831869848581557307, guid: b983ee4ad77ea674d84c01d57a1ec806,
     type: 3}
   icon: {fileID: 0}
   inputAmountPerProcess: 0
