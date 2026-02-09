@@ -17,6 +17,13 @@ public class ProcessResource : MonoBehaviour
 
     bool isProcessing = false;  //가공 중인지 여부
 
+    [Header("Lever")]
+    [SerializeField] Transform leverHandle;   // 레버 손잡이
+    [SerializeField] float leverUpY = 0.33f;  // 기본 위치
+    [SerializeField] float leverDownY = -0.33f; // 작동 위치
+    [SerializeField] float leverMoveSpeed = 2f; // 이동 속도
+
+
     private void Update()
     {
         StackPosition(stockingTable, stockingPoint);
@@ -85,6 +92,8 @@ public class ProcessResource : MonoBehaviour
     {
         isProcessing = true;
 
+        yield return StartCoroutine(MoveLeverY(leverDownY));
+
         int resourceQuantity = data.inputAmountPerProcess;
 
         if (resourceQuantity <= 0) resourceQuantity = 1;
@@ -118,6 +127,8 @@ public class ProcessResource : MonoBehaviour
             processingTable.Add(processedItem.transform);
             processedItem.transform.SetParent(processingPoint, true);
         }
+
+        yield return StartCoroutine(MoveLeverY(leverUpY));
 
         isProcessing = false;
     }
@@ -193,4 +204,22 @@ public class ProcessResource : MonoBehaviour
         backPack.AddResources(item);
         return true;
     }
+
+    // 레버 이동 코루틴
+    IEnumerator MoveLeverY(float targetY)
+    {
+        Vector3 startPos = leverHandle.localPosition;
+        Vector3 targetPos = new Vector3(startPos.x, targetY, startPos.z);
+
+        while (Mathf.Abs(leverHandle.localPosition.y - targetY) > 0.001f)
+        {
+            leverHandle.localPosition =
+                Vector3.Lerp(leverHandle.localPosition, targetPos, Time.deltaTime * leverMoveSpeed);
+
+            yield return null;
+        }
+
+        leverHandle.localPosition = targetPos;
+    }
+
 }

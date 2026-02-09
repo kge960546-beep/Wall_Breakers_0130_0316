@@ -11,6 +11,9 @@ public class StackBackPack : MonoBehaviour
     [SerializeField] private int maxCapacity = 10; //최대 수용량
     public bool IsFullBackPack() => acquiredResources.Count >= maxCapacity;
 
+    [SerializeField] private PlayerFullUI playerFullUI;
+
+
     private void Start()
     {
         if (backPackPos == null)
@@ -74,6 +77,11 @@ public class StackBackPack : MonoBehaviour
             rb.isKinematic = true;
             rb.useGravity = false;
         }
+
+        if (IsFullBackPack())
+        {
+            playerFullUI.Show();
+        }
     }
 
     public GameObject MinusResource()
@@ -90,7 +98,12 @@ public class StackBackPack : MonoBehaviour
         }
 
         acquiredResources.RemoveAt(lastIndex);
-        itemObj.transform.SetParent(null);        
+        itemObj.transform.SetParent(null);
+
+        if (!IsFullBackPack())
+        {
+            playerFullUI.Hide();
+        }
 
         return itemObj;
     }

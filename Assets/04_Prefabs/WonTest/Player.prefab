@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 7168310529089961001}
   - component: {fileID: 7338597578336623081}
   - component: {fileID: 5186094332145046543}
+  - component: {fileID: 5263282165465256761}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -166,6 +167,21 @@ MonoBehaviour:
   backPackPos: {fileID: 1276339896343955978}
   itemHeight: 0.3
   maxCapacity: 10
+  playerFullUI: {fileID: 5263282165465256761}
+--- !u!114 &5263282165465256761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1909725633079568753}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d380dc7c7f34c364189d94807cb07ba9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fullUI: {fileID: 0}
+  offset: {x: 0, y: 2.2, z: 0}
 --- !u!1 &6851842274882884959
 GameObject:
   m_ObjectHideFlags: 0

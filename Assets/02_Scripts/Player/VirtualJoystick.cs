@@ -29,9 +29,13 @@ public class VirtualJoystick : MonoBehaviour
 
     private void HandleInput()
     {
-        // 클릭 시작
+        // 클릭 시작 시점에서만 UI 클릭 여부 체크
         if (Input.GetMouseButtonDown(0))
         {
+            // UI 위 클릭이면 조이스틱 시작 안 함
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+                return;
+
             isDragging = true;
             startPos = Input.mousePosition;
 
