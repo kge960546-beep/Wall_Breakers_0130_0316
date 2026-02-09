@@ -22,3 +22,4 @@ MonoBehaviour:
   icon: {fileID: 0}
   inputAmountPerProcess: 0
   processedResult: {fileID: 0}
+  backPackRotationOffset: {x: 0, y: 90, z: 0}

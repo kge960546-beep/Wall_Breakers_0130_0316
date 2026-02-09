@@ -29,8 +29,16 @@ public class StackBackPack : MonoBehaviour
         //가방 시작 위치
         if (acquiredResources.Count > 0)
         {
+            Quaternion targetRot = backPackPos.rotation;
+            MineralItem mineralItem = acquiredResources[0].GetComponent<MineralItem>();
+
+            if (mineralItem != null && mineralItem.mineralData != null)
+            {
+                targetRot *= Quaternion.Euler(mineralItem.mineralData.backPackRotationOffset);
+            }
+
             acquiredResources[0].position = Vector3.Lerp(acquiredResources[0].position, backPackPos.position, Time.deltaTime * 10f);
-            acquiredResources[0].rotation = Quaternion.Lerp(acquiredResources[0].rotation, backPackPos.rotation, Time.deltaTime * 10f);
+            acquiredResources[0].rotation = Quaternion.Lerp(acquiredResources[0].rotation, targetRot, Time.deltaTime * 10f);
         }
 
         for (int i = 1; i < acquiredResources.Count; i++)
@@ -40,8 +48,16 @@ public class StackBackPack : MonoBehaviour
 
             Vector3 targetPos = previousAcquired.position + Vector3.up * itemHeight;
 
+            Quaternion targetRot = backPackPos.rotation;
+            MineralItem mineralItem = currentAcquired.GetComponent<MineralItem>();
+
+            if (mineralItem != null && mineralItem.mineralData != null)
+            {
+                targetRot *= Quaternion.Euler(mineralItem.mineralData.backPackRotationOffset);
+            }
+
             currentAcquired.position = Vector3.Lerp(currentAcquired.position, targetPos, Time.deltaTime * 10f);
-            currentAcquired.rotation = Quaternion.Lerp(currentAcquired.rotation, backPackPos.rotation, Time.deltaTime * 10f);
+            currentAcquired.rotation = Quaternion.Lerp(currentAcquired.rotation, targetRot, Time.deltaTime * 10f);
         }
     }
     //테이블에서 자원 받기
