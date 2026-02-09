@@ -11,6 +11,6 @@ public class RegionRequirment
 [Serializable]
 public class ItemRequirement
 {
-    public ItemData itemdata;
+    public ItemData itemData;
     public int requiredAmount;
 }

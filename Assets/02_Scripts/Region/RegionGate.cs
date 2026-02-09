@@ -13,18 +13,53 @@ public class RegionGate : MonoBehaviour
 
     private bool isOpen = false;
 
+    private void Start()
+    {
+        Debug.Log($"[RegionGate] Start - Gate objects count: {gateObjects?.Length ?? 0}");
+        ValidateSetup();
+    }
+    private void ValidateSetup()
+    {
+        if (gateObjects == null || gateObjects.Length == 0)
+        {
+            Debug.LogWarning("[RegionGate] No Gate objects assigned!");
+        }
+        else
+        {
+            Debug.Log($"[RegionGate] Gate objects assigned:");
+            for (int i = 0; i < gateObjects.Length; i++)
+            {
+                if (gateObjects[i] != null)
+                {
+                    Debug.Log($" [{i}] {gateObjects[i].name} - Active: {gateObjects[i].activeSelf}");
+                }
+                else
+                {
+                    Debug.LogWarning($"  [{i}] NULL gate object!");
+                }
+            }
+        }
+    }
     public void SetGateState(bool open)
     {
-        if (isOpen = open) return;
+        Debug.Log($"[RegionGate] SetGateState called: {open} (current state: {isOpen})");
+
+        if (isOpen == open)
+        {
+            Debug.Log("[RegionGate] Gate already in requested state, ignoring");
+            return;
+        }
 
         isOpen = open;
 
-        if(useAnimation && open)
+        if (useAnimation && open)
         {
+            Debug.Log("[RegionGate] Opening gate with animation");
             StartCoroutine(OpenGateAnimation());
         }
         else
         {
+            Debug.Log($"[RegionGate] Setting gate objects active: {!open}");
             SetGateObjectsActive(!open);
         }
 
@@ -37,11 +72,24 @@ public class RegionGate : MonoBehaviour
     }
     private void SetGateObjectsActive(bool active)
     {
-        foreach(var obj in gateObjects)
+        Debug.Log($"[RegionGate] SetGateObjectsActive: {active}");
+
+        if (gateObjects == null)
         {
-            if(obj != null)
+            Debug.LogError("[RegionGate] gateObjects array is NULL!");
+            return;
+        }
+
+        for (int i = 0; i < gateObjects.Length; i++)
+        {
+            if (gateObjects[i] != null)
             {
-                obj.SetActive(active);
+                gateObjects[i].SetActive(active);
+                Debug.Log($"[RegionGate] Gate object [{i}] {gateObjects[i].name} set to: {active}");
+            }
+            else
+            {
+                Debug.LogWarning($"[RegionGate] Gate object at index {i} is NULL!");
             }
         }
     }
@@ -76,4 +124,21 @@ public class RegionGate : MonoBehaviour
         // 애니메이션 끝나면 비활성화 
         SetGateObjectsActive(false);
     }
+
+    #region DebugTool
+    // 디버그용 - Inspector에서 테스트 가능
+    [ContextMenu("Test Open Gate")]
+    public void TestOpenGate()
+    {
+        Debug.Log("[RegionGate] Test: Opening gate");
+        SetGateState(true);
+    }
+
+    [ContextMenu("Test Close Gate")]
+    public void TestCloseGate()
+    {
+        Debug.Log("[RegionGate] Test: Closing gate");
+        SetGateState(false);
+    }
+    #endregion
 }

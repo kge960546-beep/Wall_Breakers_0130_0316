@@ -14,11 +14,8 @@ public class RegionUnlockService
     {
         unlockedRegions.Add(1);
         LoadUnlockedRegions();
-    }
+        Debug.Log("[RegionUnlockService] Service created. Region 1 unlocked by default.");
 
-    private void Awake()
-    {
-        creditService = GameManager.Instance.GetService<CreditService>();
     }
 
     public bool IsRegionUnlocked(int regionId)
@@ -53,7 +50,9 @@ public class RegionUnlockService
             return false;
         }
 
-        if(creditService.credits < regionData.unlockRequirement.requiredCredits)
+        creditService = GameManager.Instance.GetService<CreditService>();
+
+        if (creditService.credits < regionData.unlockRequirement.requiredCredits)
         {
             Debug.Log($"[RegionUnlockService] Not enough credits: {creditService.credits}/{regionData.unlockRequirement.requiredCredits}");
             return false;
@@ -61,12 +60,12 @@ public class RegionUnlockService
 
         foreach(var itemReq in regionData.unlockRequirement.requiredItems)
         {
-            var inventoryItem = PlayerInventory.Instance.Items.Find(i => i.itemData == itemReq.itemdata);
+            var inventoryItem = PlayerInventory.Instance.Items.Find(i => i.itemData == itemReq.itemData);
             int currentAmount = inventoryItem?.quantity ?? 0;
 
             if (currentAmount < itemReq.requiredAmount)
             {
-                Debug.Log($"[RegionUnlockedService] Not enough {itemReq.itemdata.itemName}: {currentAmount}/{itemReq.requiredAmount}");
+                Debug.Log($"[RegionUnlockedService] Not enough {itemReq.itemData.itemName}: {currentAmount}/{itemReq.requiredAmount}");
                 return false;
             }
         }
@@ -92,10 +91,10 @@ public class RegionUnlockService
         // 아이템 차감
         foreach(var itemReq in regionData.unlockRequirement.requiredItems)
         {
-            bool removed = PlayerInventory.Instance.RemoveItem(itemReq.itemdata, itemReq.requiredAmount);
+            bool removed = PlayerInventory.Instance.RemoveItem(itemReq.itemData, itemReq.requiredAmount);
             if(removed)
             {
-                Debug.Log($"[RegionUnlockService] Deducted {itemReq.requiredAmount}x {itemReq.itemdata.itemName}");
+                Debug.Log($"[RegionUnlockService] Deducted {itemReq.requiredAmount}x {itemReq.itemData.itemName}");
             }
         }
 

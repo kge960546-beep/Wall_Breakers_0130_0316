@@ -1,7 +1,6 @@
-using TMPro;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.UI;
+using TMPro;
 
 public class RegionUnlockUI : MonoBehaviour
 {
@@ -15,64 +14,161 @@ public class RegionUnlockUI : MonoBehaviour
     [SerializeField] private Button unlockButton;
     [SerializeField] private TextMeshProUGUI unlockButtonText;
 
+    [Header("UI Settings")]
+    [SerializeField] private Vector3 uiOffset = new Vector3(0, 2, 0); // UI 위치 오프셋
+    [SerializeField] private bool faceCamera = true; // 카메라를 향하게 할지
+
     private RegionData currentRegionData;
     private RegionUnlockService unlockService;
     private RegionUnlockZone currentZone;
+    private Camera mainCamera;
 
     private void Start()
     {
+        Debug.Log("[RegionUnlockUI] Start called");
+        ValidateSetup();
         Hide();
 
-        if(unlockButton != null)
+        if (unlockButton != null)
         {
             unlockButton.onClick.AddListener(OnUnlockButtonClicked);
         }
+
+        mainCamera = Camera.main;
     }
-    public void Show(RegionData regionData, RegionUnlockService service)
+
+    private void ValidateSetup()
     {
+        if (uiPanel == null)
+        {
+            Debug.LogError("[RegionUnlockUI] UI Panel is NOT assigned!");
+        }
+        else
+        {
+            Debug.Log($"[RegionUnlockUI] UI Panel assigned: {uiPanel.name}");
+        }
+
+        if (regionNameText == null)
+            Debug.LogWarning("[RegionUnlockUI] RegionNameText is not assigned");
+        if (descriptionText == null)
+            Debug.LogWarning("[RegionUnlockUI] DescriptionText is not assigned");
+        if (creditsRequiredText == null)
+            Debug.LogWarning("[RegionUnlockUI] CreditsRequiredText is not assigned");
+        if (unlockButton == null)
+            Debug.LogWarning("[RegionUnlockUI] UnlockButton is not assigned");
+    }
+
+    public void Show(RegionData regionData, RegionUnlockService service, RegionUnlockZone zone, Vector3 worldPosition)
+    {
+        Debug.Log($"[RegionUnlockUI] Show called for {regionData.regionName} at position {worldPosition}");
+
         currentRegionData = regionData;
         unlockService = service;
+        currentZone = zone;
+
+        // UI 위치 설정
+        transform.position = worldPosition + uiOffset;
 
         uiPanel.SetActive(true);
+        Debug.Log($"[RegionUnlockUI] UI Panel activated: {uiPanel.activeSelf}");
+
         UpdateDisplay();
     }
 
     public void Hide()
     {
-        uiPanel.SetActive(false);
+        Debug.Log("[RegionUnlockUI] Hide called");
+
+        if (uiPanel != null)
+        {
+            uiPanel.SetActive(false);
+        }
+
         currentRegionData = null;
+        currentZone = null;
+    }
+
+    private void Update()
+    {
+        if (uiPanel.activeSelf)
+        {
+            // 카메라를 향하게 회전
+            if (faceCamera && mainCamera != null)
+            {
+                transform.LookAt(transform.position + mainCamera.transform.rotation * Vector3.forward,
+                                 mainCamera.transform.rotation * Vector3.up);
+            }
+
+            // 실시간 업데이트
+            if (currentRegionData != null)
+            {
+                UpdateDisplay();
+            }
+        }
     }
 
     private void UpdateDisplay()
     {
-        if (currentRegionData != null) return;
-
-        // 지역 이름 및 설명
-        regionNameText.text = currentRegionData.regionName;
-        descriptionText.text = currentRegionData.description;
-
-        // 크레딧 요구 사항
-        long requiredCredits = currentRegionData.unlockRequirement.requiredCredits;
-        long currentCredits = GameManager.Instance.GetService<CreditService>().credits;
-
-        string creditsColor = currentCredits >= requiredCredits ? "#00FF00" : "#FF0000";
-        creditsRequiredText.text = $"Credits: <color={creditsColor}>{NotateNumber.ChangeNumber(currentCredits)}</color> / {NotateNumber.ChangeNumber(requiredCredits)}";
-
-        ClearItemRequirements();
-
-        foreach(var itemReq in currentRegionData.unlockRequirement.requiredItems)
+        if (currentRegionData == null)
         {
-            CreateItemRequirementUI(itemReq);
+            Debug.LogWarning("[RegionUnlockUI] Cannot update display - currentRegionData is null");
+            return;
         }
 
-        bool canUnlock = unlockService.CanUnlockRegion(currentRegionData.regionId, currentRegionData);
-        unlockButton.interactable = canUnlock;
-        unlockButtonText.text = canUnlock ? "Unlock Region" : "Requirements Not Met";
+        // 지역 이름 및 설명
+        if (regionNameText != null)
+        {
+            regionNameText.text = currentRegionData.regionName;
+        }
+
+        if (descriptionText != null)
+        {
+            descriptionText.text = currentRegionData.description;
+        }
+
+        // 크레딧 요구사항
+        long requiredCredits = currentRegionData.unlockRequirement.requiredCredits;
+        CreditService creditService = GameManager.Instance.GetService<CreditService>();
+        long currentCredits = creditService != null ? creditService.credits : 0;
+
+        string creditsColor = currentCredits >= requiredCredits ? "#00FF00" : "#FF0000";
+
+        if (creditsRequiredText != null)
+        {
+            creditsRequiredText.text = $"Credits: <color={creditsColor}>{NotateNumber.ChangeNumber(currentCredits)}</color> / {NotateNumber.ChangeNumber(requiredCredits)}";
+        }
+
+        // 아이템 요구사항
+        if (itemRequirementsContainer != null && itemRequirementPrefab != null)
+        {
+            ClearItemRequirements();
+
+            foreach (var itemReq in currentRegionData.unlockRequirement.requiredItems)
+            {
+                CreateItemRequirementUI(itemReq);
+            }
+        }
+
+        // 해금 버튼 상태
+        if (unlockService != null)
+        {
+            bool canUnlock = unlockService.CanUnlockRegion(currentRegionData.regionId, currentRegionData);
+
+            if (unlockButton != null)
+            {
+                unlockButton.interactable = canUnlock;
+            }
+
+            if (unlockButtonText != null)
+            {
+                unlockButtonText.text = canUnlock ? "Unlock Region" : "Requirements Not Yet";
+            }
+        }
     }
 
     private void ClearItemRequirements()
     {
-        foreach(Transform child in itemRequirementsContainer)
+        foreach (Transform child in itemRequirementsContainer)
         {
             Destroy(child.gameObject);
         }
@@ -80,44 +176,38 @@ public class RegionUnlockUI : MonoBehaviour
 
     private void CreateItemRequirementUI(ItemRequirement itemReq)
     {
-        GameObject itemUI = Instantiate(itemRequirementPrefab);
+        GameObject itemUI = Instantiate(itemRequirementPrefab, itemRequirementsContainer);
 
-        //아이템 정보 설정(프리팹에 따라 조정)
         TextMeshProUGUI itemText = itemUI.GetComponentInChildren<TextMeshProUGUI>();
         Image itemIcon = itemUI.GetComponentInChildren<Image>();
 
-        var inventoryItem = PlayerInventory.Instance.Items.Find(i => i.itemData == itemReq.itemdata);
+        var inventoryItem = PlayerInventory.Instance.Items.Find(i => i.itemData == itemReq.itemData);
         int currentAmount = inventoryItem?.quantity ?? 0;
 
         string itemColor = currentAmount >= itemReq.requiredAmount ? "#00FF00" : "#FF0000";
 
-        if(itemText != null)
+        if (itemText != null)
         {
-            itemText.text = $"{itemReq.itemdata.itemName}: <color={itemColor}>{currentAmount}</color> / {itemReq.requiredAmount}";
+            itemText.text = $"{itemReq.itemData.itemName}: <color={itemColor}>{currentAmount}</color> / {itemReq.requiredAmount}";
         }
 
-        if(itemIcon != null && itemReq.itemdata.icon != null)
+        if (itemIcon != null && itemReq.itemData.icon != null)
         {
-            itemIcon.sprite = itemReq.itemdata.icon;
+            itemIcon.sprite = itemReq.itemData.icon;
         }
     }
 
     private void OnUnlockButtonClicked()
     {
-        // RegionUnlockZone을 통해 해금 시도
-        RegionUnlockZone zone = FindObjectOfType<RegionUnlockZone>();
-        if(zone != null)
-        {
-            zone.AttempUnlock();
-        }
-    }
+        Debug.Log("[RegionUnlockUI] Unlock button clicked");
 
-    // 실시간 업데이트 (선택사항)
-    private void Update()
-    {
-        if(uiPanel.activeSelf && currentRegionData != null)
+        if (currentZone != null)
         {
-            UpdateDisplay();
+            currentZone.AttemptUnlock();
+        }
+        else
+        {
+            Debug.LogError("[RegionUnlockUI] currentZone is null!");
         }
     }
 }
