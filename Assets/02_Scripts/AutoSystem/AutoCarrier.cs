@@ -1,0 +1,110 @@
+using UnityEngine;
+
+
+public enum currentState { Idle, MovingToTable, MovingMachine, }
+public class AutoCarrier : MonoBehaviour
+{
+    [SerializeField] private AutoBackPack autoBackPack; //가방 스크립트 참조
+    [SerializeField] private Animator anim;
+
+    [SerializeField] Transform resourceTable;        //자원 놓는 테이블 위치
+    [SerializeField] Transform processingMachine;    //가공기 위치
+    [SerializeField] Transform idleSpot;             //대기 위치
+    [SerializeField] float moveDelay = 4.0f;         //이동후 딜레이
+    [SerializeField] float stopDistance = 0.5f;      //목적지 도착 거리
+
+    [SerializeField] private float moveSpeed = 5f;   //이동 속도
+
+    private Rigidbody rb;
+    private Vector3 moveDirection;
+    public Vector3 MoveDirection => moveDirection;
+    private currentState state = currentState.Idle;
+
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody>();
+        rb.constraints = RigidbodyConstraints.FreezeRotation;
+        anim = GetComponent<Animator>();
+    }
+
+    private void Start()
+    {
+        if (autoBackPack == null)
+        {
+            autoBackPack = GetComponent<AutoBackPack>();
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        Move();
+        HandleAuto();
+    }
+
+    public void SetMoveDirection(Vector3 dir)
+    {
+        moveDirection = dir;
+    }
+
+    // 실제 이동 처리
+    private void Move()
+    {
+        Vector3 velocity = moveDirection * moveSpeed;
+        velocity.y = rb.velocity.y;
+
+        rb.velocity = velocity;
+
+        if (anim != null)
+        {
+            float currentSpeed = moveDirection.magnitude;
+            anim.SetFloat("moveSpeed", currentSpeed);
+        }
+
+        if (moveDirection != Vector3.zero)
+        {
+            rb.rotation = Quaternion.LookRotation(moveDirection);
+        }
+    }
+
+    //자동 운반 상태 처리
+    public void HandleAuto()
+    {
+        switch (state)
+        {
+            case (currentState.Idle):
+                if (!autoBackPack.IsFullBackPack())
+                {
+                    state = currentState.MovingToTable;
+                }
+                else
+                {
+                    state = currentState.MovingMachine;
+                }
+                break;
+            case (currentState.MovingToTable):
+                GoTargetPoint(resourceTable.position);
+                break;
+            case (currentState.MovingMachine):
+                GoTargetPoint(processingMachine.position);
+                break;
+        }
+    }
+
+    public void GoTargetPoint(Vector3 targetPos)
+    {
+        float distanceToTarget = Vector3.Distance(transform.position, targetPos);
+
+        if (distanceToTarget <= stopDistance)
+        {
+            SetMoveDirection(Vector3.zero);
+            state = currentState.Idle;
+
+        }
+        else
+        {
+            Vector3 direction = (targetPos - transform.position).normalized; //이동 방향 계산
+            direction.y = 0f; // Y축 이동 무시
+            SetMoveDirection(direction);
+        }
+    }
+}
