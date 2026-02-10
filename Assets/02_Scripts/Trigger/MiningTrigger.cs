@@ -12,7 +12,7 @@ public class MiningTrigger : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (!other.CompareTag("Player"))
+        if (!other.CompareTag("Player") && !other.CompareTag("AutoMineWorker"))
             return;
 
         PlayerFSM fsm = other.GetComponent<PlayerFSM>();
@@ -28,6 +28,13 @@ public class MiningTrigger : MonoBehaviour
         // 실제 채굴은 MiningNode가 담당
         if (fsm.CurrentStateType == PlayerStateType.Mining)
         {
+            if (!miningNode.canMine)
+            {
+                fsm.ExitMining();
+                return;
+            }    
+                
+
             miningNode.TryMine();
         }
     }

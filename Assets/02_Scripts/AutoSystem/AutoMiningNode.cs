@@ -1,22 +1,12 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// 채굴 대상(광산, 채굴기)에 붙는 컴포넌트
-/// - 채굴 타이머 관리
-/// - 채굴 결과 생성
-/// - 채굴 결과를 ResourceTable(창고)에 적재
-/// 
-/// ※ 주의
-/// - 백팩(StackBackPack)과 직접 연동하지 않음
-/// - 용량 판단, 상태 전환은 여기서 하지 않음
-/// - 취합 테스트용 최소 책임만 가짐
-/// </summary>
-public class MiningNode : MonoBehaviour
+public class AutoMiningNode : MonoBehaviour
 {
     [Header("채굴 설정")]
     [SerializeField] private ItemDataSO mineralData;  // 채굴 결과 SO
-    [SerializeField] private float mineInterval = 1f; // 채굴 주기 (초)
+    [SerializeField] private float mineInterval = 3f; // 채굴 주기 (초)
     [SerializeField] float mineDelay = 5f;           // 채굴 쿨타임(초)
     [SerializeField] int maxMineCount = 10;           // 최대 채굴 가능 횟수
     [SerializeField] int currentMineCount = 0;
@@ -67,8 +57,8 @@ public class MiningNode : MonoBehaviour
             // 채굴 결과를 창고(ResourceTable)에 적재
             resourceTable.AddResources(item);
             currentMineCount++;
-        }    
-        if(currentMineCount == maxMineCount)
+        }
+        if (currentMineCount == maxMineCount)
         {
             foreach (GameObject mineral in mineMineral)
             {
@@ -88,7 +78,7 @@ public class MiningNode : MonoBehaviour
                 mineral.SetActive(true);
             }
         }
-        
+
 
 
         // 가이드 진행도 증가 (현재 스텝일 때만)
