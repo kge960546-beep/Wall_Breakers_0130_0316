@@ -147,8 +147,16 @@ public class ProcessResource : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (!other.CompareTag("Player"))
+        if (!other.CompareTag("Player") && !other.CompareTag("AutoCarrierWorker"))
             return;
+
+        var autoBackPack = other.GetComponent<AutoBackPack>();
+
+        if(autoBackPack != null)
+        {
+            GameObject item = autoBackPack.RemoveResource();
+            if (item != null) AddStock(item);
+        }
 
         PlayerFSM fsm = other.GetComponent<PlayerFSM>();
         StackBackPack backPack = other.GetComponent<StackBackPack>();

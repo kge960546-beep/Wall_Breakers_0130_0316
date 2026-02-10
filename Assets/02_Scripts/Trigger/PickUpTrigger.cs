@@ -12,7 +12,7 @@ public class PickUpTrigger : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (!other.CompareTag("Player"))
+        if (!other.CompareTag("Player") && !other.CompareTag("AutoCarrierWorker"))
             return;
 
         PlayerFSM fsm = other.GetComponent<PlayerFSM>();

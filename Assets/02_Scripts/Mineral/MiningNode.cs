@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -13,9 +15,15 @@ using UnityEngine;
 /// </summary>
 public class MiningNode : MonoBehaviour
 {
-    [Header("채굴 설정")]
-    [SerializeField] private ItemDataSO mineralData;   // 채굴 결과 SO
+    [Header("채굴 설정")]    
+    [SerializeField] private ItemDataSO mineralData;  // 채굴 결과 SO
     [SerializeField] private float mineInterval = 1f; // 채굴 주기 (초)
+    [SerializeField] private float autoMineInterval = 3f; // 채굴 주기 (초)    
+    [SerializeField] float mineDelay = 5f;           // 채굴 쿨타임(초)
+    [SerializeField] int maxMineCount = 10;           // 최대 채굴 가능 횟수
+    [SerializeField] int currentMineCount = 0;          //현재 채굴한 횟수
+    [SerializeField] GameObject[] mineMineral;        // 채굴 광물 오브젝트
+    public bool canMine => currentMineCount < maxMineCount;
 
     [Header("연결 대상")]
     [SerializeField] private ResourceTable resourceTable; // 채굴기 옆 창고
@@ -31,7 +39,9 @@ public class MiningNode : MonoBehaviour
     /// - MiningTrigger / MiningState 등에서 호출
     /// </summary>
     public void TryMine()
-    {
+    {       
+        if (!canMine) return;
+
         // 필수 참조 체크
         if (mineralData == null || resourceTable == null)
             return;
@@ -45,18 +55,58 @@ public class MiningNode : MonoBehaviour
 
         Mine();
     }
+    public void AutoUnitTryMine()
+    {       
+        if (!canMine) return;
+
+        // 필수 참조 체크
+        if (mineralData == null || resourceTable == null)
+            return;
+
+        mineTimer += Time.deltaTime;
+
+        if (mineTimer < autoMineInterval)
+            return;
+
+        mineTimer = 0f;
+
+        Mine();
+    }
 
     /// <summary>
     /// 실제 채굴 처리
     /// </summary>
     private void Mine()
     {
-        // 채굴 결과 생성
-        GameObject item = PoolManager.instance.Get(mineralData.mineralPrefab, spawnPoint.position, Quaternion.identity);        
-        item.transform.SetParent(spawnPoint);
+        if (currentMineCount < maxMineCount)
+        {
+            GameObject item = PoolManager.instance.Get(mineralData.mineralPrefab, spawnPoint.position, Quaternion.identity);
+            item.transform.SetParent(spawnPoint);
 
-        // 채굴 결과를 창고(ResourceTable)에 적재
-        resourceTable.AddResources(item);
+            // 채굴 결과를 창고(ResourceTable)에 적재
+            resourceTable.AddResources(item);
+            currentMineCount++;
+        }    
+        if(currentMineCount == maxMineCount)
+        {
+            foreach (GameObject mineral in mineMineral)
+            {
+                mineral.SetActive(false);
+            }
+
+            StartCoroutine(mineMineralSpawn());
+        }
+
+        IEnumerator mineMineralSpawn()
+        {
+            yield return new WaitForSeconds(mineDelay);
+            currentMineCount = 0;
+
+            foreach (GameObject mineral in mineMineral)
+            {
+                mineral.SetActive(true);
+            }
+        }       
 
         // 가이드 진행도 증가 (현재 스텝일 때만)
         if (GuideManager.Instance != null &&
