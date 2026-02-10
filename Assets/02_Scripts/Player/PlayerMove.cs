@@ -8,6 +8,8 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMove : MonoBehaviour
 {
+    public static PlayerMove Instance;
+
     [SerializeField] private float moveSpeed = 5f;
 
     private Rigidbody rb;
@@ -16,6 +18,11 @@ public class PlayerMove : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeRotation;
     }
@@ -33,6 +40,13 @@ public class PlayerMove : MonoBehaviour
     public void SetMoveDirection(Vector3 dir)
     {
         moveDirection = dir;
+    }
+
+    // 광고 보상 등 외부 효과로 이동속도 증감
+    public void AddSpeed(float value)
+    {
+        moveSpeed += value;
+        moveSpeed = Mathf.Max(0f, moveSpeed); // 음수 방지
     }
 
     // 실제 이동 처리
