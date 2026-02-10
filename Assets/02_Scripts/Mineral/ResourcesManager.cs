@@ -2,68 +2,25 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[DefaultExecutionOrder(-50)]
 public class ResourcesManager : MonoBehaviour
 {
-    public static ResourcesManager instance;
-    private void Awake()
+    [Header("자원 프리팹")]
+    [SerializeField] GameObject earthPrefab;
+    [SerializeField] GameObject rockPrefab;
+    [SerializeField] GameObject copperPrefab;
+    [SerializeField] GameObject ironPrefab;
+    [SerializeField] GameObject goldPrefab;
+    [SerializeField] GameObject moneyPrefab;
+
+    private void Start()
     {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        PoolManager.instance.CreatePool(earthPrefab, 30);
+        PoolManager.instance.CreatePool(rockPrefab, 30);
+        PoolManager.instance.CreatePool(copperPrefab, 30);
+        PoolManager.instance.CreatePool(ironPrefab, 30);
+        PoolManager.instance.CreatePool(goldPrefab, 30);
+        PoolManager.instance.CreatePool(moneyPrefab, 30);
 
-        mineralAmounts = new int[mineralsDataList.Count];
-    }
-
-    [SerializeField] List<MineralSO> mineralsDataList = new List<MineralSO>(); //자원과 수량을 담는 리스트
-    private int[] mineralAmounts; //각 자원의 수량을 담는 배열
-
-    private event Action<MineralSO, int> onMineralChanged;
-
-    //구독
-    public void SubscribeonMineralChanged(Action<MineralSO, int> action)
-    {
-        onMineralChanged += action;
-    }
-
-    //구독 해제
-    public void UnsubscribeonMineralChanged(Action<MineralSO, int> action)
-    {
-        onMineralChanged -= action;
-    }
-
-    //자원 수량 변경
-    public void ChangeAmount(MineralSO data, int amount)
-    {
-        if (data == null) return;
-
-        int index = data.Id;
-
-        if (index < 0 || index >= mineralAmounts.Length)
-        {
-            return;
-        }
-
-        mineralAmounts[index] += amount;
-
-        onMineralChanged?.Invoke(data, mineralAmounts[index]);
-
-#if UNITY_EDITOR
-        Debug.Log($"자원 {data.mineralName} 수량이 {mineralAmounts[index]}로 변경되었습니다.");
-#endif
-
-        //TODO: UI 업데이트
-    }
-
-    //현재 자원이 몇개 있는지 반환
-    public int GetCurrentAmount(int id)
-    {
-        if (id < 0 || id >= mineralAmounts.Length) return 0;
-        return mineralAmounts[id];
+        Debug.Log("풀링 완료");
     }
 }

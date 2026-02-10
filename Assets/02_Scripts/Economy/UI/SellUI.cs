@@ -81,7 +81,7 @@ public class SellUI : MonoBehaviour
         uiPanel.SetActive(false);
     }
 
-    public void UpdateDisplay(InventoryItem item, float duration)
+    public void UpdateDisplay(ItemDataSO item, float duration) //Àü InventoryItem
     {
         if (item == null)
         {
@@ -95,12 +95,13 @@ public class SellUI : MonoBehaviour
         if (itemIcon != null)
         {
             itemIcon.enabled = true;
-            itemIcon.sprite = item.itemData.icon;
+            itemIcon.sprite = item.icon;
         }
 
-        itemNameText.text = $"{item.itemData.itemName} x{item.quantity}";
+        int currentQuantity = PlayerInventory.Instance.GetItemCount(item);
+        itemNameText.text = $"{item.itemName} x{currentQuantity}";
 
-        string formattedPrice = NotateNumber.ChangeNumber(item.itemData.sellPrice);
+        string formattedPrice = NotateNumber.ChangeNumber(item.sellPrice);
         priceText.text = $"+{formattedPrice}";
         progressBar.fillAmount = 0f;
     }

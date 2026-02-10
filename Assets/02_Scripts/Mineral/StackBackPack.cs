@@ -11,6 +11,9 @@ public class StackBackPack : MonoBehaviour
     [SerializeField] private int maxCapacity = 10; //최대 수용량
     public bool IsFullBackPack() => acquiredResources.Count >= maxCapacity;
 
+    [SerializeField] private PlayerFullUI playerFullUI;
+
+
     private void Start()
     {
         if (backPackPos == null)
@@ -26,8 +29,16 @@ public class StackBackPack : MonoBehaviour
         //가방 시작 위치
         if (acquiredResources.Count > 0)
         {
+            Quaternion targetRot = backPackPos.rotation;
+            MineralItem mineralItem = acquiredResources[0].GetComponent<MineralItem>();
+
+            if (mineralItem != null && mineralItem.mineralData != null)
+            {
+                targetRot *= Quaternion.Euler(mineralItem.mineralData.backPackRotationOffset);
+            }
+
             acquiredResources[0].position = Vector3.Lerp(acquiredResources[0].position, backPackPos.position, Time.deltaTime * 10f);
-            acquiredResources[0].rotation = Quaternion.Lerp(acquiredResources[0].rotation, backPackPos.rotation, Time.deltaTime * 10f);
+            acquiredResources[0].rotation = Quaternion.Lerp(acquiredResources[0].rotation, targetRot, Time.deltaTime * 10f);
         }
 
         for (int i = 1; i < acquiredResources.Count; i++)
@@ -37,23 +48,56 @@ public class StackBackPack : MonoBehaviour
 
             Vector3 targetPos = previousAcquired.position + Vector3.up * itemHeight;
 
+            Quaternion targetRot = backPackPos.rotation;
+            MineralItem mineralItem = currentAcquired.GetComponent<MineralItem>();
+
+            if (mineralItem != null && mineralItem.mineralData != null)
+            {
+                targetRot *= Quaternion.Euler(mineralItem.mineralData.backPackRotationOffset);
+            }
+
             currentAcquired.position = Vector3.Lerp(currentAcquired.position, targetPos, Time.deltaTime * 10f);
-            currentAcquired.rotation = Quaternion.Lerp(currentAcquired.rotation, backPackPos.rotation, Time.deltaTime * 10f);
+            currentAcquired.rotation = Quaternion.Lerp(currentAcquired.rotation, targetRot, Time.deltaTime * 10f);
         }
     }
     //테이블에서 자원 받기
-    public void AddResources(GameObject resources)
+    public void AddResources(GameObject resourcesObj)
     {
-        if (resources == null) return;
+        if (resourcesObj == null) return;
+        
+        MineralItem mineralItem = resourcesObj.GetComponent<MineralItem>();
 
-        acquiredResources.Add(resources.transform);
+        if(mineralItem == null || mineralItem.mineralData == null)
+        {
+            Debug.LogWarning("없습니다 MineralItem 또는 mineralData.");
 
-        resources.transform.SetParent(backPackPos, true);
+            Destroy(resourcesObj);
+            return;
+        }
+        
+        if(mineralItem!= null && mineralItem.mineralData != null)
+        {
+            PlayerInventory.Instance.AddItem(mineralItem.mineralData, 1);
+        }
 
-        Collider col = resources.GetComponent<Collider>();
+        acquiredResources.Add(resourcesObj.transform);
+        resourcesObj.transform.SetParent(backPackPos, true);
+
+        Collider col = resourcesObj.GetComponent<Collider>();
         if (col) col.enabled = false;
 
-        Destroy(resources.GetComponent<Rigidbody>());       
+        Rigidbody rb = resourcesObj.GetComponent<Rigidbody>();
+
+        if(rb != null)
+        {
+            rb.isKinematic = true;
+            rb.useGravity = false;
+        }
+
+        if (IsFullBackPack())
+        {
+            playerFullUI.Show();
+        }
     }
 
     public GameObject MinusResource()
@@ -61,12 +105,23 @@ public class StackBackPack : MonoBehaviour
         if (acquiredResources.Count == 0) return null;
 
         int lastIndex = acquiredResources.Count - 1;
-        GameObject item = acquiredResources[lastIndex].gameObject;
+        GameObject itemObj = acquiredResources[lastIndex].gameObject;
+
+        MineralItem mineralItem = itemObj.GetComponent<MineralItem>();
+        if(mineralItem != null && mineralItem.mineralData != null)
+        {
+            PlayerInventory.Instance.RemoveItem(mineralItem.mineralData, 1);
+        }
+
         acquiredResources.RemoveAt(lastIndex);
+        itemObj.transform.SetParent(null);
 
-        item.transform.SetParent(null);        
+        if (!IsFullBackPack())
+        {
+            playerFullUI.Hide();
+        }
 
-        return item;
+        return itemObj;
     }
 
     public GameObject PeekResource()

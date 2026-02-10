@@ -1,22 +1,22 @@
 using UnityEngine;
 
-public enum MineralType 
-{
-    RawMaterial, //원석
-    processed    //가공품
-}
-
-[CreateAssetMenu(fileName = "MineralData", menuName = "SO/MineralData")]
-public class MineralSO : ScriptableObject
-{
-    public int Id;
-    public string mineralName;
-    public MineralType mineralType;
-    public int price;                   //판매시 가격(안써도 무방)
-
-    public GameObject muneralPrefab;
-    public Sprite icon;
-
-    public int inputAmountPerProcess; //가공시 필요한 원재료 수량
-    public MineralSO processedResult; //이 광물을 가공했을시 나오는 가공품SO
-}
+//public enum MineralType 
+//{
+//    RawMaterial, //원석
+//    processed    //가공품
+//}
+//
+//[CreateAssetMenu(fileName = "MineralData", menuName = "SO/MineralData")]
+//public class MineralSO : ScriptableObject
+//{
+//    public int Id;
+//    public string mineralName;
+//    public MineralType mineralType;
+//    public int price;                   //판매시 가격(안써도 무방)
+//
+//    public GameObject muneralPrefab;
+//    public Sprite icon;
+//
+//    public int inputAmountPerProcess; //가공시 필요한 원재료 수량
+//    public MineralSO processedResult; //이 광물을 가공했을시 나오는 가공품SO
+//}

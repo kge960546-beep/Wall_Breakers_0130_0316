@@ -3,12 +3,12 @@ using UnityEngine;
 public class TestSetup : MonoBehaviour
 {
     [Header("Item Data References")]
-    [SerializeField] private ItemData iron;
-    [SerializeField] private ItemData copper;
-    [SerializeField] private ItemData silver;
-    [SerializeField] private ItemData ironIngot;
-    [SerializeField] private ItemData copperIngot;
-    [SerializeField] private ItemData silverIngot;
+    [SerializeField] private ItemDataSO iron;
+    [SerializeField] private ItemDataSO copper;
+    [SerializeField] private ItemDataSO silver;
+    [SerializeField] private ItemDataSO ironIngot;
+    [SerializeField] private ItemDataSO copperIngot;
+    [SerializeField] private ItemDataSO silverIngot;
 
     private void Start()
     {

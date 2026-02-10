@@ -44,7 +44,13 @@ public class ResourceTable : MonoBehaviour
         Collider col = resources.GetComponent<Collider>();
         if (col) col.enabled = false;        
 
-        Destroy(resources.GetComponent<Rigidbody>());
+        Rigidbody rb = resources.GetComponent<Rigidbody>();
+
+        if(rb != null)
+        {
+            rb.isKinematic = true;
+            rb.useGravity = false;
+        }        
     }
 
     //플레이어에게 자원 주기

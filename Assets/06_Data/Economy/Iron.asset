@@ -12,8 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 348f6c8908c66824c9f705203cd222ba, type: 3}
   m_Name: Iron
   m_EditorClassIdentifier: 
-  itemName: Iron
+  Id: 6
+  itemName: "\uCCA0"
   itemType: 0
   sellPrice: 5
   sellDuration: 1
+  mineralPrefab: {fileID: 919132149155446097, guid: d679619923c782b41a28af8fc70a3b8a,
+    type: 3}
   icon: {fileID: 21300028, guid: 1eaee135ce037439d925cee5e41ce026, type: 3}
+  inputAmountPerProcess: 3
+  processedResult: {fileID: 11400000, guid: 6c3f948bd66e8d44792fb88acff70554, type: 2}
