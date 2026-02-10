@@ -38,12 +38,7 @@ public class CameraManager : MonoBehaviour
         if (!isFollowing || player == null)
             return;
 
-        Vector3 targetPos = player.position + followOffset;
-        transform.position = Vector3.Lerp(
-            transform.position,
-            targetPos,
-            Time.deltaTime * followSmooth
-        );
+        transform.position = player.position + followOffset;
     }
 
     public void FocusOnTarget(Transform target, float focusDuration = 2f)

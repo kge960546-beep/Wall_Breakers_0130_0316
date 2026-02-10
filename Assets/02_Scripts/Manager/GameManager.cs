@@ -85,6 +85,9 @@ public class GameManager : MonoBehaviour
     {
         RegisterService(new CreditService());
         Debug.Log("[GameManager] CreditService registed successfully");
+
+        RegisterService(new RegionUnlockService());
+        Debug.Log("[GameManager] RegionUnlockService registed successfully");
     }
     private void RegisterService<T>(T service)
     {
