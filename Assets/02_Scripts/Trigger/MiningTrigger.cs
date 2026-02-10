@@ -32,10 +32,17 @@ public class MiningTrigger : MonoBehaviour
             {
                 fsm.ExitMining();
                 return;
-            }    
-                
+            }                
 
-            miningNode.TryMine();
+            if(other.CompareTag("Player"))
+            {
+                miningNode.TryMine();
+            }
+            else if(other.CompareTag("AutoMineWorker"))
+            {
+                miningNode.AutoUnitTryMine();
+            }
+            
         }
     }
 

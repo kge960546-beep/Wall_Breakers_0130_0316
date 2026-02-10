@@ -79,8 +79,6 @@ public class AutoMiningNode : MonoBehaviour
             }
         }
 
-
-
         // 가이드 진행도 증가 (현재 스텝일 때만)
         if (GuideManager.Instance != null &&
             mineGuideStep != null &&
