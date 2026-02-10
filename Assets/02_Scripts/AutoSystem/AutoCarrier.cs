@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 
 public enum currentState { Idle, MovingToTable, MovingMachine, }
@@ -6,6 +7,7 @@ public class AutoCarrier : MonoBehaviour
 {
     [SerializeField] private AutoBackPack autoBackPack; //가방 스크립트 참조
     [SerializeField] private Animator anim;
+    [SerializeField] NavMeshAgent agent;
 
     [SerializeField] Transform resourceTable;        //자원 놓는 테이블 위치
     [SerializeField] Transform processingMachine;    //가공기 위치
@@ -22,6 +24,9 @@ public class AutoCarrier : MonoBehaviour
 
     private void Awake()
     {
+        agent = GetComponent<NavMeshAgent>();
+        agent.stoppingDistance = stopDistance;
+
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeRotation;
         anim = GetComponent<Animator>();
@@ -36,14 +41,23 @@ public class AutoCarrier : MonoBehaviour
     }
 
     private void FixedUpdate()
-    {
-        Move();
+    {        
         HandleAuto();
+        UpdateAnim();
     }
 
     public void SetMoveDirection(Vector3 dir)
     {
         moveDirection = dir;
+    }
+
+    public void UpdateAnim()
+    {
+        if (anim != null)
+        {
+            float currentSpeed = agent.velocity.magnitude;
+            anim.SetFloat("moveSpeed", currentSpeed);
+        }
     }
 
     // 실제 이동 처리
@@ -90,21 +104,31 @@ public class AutoCarrier : MonoBehaviour
         }
     }
 
+    //네비매쉬 이동으로 변경
     public void GoTargetPoint(Vector3 targetPos)
     {
-        float distanceToTarget = Vector3.Distance(transform.position, targetPos);
-
-        if (distanceToTarget <= stopDistance)
+        if(agent.destination != targetPos)
         {
-            SetMoveDirection(Vector3.zero);
+            agent.SetDestination(targetPos);
+        }
+
+        if(!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
             state = currentState.Idle;
-
         }
-        else
-        {
-            Vector3 direction = (targetPos - transform.position).normalized; //이동 방향 계산
-            direction.y = 0f; // Y축 이동 무시
-            SetMoveDirection(direction);
-        }
+       //float distanceToTarget = Vector3.Distance(transform.position, targetPos);
+       //
+       //if (distanceToTarget <= stopDistance)
+       //{
+       //    SetMoveDirection(Vector3.zero);
+       //    state = currentState.Idle;
+       //
+       //}
+       //else
+       //{
+       //    Vector3 direction = (targetPos - transform.position).normalized; //이동 방향 계산
+       //    direction.y = 0f; // Y축 이동 무시
+       //    SetMoveDirection(direction);
+       //}
     }
 }
