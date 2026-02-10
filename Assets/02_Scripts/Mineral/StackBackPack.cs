@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class StackBackPack : MonoBehaviour
 {
-    [SerializeField] private List<Transform> acquiredResources = new List<Transform>(); //가방에 담길 리스트
+    private List<Transform> acquiredResources = new List<Transform>(); //가방에 담길 리스트
     [SerializeField] GameObject player;   //플레이어
     [SerializeField] Transform backPackPos; //가방 위치
     public float itemHeight = 0.3f; //아이템 높이 간격
@@ -12,6 +12,16 @@ public class StackBackPack : MonoBehaviour
     public bool IsFullBackPack() => acquiredResources.Count >= maxCapacity;
 
     [SerializeField] private PlayerFullUI playerFullUI;
+
+    public static StackBackPack Instance;
+
+    private void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+    }
 
 
     private void Start()
@@ -154,4 +164,22 @@ public class StackBackPack : MonoBehaviour
             }
         }
     }
+
+    // 가방 용량 늘리는 메서드
+    public void AddCapacity(int amount)
+    {
+        maxCapacity += amount;
+
+        if (maxCapacity < 0)
+            maxCapacity = 0;
+
+        // 현재 보유량이 새 최대치보다 많아도 강제 처리하지 않음
+        // 단, 새로 담기는 것만 제한
+        if (acquiredResources.Count < maxCapacity)
+        {
+            playerFullUI.Hide();
+        }
+    }
+
+
 }
