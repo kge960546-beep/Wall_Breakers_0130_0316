@@ -48,6 +48,7 @@ public class AutoAStarCarrier : MonoBehaviour
         Move();
     }
 
+    //이동 후 딜레이 처리
     IEnumerator MoveDelay()
     {
         state = aStarCurrentState.Processing;
@@ -128,6 +129,7 @@ public class AutoAStarCarrier : MonoBehaviour
             if (currentPath == null) return;
         }
 
+        //경로가 있으면 다음 노드로 이동
         if (pathIndex < currentPath.Count)
         {
             Vector3 nextPos = pathFinder.GridToWorld(currentPath[pathIndex]);
@@ -147,7 +149,7 @@ public class AutoAStarCarrier : MonoBehaviour
                 SetMoveDirection(offset.normalized);
             }
         }
-        else
+        else //목적지 도착
         {
             if(state != aStarCurrentState.Processing)
             {
