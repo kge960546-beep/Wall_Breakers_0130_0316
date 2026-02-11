@@ -2,8 +2,8 @@ using UnityEngine;
 using UnityEngine.AI;
 
 
-public enum currentState { Idle, MovingToTable, MovingMachine, }
-public class AutoCarrier : MonoBehaviour
+public enum navMeshCurrentState { Idle, MovingToTable, MovingMachine, }
+public class AutoNavMeshCarrier : MonoBehaviour
 {
     [SerializeField] private AutoBackPack autoBackPack; //가방 스크립트 참조
     [SerializeField] private Animator anim;
@@ -20,7 +20,7 @@ public class AutoCarrier : MonoBehaviour
     private Rigidbody rb;
     private Vector3 moveDirection;
     public Vector3 MoveDirection => moveDirection;
-    private currentState state = currentState.Idle;
+    private navMeshCurrentState state = navMeshCurrentState.Idle;
 
     private void Awake()
     {
@@ -85,20 +85,20 @@ public class AutoCarrier : MonoBehaviour
     {
         switch (state)
         {
-            case (currentState.Idle):
+            case (navMeshCurrentState.Idle):
                 if (!autoBackPack.IsFullBackPack())
                 {
-                    state = currentState.MovingToTable;
+                    state = navMeshCurrentState.MovingToTable;
                 }
                 else
                 {
-                    state = currentState.MovingMachine;
+                    state = navMeshCurrentState.MovingMachine;
                 }
                 break;
-            case (currentState.MovingToTable):
+            case (navMeshCurrentState.MovingToTable):
                 GoTargetPoint(resourceTable.position);
                 break;
-            case (currentState.MovingMachine):
+            case (navMeshCurrentState.MovingMachine):
                 GoTargetPoint(processingMachine.position);
                 break;
         }
@@ -114,7 +114,7 @@ public class AutoCarrier : MonoBehaviour
 
         if(!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
-            state = currentState.Idle;
+            state = navMeshCurrentState.Idle;
         }
        //float distanceToTarget = Vector3.Distance(transform.position, targetPos);
        //
