@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-
 public enum aStarCurrentState { Idle, MovingToTable, MovingMachine, }
 public class AutoAStarCarrier : MonoBehaviour
 {
