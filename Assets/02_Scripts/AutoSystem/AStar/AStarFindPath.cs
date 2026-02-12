@@ -10,7 +10,6 @@ public class AStarFindPath : MonoBehaviour
     public float cellSize; //셀 크기
     public float checkSize = 0.35f; //충돌 체크 크기
 
-
     private void Awake()
     {
         if(floorSample != null)
@@ -110,11 +109,28 @@ public class AStarFindPath : MonoBehaviour
             {
                 var neighbor = current + dir;
 
-                if(!IsValid(neighbor) || closedSet.Contains(neighbor))
+                //이미 평가된 노드인지 확인
+                if (closedSet.Contains(neighbor))
                 {
                     continue;
                 }
-               
+
+                //장애물이 있는지 확인
+                if (neighbor != end && !IsValid(neighbor)) 
+                {
+                    continue;
+                }
+
+                //대각선 이동 시 코너컷팅 방지
+                if (dir.x != 0 && dir.y != 0)
+                {
+                    if(!IsValid(new Vector2Int(current.x + dir.x, current.y)) ||
+                        !IsValid(new Vector2Int(current.x, current.y + dir.y)))
+                    {
+                        continue;
+                    }
+                }
+
                 int moveCost = (dir.x != 0 && dir.y != 0) ? 14 : 10; //대각선 이동 비용과 직선 이동 비용 구분
                 int tentativeGScore = gScore[current] + moveCost;
 
