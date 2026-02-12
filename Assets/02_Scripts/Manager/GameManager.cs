@@ -83,19 +83,19 @@ public class GameManager : MonoBehaviour
     #region Service
     private void RegisterServices()
     {
-        RegisterService(new CreditService());
-        Debug.Log("[GameManager] CreditService registed successfully");
+        RegisterService(new CreditService());        
+        Utils.DebugLog("[GameManager] CreditService registed successfully");
 
-        RegisterService(new RegionUnlockService());
-        Debug.Log("[GameManager] RegionUnlockService registed successfully");
+        RegisterService(new RegionUnlockService());        
+        Utils.DebugLog("[GameManager] RegionUnlockService registed successfully");
     }
     private void RegisterService<T>(T service)
     {
         var type = typeof(T);
 
         if(services.ContainsKey(type))
-        {
-            Debug.LogWarning($"[GameManager] Service already registed: {type}");
+        {            
+            Utils.DebugLogWarning($"[GameManager] Service already registed: {type}");
             return;
         }
 
@@ -107,8 +107,8 @@ public class GameManager : MonoBehaviour
 
         if(services.TryGetValue(type, out var service))
             return (T)service;
-
-        Debug.LogError($"[GameManger] Service not found : {type}");
+        
+        Utils.DebugLogError($"[GameManger] Service not found : {type}");
         return default;
     }
     #endregion

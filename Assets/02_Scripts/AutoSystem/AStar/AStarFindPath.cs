@@ -1,19 +1,18 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class AStarFindPath : MonoBehaviour
 {
     [Header("세팅")]
+    [SerializeField] GridManager gridManager; //그리드 매니저 참조
     public LayerMask obstacleLayer; //장애물 레이어
     public GameObject floorSample; //바닥 오브젝트 샘플
     public float cellSize; //셀 크기
     public float checkSize = 0.35f; //충돌 체크 크기
 
-
     private void Awake()
     {
-        if(floorSample != null)
+        if (floorSample != null)
         {
             cellSize = floorSample.GetComponent<Renderer>().bounds.size.x;
         }
@@ -27,8 +26,8 @@ public class AStarFindPath : MonoBehaviour
     /// <returns></returns>
     public Vector2Int WorldToGrid(Vector3 worldPos)
     {
-        int x = Mathf.RoundToInt(worldPos.x / cellSize);
-        int y = Mathf.RoundToInt(worldPos.z / cellSize);
+        int x = Mathf.FloorToInt((worldPos.x - gridManager.origin.x) / gridManager.cellSize);
+        int y = Mathf.FloorToInt((worldPos.z - gridManager.origin.z) / gridManager.cellSize);
         return new Vector2Int(x, y);
     }
 
@@ -39,9 +38,11 @@ public class AStarFindPath : MonoBehaviour
     /// <returns></returns>
     public Vector3 GridToWorld(Vector2Int gridPos)
     {
-        float x = gridPos.x * cellSize;
-        float z = gridPos.y * cellSize;
-        return new Vector3(x, 0f, z);
+        float x = gridManager.origin.x + (gridPos.x + 0.5f) * gridManager.cellSize;
+        float z = gridManager.origin.z + (gridPos.y + 0.5f) * gridManager.cellSize;
+        //float x = gridPos.x * cellSize;
+        //float z = gridPos.y * cellSize;
+        return new Vector3(x, transform.position.y, z);
     }
 
     /// <summary>
@@ -110,11 +111,28 @@ public class AStarFindPath : MonoBehaviour
             {
                 var neighbor = current + dir;
 
-                if(!IsValid(neighbor) || closedSet.Contains(neighbor))
+                //이미 평가된 노드인지 확인
+                if (closedSet.Contains(neighbor))
                 {
                     continue;
                 }
-               
+
+                //장애물이 있는지 확인
+                if (neighbor != end && !IsValid(neighbor))
+                {
+                    continue;
+                }
+
+                //대각선 이동 시 코너컷팅 방지
+                if (dir.x != 0 && dir.y != 0)
+                {
+                    if (!IsValid(new Vector2Int(current.x + dir.x, current.y)) ||
+                        !IsValid(new Vector2Int(current.x, current.y + dir.y)))
+                    {
+                        continue;
+                    }
+                }
+
                 int moveCost = (dir.x != 0 && dir.y != 0) ? 14 : 10; //대각선 이동 비용과 직선 이동 비용 구분
                 int tentativeGScore = gScore[current] + moveCost;
 
@@ -122,7 +140,7 @@ public class AStarFindPath : MonoBehaviour
                 {
                     cameFrom[neighbor] = current;
                     gScore[neighbor] = tentativeGScore;
-                    fScore[neighbor] = tentativeGScore + (Heuristic(neighbor, end)* 10);
+                    fScore[neighbor] = tentativeGScore + (Heuristic(neighbor, end) * 10);
                     openSet.Enqueue(neighbor, fScore[neighbor]);
                 }
             }
@@ -149,13 +167,21 @@ public class AStarFindPath : MonoBehaviour
     /// </summary>
     /// <param name="pos"></param>
     /// <returns></returns>
+    //bool IsValid(Vector2Int pos)
+    //{
+    //    Vector3 worldPos = new Vector3(pos.x * cellSize, 1f, pos.y * cellSize);
+    //
+    //    bool isObstacle = Physics.CheckBox(worldPos, Vector3.one * (cellSize * checkSize), Quaternion.identity, obstacleLayer);
+    //
+    //    return !isObstacle;
+    //}
+
     bool IsValid(Vector2Int pos)
     {
-        Vector3 worldPos = new Vector3(pos.x * cellSize, 1f, pos.y * cellSize);
+        if (pos.x < 0 || pos.x >= gridManager.width || pos.y < 0 || pos.y >= gridManager.height)
+            return false;
 
-        bool isObstacle = Physics.CheckBox(worldPos, Vector3.one * (cellSize * checkSize), Quaternion.identity, obstacleLayer);
-
-        return !isObstacle;
+        return !gridManager.blocked[pos.y, pos.x];
     }
 
     /// <summary>
@@ -170,7 +196,7 @@ public class AStarFindPath : MonoBehaviour
 
         var current = end;
 
-        while(cameFrom.ContainsKey(current))
+        while (cameFrom.ContainsKey(current))
         {
             path.Add(current);
             current = cameFrom[current];
@@ -180,5 +206,5 @@ public class AStarFindPath : MonoBehaviour
         path.Reverse();
 
         return path;
-    }       
+    }
 }
