@@ -23,6 +23,7 @@ public class MiningNode : MonoBehaviour
     [SerializeField] int maxMineCount = 10;           // ÃÖ´ë Ã¤±¼ °¡´É È½¼ö
     [SerializeField] int currentMineCount = 0;          //ÇöÀç Ã¤±¼ÇÑ È½¼ö
     [SerializeField] GameObject[] mineMineral;        // Ã¤±¼ ±¤¹° ¿ÀºêÁ§Æ®
+    [SerializeField] new WaitForSeconds wait = new WaitForSeconds(5f);
     public bool canMine => currentMineCount < maxMineCount;
 
     [Header("¿¬°á ´ë»ó")]
@@ -113,7 +114,7 @@ public class MiningNode : MonoBehaviour
     }
     IEnumerator mineMineralSpawn()
     {
-        yield return new WaitForSeconds(mineDelay);
+        yield return wait;
         currentMineCount = 0;
 
         foreach (GameObject mineral in mineMineral)
