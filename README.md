@@ -1,3 +1,16 @@
+## Third-Party Music Credits
+
+### Towball’s Crossing (Music Pack)
+- Author: Towball
+- Source: https://towball.itch.io/towballs-crossing
+- License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+  - License Text: https://creativecommons.org/licenses/by/4.0/
+- Usage: Background music (BGM) included in this project.
+- Changes:
+  - None (original files used as provided).
+  - If modified: (e.g., trimmed / looped / normalized / converted format)
+
+
 # 1. 커밋 메시지 기본 구조
 
 type: Subject (제목)
