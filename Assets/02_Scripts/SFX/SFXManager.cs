@@ -7,6 +7,8 @@ public class SFXManager : MonoBehaviour
 {
     public static SFXManager instance;
 
+    WaitForSeconds wait = new WaitForSeconds(1f);
+
     private Dictionary<string, AudioClip> sfxClipDic;
     AudioSource bgmPlayer;
     AudioSource sfxPlayer;
@@ -29,17 +31,7 @@ public class SFXManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
-    private void Update()
-    {
-        if(bgmPlayList != null && bgmPlayList.Length > 0)
-        {
-            if(!bgmPlayer.isPlaying)
-            {
-                PlayNextBGM();
-            }
-        }
-    }
+    }   
 
     void Init()
     {
@@ -62,6 +54,8 @@ public class SFXManager : MonoBehaviour
                 sfxClipDic[clip.name] = clip;
             }
         }
+
+        StartPlayBGM();
     }
 
     public void PlayOnSFX(string soundName, Vector3 soundPos)
@@ -87,7 +81,8 @@ public class SFXManager : MonoBehaviour
     {
         if(bgmPlayList != null && bgmPlayList.Length > 0)
         {
-            PlayOnBGM(bgmPlayList[currentBGMIndex]);
+            StopAllCoroutines();
+            StartCoroutine(BGMQueueRoutine());
         }
     }
 
@@ -95,5 +90,26 @@ public class SFXManager : MonoBehaviour
     {
         currentBGMIndex = (currentBGMIndex + 1) % bgmPlayList.Length;
         PlayOnBGM(bgmPlayList[currentBGMIndex]);
+    }
+
+    IEnumerator BGMQueueRoutine()
+    {
+        while (true)
+        {
+            string currentBGM = bgmPlayList[currentBGMIndex];
+
+            if(sfxClipDic.TryGetValue(currentBGM, out var clip))
+            {
+                bgmPlayer.clip = clip;
+                bgmPlayer.Play();
+                yield return new WaitForSeconds(clip.length);
+            }
+            else
+            {
+                yield return wait;
+            }
+
+            currentBGMIndex = (currentBGMIndex + 1) % bgmPlayList.Length;
+        }
     }
 }
