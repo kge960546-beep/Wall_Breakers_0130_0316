@@ -97,16 +97,7 @@ public class MiningNode : MonoBehaviour
             StartCoroutine(mineMineralSpawn());
         }
 
-        IEnumerator mineMineralSpawn()
-        {
-            yield return new WaitForSeconds(mineDelay);
-            currentMineCount = 0;
-
-            foreach (GameObject mineral in mineMineral)
-            {
-                mineral.SetActive(true);
-            }
-        }       
+          
 
         // 가이드 진행도 증가 (현재 스텝일 때만)
         if (GuideManager.Instance != null &&
@@ -119,5 +110,15 @@ public class MiningNode : MonoBehaviour
 #if UNITY_EDITOR
         Debug.Log($"[MiningNode] {mineralData.itemName} 채굴 → ResourceTable 적재");
 #endif
+    }
+    IEnumerator mineMineralSpawn()
+    {
+        yield return new WaitForSeconds(mineDelay);
+        currentMineCount = 0;
+
+        foreach (GameObject mineral in mineMineral)
+        {
+            mineral.SetActive(true);
+        }
     }
 }
