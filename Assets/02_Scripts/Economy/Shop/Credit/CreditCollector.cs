@@ -15,6 +15,8 @@ public class CreditCollector : MonoBehaviour
     private Coroutine collectCoroutine;
     private CreditService creditService;
 
+    [SerializeField] WaitForSeconds wait = new WaitForSeconds(0.5f);
+
     private void Start()
     {
         ValidateSetup();
@@ -111,7 +113,7 @@ public class CreditCollector : MonoBehaviour
             if(credits.Count == 0)
             {
                 collectUI?.UpdateDisplay(0, 0);
-                yield return new WaitForSeconds(0.5f);
+                yield return wait;
                 continue;
             }
 

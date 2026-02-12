@@ -23,6 +23,7 @@ public class MiningNode : MonoBehaviour
     [SerializeField] int maxMineCount = 10;           // 최대 채굴 가능 횟수
     [SerializeField] int currentMineCount = 0;          //현재 채굴한 횟수
     [SerializeField] GameObject[] mineMineral;        // 채굴 광물 오브젝트
+    [SerializeField] new WaitForSeconds wait = new WaitForSeconds(5f);
     public bool canMine => currentMineCount < maxMineCount;
 
     [Header("연결 대상")]
@@ -97,16 +98,7 @@ public class MiningNode : MonoBehaviour
             StartCoroutine(mineMineralSpawn());
         }
 
-        IEnumerator mineMineralSpawn()
-        {
-            yield return new WaitForSeconds(mineDelay);
-            currentMineCount = 0;
-
-            foreach (GameObject mineral in mineMineral)
-            {
-                mineral.SetActive(true);
-            }
-        }       
+          
 
         // 가이드 진행도 증가 (현재 스텝일 때만)
         if (GuideManager.Instance != null &&
@@ -119,5 +111,15 @@ public class MiningNode : MonoBehaviour
 #if UNITY_EDITOR
         Debug.Log($"[MiningNode] {mineralData.itemName} 채굴 → ResourceTable 적재");
 #endif
+    }
+    IEnumerator mineMineralSpawn()
+    {
+        yield return wait;
+        currentMineCount = 0;
+
+        foreach (GameObject mineral in mineMineral)
+        {
+            mineral.SetActive(true);
+        }
     }
 }

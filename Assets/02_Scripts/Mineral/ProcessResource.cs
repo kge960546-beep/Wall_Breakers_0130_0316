@@ -13,7 +13,9 @@ public class ProcessResource : MonoBehaviour
     [SerializeField] Transform processingPoint; //가공 위치
 
     [SerializeField] float itemHeight = 0.3f;   //아이템 높이 간격
+
     [SerializeField] float delay = 1.0f;        //가공 딜레이
+    [SerializeField] WaitForSeconds wait = new WaitForSeconds(1.0f);    
 
     bool isProcessing = false;  //가공 중인지 여부
 
@@ -117,7 +119,7 @@ public class ProcessResource : MonoBehaviour
             }
         }
 
-        yield return new WaitForSeconds(delay);
+        yield return wait;
 
         if (data.processedResult != null && data.processedResult.mineralPrefab != null)
         {

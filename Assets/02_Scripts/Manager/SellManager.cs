@@ -20,6 +20,8 @@ public class SellManager : MonoBehaviour
 
     [Header("kwen 추가")]
     [SerializeField] StackBackPack stackBackPack;
+    [SerializeField] WaitForSeconds wait = new WaitForSeconds(0.5f);
+    [SerializeField] WaitForSeconds shortWait = new WaitForSeconds(0.1f);
 
     private void Start()
     {
@@ -102,7 +104,7 @@ public class SellManager : MonoBehaviour
             {
                 // 판매할 아이템이 없으면 대기
                 sellUI.UpdateDisplay(null, 0);
-                yield return new WaitForSeconds(0.5f);
+                yield return wait;
                 continue;
             }
 
@@ -150,7 +152,7 @@ public class SellManager : MonoBehaviour
             }
 
             // 다음 판매 사이클까지 짧은 대기
-            yield return new WaitForSeconds(0.1f);
+            yield return shortWait;
         }
     }
 }
