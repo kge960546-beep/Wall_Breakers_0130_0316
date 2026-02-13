@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77371abb074793c41bfca95414b04fb3, type: 3}
+  m_Name: Processor_ProcessTimeReduce
+  m_EditorClassIdentifier: 
+  upgradeID: PROCESSOR_PROCESS_TIME_REDUCE
+  displayName: "\uAC00\uACF5\uC2DC\uAC04 \uAC10\uC18C"
+  description: "\uAC00\uACF5\uC2DC\uAC04 -10%"
+  effects:
+  - upgradeType: 18
+    value: 0.1
+  cost: 900
+  section: 1
