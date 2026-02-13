@@ -51,4 +51,15 @@ public class CreditService
         _credits = amount;
         OnCreditsChanged?.Invoke(_credits);
     }
+
+    public bool TrySpendCredit(long amount)
+    {
+        if (_credits < amount)
+            return false;
+
+        _credits -= amount;
+        OnCreditsChanged?.Invoke(_credits);
+        return true;
+    }
+
 }
