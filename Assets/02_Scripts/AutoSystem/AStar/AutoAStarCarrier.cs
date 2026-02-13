@@ -17,6 +17,7 @@ public class AutoAStarCarrier : MonoBehaviour
     [SerializeField] float stopDistance = 0.5f;      //목적지 도착 거리
 
     [SerializeField] private float moveSpeed = 5f;   //이동 속도
+    [SerializeField] private float rotateSpeed = 30f; //회전 속도
 
     private Rigidbody rb;
     private Vector3 moveDirection;
@@ -76,7 +77,7 @@ public class AutoAStarCarrier : MonoBehaviour
         if (moveDirection != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
-            rb.rotation = Quaternion.Slerp(rb.rotation, targetRotation, 10f * Time.fixedDeltaTime);
+            rb.rotation = Quaternion.Slerp(rb.rotation, targetRotation, rotateSpeed * Time.fixedDeltaTime);
         }
         else
         {
