@@ -7,6 +7,13 @@ public class ResourceTable : MonoBehaviour
     [SerializeField] List<Transform> resourceInTable = new List<Transform>();
     [SerializeField] Transform tablePos; //테이블 위치
     [SerializeField] float itemHeight = 0.3f; //아이템 높이 간격
+
+    [Header("저장할 데이터 설정")]
+    [SerializeField] int sectionIndex;
+    [SerializeField] GameObject mineralPrefab;
+
+    public int SectionIndex => sectionIndex;
+    public int CurrentCount => resourceInTable.Count;
     
     void Update()
     {
@@ -37,7 +44,7 @@ public class ResourceTable : MonoBehaviour
     {
         if (resources == null) return;
 
-        resourceInTable.Add(resources.transform);
+        resourceInTable.Add(resources.transform);       
 
         resources.transform.SetParent(tablePos, true);
 
@@ -64,5 +71,35 @@ public class ResourceTable : MonoBehaviour
         resourceInTable.RemoveAt(lastIndex);
         
         return itemTr.gameObject;
+    }
+
+    public void RebuildStack(int amount)
+    {
+        Debug.Log($"[Table] {gameObject.name} 복구 시작. 목표 개수: {amount}");
+
+        if (mineralPrefab == null)
+        {
+            Debug.LogError($"{gameObject.name}의 mineralPrefab이 비어있습니다!");
+            return;
+        }
+
+        while (resourceInTable.Count > 0)
+        {
+            GameObject obj = GiveItem();
+            PoolManager.instance.ReturnIt(mineralPrefab, obj);
+        }
+
+        for(int i = 0; i < amount; i++)
+        {
+            GameObject item = PoolManager.instance.Get(mineralPrefab, tablePos.position, tablePos.rotation);
+
+            if (item == null)
+            {
+                Debug.LogError("PoolManager에서 아이템을 가져오지 못했습니다.");
+                continue;
+            }
+
+            AddResources(item);
+        }
     }
 }

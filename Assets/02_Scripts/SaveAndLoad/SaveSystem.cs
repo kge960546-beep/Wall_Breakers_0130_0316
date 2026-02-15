@@ -11,7 +11,7 @@ public class SaveSystem : MonoBehaviour
 
         File.WriteAllText(SavePath, json);
 
-        Utils.DebugLog("저장 완료");
+        Debug.Log($"[SaveSystem] 파일 저장 완료: {SavePath}");
     }
 
     public static GameData Load()

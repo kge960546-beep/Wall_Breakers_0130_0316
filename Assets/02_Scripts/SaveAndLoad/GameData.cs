@@ -6,8 +6,9 @@ public class GameData
     [Header("현재 가지고있는 골드")]
     public int currentGold;
 
-    [Header("각 섹션별 채굴되 자원 갯수")]
-    public int[] sectionMineralCount = new int[5]; // 0이상 5미만    
+    [Header("각 섹션별 채굴되는 자원 갯수, 섹션별 가공품 갯수")]
+    public int[] sectionMineralCount = new int[5]; // 0이상 5미만
+    public int[] sectionProcessMineralCount = new int[5];
 
     [Header("판매후 스폰된 재화 오브젝트 갯수")]
     public int unCollectedMoney;
