@@ -3,8 +3,9 @@ using UnityEngine;
 [System.Serializable]
 public class GameData
 {
-    [Header("현재 가지고있는 골드")]
+    [Header("현재 가지고있는 골드, 생성된 골드 오브젝트")]
     public int currentGold;
+    public int unCollectedGold;
 
     [Header("각 섹션별 채굴되는 자원 갯수, 섹션별 가공품 갯수")]
     public int[] sectionMineralCount = new int[5]; // 0이상 5미만

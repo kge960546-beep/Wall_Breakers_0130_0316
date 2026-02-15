@@ -16,5 +16,10 @@ public class CreditObject : MonoBehaviour
     {
         if (IsCollected) return;
         IsCollected = true;
+
+        if (SceneGameDataManager.instance != null)
+        {
+            SceneGameDataManager.instance.currentGold += creditAmount;
+        }
     }
 }

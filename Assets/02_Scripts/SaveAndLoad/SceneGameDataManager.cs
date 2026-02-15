@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,6 +8,7 @@ public class SceneGameDataManager : MonoBehaviour
 
     [Header("저장할 데이터들")]
     public int currentGold;
+    public int unCollectedGold;
     public int[] sectionMineralCount = new int[5];
     public int[] sectionProcessMineralCount = new int[5];
     public int unCollectedMoney;
@@ -36,9 +36,12 @@ public class SceneGameDataManager : MonoBehaviour
 
     public void SaveGame()
     {
-        GameData data = new GameData();        
+        SaveGoldObject();
+
+        GameData data = new GameData();
 
         data.currentGold = this.currentGold;
+        data.unCollectedGold = this.unCollectedGold;
 
         data.sectionMineralCount = (int[])this.sectionMineralCount.Clone();
         data.sectionProcessMineralCount = (int[])this.sectionProcessMineralCount.Clone();
@@ -50,6 +53,7 @@ public class SceneGameDataManager : MonoBehaviour
         data.playerPowerLevel = this.playerPowerLevel;
 
         SaveSystem.Save(data);
+        Debug.Log($"[저장확인] 지갑: {data.currentGold} / 바닥: {data.unCollectedGold}");
         Debug.Log("<color=green>1. 파일 저장 완료</color>");
     }
 
@@ -64,17 +68,15 @@ public class SceneGameDataManager : MonoBehaviour
             this.sectionMineralCount = (int[])data.sectionMineralCount.Clone();
             this.sectionProcessMineralCount = (int[])data.sectionProcessMineralCount.Clone();
 
+            this.unlockedSections = (bool[])data.unlockedSections.Clone();
             this.unCollectedMoney = data.unCollectedMoney;
-            this.unlockedSections = data.unlockedSections;
-            this.sectionFillAmount = data.sectionFillAmount;
+            this.sectionFillAmount = (int[])data.sectionFillAmount.Clone();
             this.autoNPCLevel = data.autoNPCLevel;
             this.playerPowerLevel = data.playerPowerLevel;
 
             isPendingLoad = true;
 
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-
-            StartCoroutine(SceneLoadSaveData());
 
             Debug.Log($"[LoadGame] 파일에서 읽은 데이터 확인 - 섹션1: {data.sectionMineralCount[0]}개");
             Debug.Log($"[LoadGame] 파일에서 읽은 데이터 확인 - 섹션2: {data.sectionMineralCount[1]}개");
@@ -86,7 +88,7 @@ public class SceneGameDataManager : MonoBehaviour
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if(isPendingLoad)
+        if (isPendingLoad)
         {
             isPendingLoad = false;
             StartCoroutine(SceneLoadSaveData());
@@ -104,18 +106,37 @@ public class SceneGameDataManager : MonoBehaviour
         Debug.Log($"복구 시작 - 섹션5 데이터: {sectionMineralCount[4]}");
 
         var creditService = GameManager.Instance.GetService<CreditService>();
-        if(creditService != null)
+        if (creditService != null)
         {
-            creditService.SetCredit(currentGold);
+            creditService?.SetCredit(currentGold);
             Debug.Log($"<color=gold>[Load] CreditService 데이터 복구 완료: {currentGold}</color>");
         }
+
+        RestorePendingCredits();
 
         ResourceTableLoad();
         ProcessTableLoad();
 
         Utils.DebugLog("씬 재시작후 불러오기 완료");
     }
-      
+    public void SaveGoldObject()
+    {
+        int pendingTotal = 0;
+        CreditObject[] credits = FindObjectsByType<CreditObject>(FindObjectsSortMode.None);
+        foreach (var c in credits) { if (!c.IsCollected) pendingTotal += c.CreditAmount; }
+        this.unCollectedGold = pendingTotal;
+    }
+
+    public void RestorePendingCredits()
+    {
+        if (unCollectedGold <= 0) return;
+
+        CreditSpawner spawner = FindObjectOfType<CreditSpawner>();
+        if (spawner != null)
+        {
+            spawner.SpawnCredit(unCollectedGold);
+        }
+    }
 
     public void ResourceTableLoad()
     {
@@ -134,7 +155,7 @@ public class SceneGameDataManager : MonoBehaviour
     {
         ProcessResource[] processors = FindObjectsByType<ProcessResource>(FindObjectsSortMode.None);
 
-        foreach(var proc in processors)
+        foreach (var proc in processors)
         {
             int saveAmount = sectionProcessMineralCount[proc.sectionIndex];
             proc.RebuildProcessedStack(saveAmount);
