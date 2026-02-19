@@ -1,18 +1,22 @@
 using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 /// <summary>
 /// 업그레이드 효과 중앙 집계 매니저
-/// - 모든 업그레이드 효과 누적 관리
-/// - 타입별 switch 분기 처리
-/// - 각 시스템에 이벤트 발행
+/// - 활성 노드 전체 재집계
+/// - 상태 기반 계산
+/// - 타입별 이벤트 발행
 /// </summary>
 public class UpgradeEffectManager : MonoBehaviour
 {
     public static UpgradeEffectManager Instance;
 
+    [Header("Graph Reference")]
+    [SerializeField] private UpgradeGraphBuilder graphBuilder;
+
     // =========================
-    // 플레이어 직접 강화
+    // 누적 결과 값
     // =========================
 
     private float totalPlayerMoveSpeed;
@@ -21,52 +25,28 @@ public class UpgradeEffectManager : MonoBehaviour
     private float totalPlayerMineAmount;
     private float totalPlayerSellPrice;
 
-    // =========================
-    // 자동화 - 광부
-    // =========================
-
     private int totalMinerUnlockCount;
     private float totalMinerMineSpeed;
-
-    // =========================
-    // 자동화 - 운반인 A
-    // =========================
 
     private bool carrierAUnlocked;
     private float carrierAMoveSpeed;
     private int carrierAMaxCarry;
 
-    // =========================
-    // 자동화 - 운반인 B
-    // =========================
-
     private bool carrierBUnlocked;
     private float carrierBMoveSpeed;
     private int carrierBMaxCarry;
 
-    // =========================
-    // 채굴 구역
-    // =========================
-
     private int miningAreaMaxStorage;
     private float miningAreaRespawnReduce;
 
-    // =========================
-    // 가공기계
-    // =========================
-
     private int processorMaxStorage;
     private float processorProcessTimeReduce;
-
-    // =========================
-    // 최종 특수 효과
-    // =========================
 
     private float miningOneTimeAmountIncrease;
     private float processedItemSellPriceIncrease;
 
     // =========================
-    // 이벤트 영역
+    // 이벤트
     // =========================
 
     public event Action<float> OnPlayerMoveSpeedChanged;
@@ -104,147 +84,171 @@ public class UpgradeEffectManager : MonoBehaviour
     }
 
     // =========================
-    // 외부 호출 메서드
+    // 핵심 재집계 메서드
     // =========================
 
-    public void ApplyUpgrade(UpgradeDataSO data)
+    public void RecalculateAllEffects()
     {
-        foreach (var effect in data.effects)
+        ResetAllTotals();
+
+        if (graphBuilder == null)
+            return;
+
+        List<UpgradeGraphNode<UpgradeDataSO>> activated =
+            graphBuilder.dag.GetActivatedNodes();
+
+        foreach (var node in activated)
         {
-            ApplyEffect(effect);
+            foreach (var effect in node.Data.effects)
+            {
+                AccumulateEffect(effect);
+            }
         }
+
+        DispatchAllEvents();
     }
 
     // =========================
-    // 타입별 분기 처리
+    // 누적 계산
     // =========================
 
-    private void ApplyEffect(UpgradeEffect effect)
+    private void AccumulateEffect(UpgradeEffect effect)
     {
         switch (effect.upgradeType)
         {
-            // =========================
-            // Player
-            // =========================
-
             case UpgradeType.PlayerMoveSpeed:
                 totalPlayerMoveSpeed += effect.value;
-                OnPlayerMoveSpeedChanged?.Invoke(totalPlayerMoveSpeed);
                 break;
 
             case UpgradeType.PlayerMineSpeed:
                 totalPlayerMineSpeed += effect.value;
-                OnPlayerMineSpeedChanged?.Invoke(totalPlayerMineSpeed);
                 break;
 
             case UpgradeType.PlayerMaxCarry:
                 totalPlayerMaxCarry += (int)effect.value;
-                OnPlayerMaxCarryChanged?.Invoke(totalPlayerMaxCarry);
                 break;
 
             case UpgradeType.PlayerMineAmount:
                 totalPlayerMineAmount += effect.value;
-                OnPlayerMineAmountChanged?.Invoke(totalPlayerMineAmount);
                 break;
 
             case UpgradeType.PlayerSellPrice:
                 totalPlayerSellPrice += effect.value;
-                OnPlayerSellPriceChanged?.Invoke(totalPlayerSellPrice);
                 break;
-
-            // =========================
-            // Miner
-            // =========================
 
             case UpgradeType.MinerUnlock:
                 totalMinerUnlockCount += (int)effect.value;
-                OnMinerUnlockChanged?.Invoke(totalMinerUnlockCount);
                 break;
 
             case UpgradeType.MinerMineSpeed:
                 totalMinerMineSpeed += effect.value;
-                OnMinerMineSpeedChanged?.Invoke(totalMinerMineSpeed);
                 break;
-
-            // =========================
-            // Carrier A
-            // =========================
 
             case UpgradeType.CarrierAUnlock:
                 carrierAUnlocked = true;
-                OnCarrierAUnlockChanged?.Invoke(carrierAUnlocked);
                 break;
 
             case UpgradeType.CarrierAMoveSpeed:
                 carrierAMoveSpeed += effect.value;
-                OnCarrierAMoveSpeedChanged?.Invoke(carrierAMoveSpeed);
                 break;
 
             case UpgradeType.CarrierAMaxCarry:
                 carrierAMaxCarry += (int)effect.value;
-                OnCarrierAMaxCarryChanged?.Invoke(carrierAMaxCarry);
                 break;
-
-            // =========================
-            // Carrier B
-            // =========================
 
             case UpgradeType.CarrierBUnlock:
                 carrierBUnlocked = true;
-                OnCarrierBUnlockChanged?.Invoke(carrierBUnlocked);
                 break;
 
             case UpgradeType.CarrierBMoveSpeed:
                 carrierBMoveSpeed += effect.value;
-                OnCarrierBMoveSpeedChanged?.Invoke(carrierBMoveSpeed);
                 break;
 
             case UpgradeType.CarrierBMaxCarry:
                 carrierBMaxCarry += (int)effect.value;
-                OnCarrierBMaxCarryChanged?.Invoke(carrierBMaxCarry);
                 break;
-
-            // =========================
-            // Mining Area
-            // =========================
 
             case UpgradeType.MiningAreaMaxStorage:
                 miningAreaMaxStorage += (int)effect.value;
-                OnMiningAreaMaxStorageChanged?.Invoke(miningAreaMaxStorage);
                 break;
 
             case UpgradeType.MiningAreaRespawnReduce:
                 miningAreaRespawnReduce += effect.value;
-                OnMiningAreaRespawnReduceChanged?.Invoke(miningAreaRespawnReduce);
                 break;
-
-            // =========================
-            // Processor
-            // =========================
 
             case UpgradeType.ProcessorMaxStorage:
                 processorMaxStorage += (int)effect.value;
-                OnProcessorMaxStorageChanged?.Invoke(processorMaxStorage);
                 break;
 
             case UpgradeType.ProcessorProcessTimeReduce:
                 processorProcessTimeReduce += effect.value;
-                OnProcessorProcessTimeReduceChanged?.Invoke(processorProcessTimeReduce);
                 break;
-
-            // =========================
-            // Final
-            // =========================
 
             case UpgradeType.MiningOneTimeAmountIncrease:
                 miningOneTimeAmountIncrease += effect.value;
-                OnMiningOneTimeAmountIncreaseChanged?.Invoke(miningOneTimeAmountIncrease);
                 break;
 
             case UpgradeType.ProcessedItemSellPriceIncrease:
                 processedItemSellPriceIncrease += effect.value;
-                OnProcessedItemSellPriceIncreaseChanged?.Invoke(processedItemSellPriceIncrease);
                 break;
         }
+    }
+
+    private void ResetAllTotals()
+    {
+        totalPlayerMoveSpeed = 0f;
+        totalPlayerMineSpeed = 0f;
+        totalPlayerMaxCarry = 0;
+        totalPlayerMineAmount = 0f;
+        totalPlayerSellPrice = 0f;
+
+        totalMinerUnlockCount = 0;
+        totalMinerMineSpeed = 0f;
+
+        carrierAUnlocked = false;
+        carrierAMoveSpeed = 0f;
+        carrierAMaxCarry = 0;
+
+        carrierBUnlocked = false;
+        carrierBMoveSpeed = 0f;
+        carrierBMaxCarry = 0;
+
+        miningAreaMaxStorage = 0;
+        miningAreaRespawnReduce = 0f;
+
+        processorMaxStorage = 0;
+        processorProcessTimeReduce = 0f;
+
+        miningOneTimeAmountIncrease = 0f;
+        processedItemSellPriceIncrease = 0f;
+    }
+
+    private void DispatchAllEvents()
+    {
+        OnPlayerMoveSpeedChanged?.Invoke(totalPlayerMoveSpeed);
+        OnPlayerMineSpeedChanged?.Invoke(totalPlayerMineSpeed);
+        OnPlayerMaxCarryChanged?.Invoke(totalPlayerMaxCarry);
+        OnPlayerMineAmountChanged?.Invoke(totalPlayerMineAmount);
+        OnPlayerSellPriceChanged?.Invoke(totalPlayerSellPrice);
+
+        OnMinerUnlockChanged?.Invoke(totalMinerUnlockCount);
+        OnMinerMineSpeedChanged?.Invoke(totalMinerMineSpeed);
+
+        OnCarrierAUnlockChanged?.Invoke(carrierAUnlocked);
+        OnCarrierAMoveSpeedChanged?.Invoke(carrierAMoveSpeed);
+        OnCarrierAMaxCarryChanged?.Invoke(carrierAMaxCarry);
+
+        OnCarrierBUnlockChanged?.Invoke(carrierBUnlocked);
+        OnCarrierBMoveSpeedChanged?.Invoke(carrierBMoveSpeed);
+        OnCarrierBMaxCarryChanged?.Invoke(carrierBMaxCarry);
+
+        OnMiningAreaMaxStorageChanged?.Invoke(miningAreaMaxStorage);
+        OnMiningAreaRespawnReduceChanged?.Invoke(miningAreaRespawnReduce);
+
+        OnProcessorMaxStorageChanged?.Invoke(processorMaxStorage);
+        OnProcessorProcessTimeReduceChanged?.Invoke(processorProcessTimeReduce);
+
+        OnMiningOneTimeAmountIncreaseChanged?.Invoke(miningOneTimeAmountIncrease);
+        OnProcessedItemSellPriceIncreaseChanged?.Invoke(processedItemSellPriceIncrease);
     }
 }
