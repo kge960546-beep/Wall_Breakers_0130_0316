@@ -9,6 +9,9 @@ public class StackBackPack : MonoBehaviour
     public float itemHeight = 0.3f; //아이템 높이 간격
 
     [SerializeField] private int maxCapacity = 10; //최대 수용량
+    private int baseCapacity;                      //기본 수용량
+    private int bonusCapacity;                     //강화 수용량
+
     public bool IsFullBackPack() => acquiredResources.Count >= maxCapacity;
 
     [SerializeField] private PlayerFullUI playerFullUI;
@@ -21,8 +24,32 @@ public class StackBackPack : MonoBehaviour
             Instance = this;
         else
             Destroy(gameObject);
+
+        baseCapacity = maxCapacity; // 기본값 저장
     }
 
+    private void OnEnable()
+    {
+        if (UpgradeEffectManager.Instance != null)
+            UpgradeEffectManager.Instance.OnPlayerMaxCarryChanged += HandleMaxCarryChanged;
+    }
+
+    private void OnDisable()
+    {
+        if (UpgradeEffectManager.Instance != null)
+            UpgradeEffectManager.Instance.OnPlayerMaxCarryChanged -= HandleMaxCarryChanged;
+    }
+
+    private void HandleMaxCarryChanged(int totalBonus)
+    {
+        bonusCapacity = totalBonus;
+        maxCapacity = baseCapacity + bonusCapacity;
+
+        if (acquiredResources.Count < maxCapacity)
+        {
+            playerFullUI.Hide();
+        }
+    }
 
     private void Start()
     {
@@ -31,12 +58,11 @@ public class StackBackPack : MonoBehaviour
             backPackPos = GameObject.Find("BackPackPos").transform;
         }
     }
-        
+
     private void Update()
     {
         if (acquiredResources.Count == 0) return;
 
-        //가방 시작 위치
         if (acquiredResources.Count > 0)
         {
             Quaternion targetRot = backPackPos.rotation;
@@ -70,22 +96,21 @@ public class StackBackPack : MonoBehaviour
             currentAcquired.rotation = Quaternion.Lerp(currentAcquired.rotation, targetRot, Time.deltaTime * 10f);
         }
     }
-    //테이블에서 자원 받기
+
     public void AddResources(GameObject resourcesObj)
     {
         if (resourcesObj == null) return;
-        
+
         MineralItem mineralItem = resourcesObj.GetComponent<MineralItem>();
 
-        if(mineralItem == null || mineralItem.mineralData == null)
+        if (mineralItem == null || mineralItem.mineralData == null)
         {
             Debug.LogWarning("없습니다 MineralItem 또는 mineralData.");
-
             Destroy(resourcesObj);
             return;
         }
-        
-        if(mineralItem!= null && mineralItem.mineralData != null)
+
+        if (mineralItem != null && mineralItem.mineralData != null)
         {
             PlayerInventory.Instance.AddItem(mineralItem.mineralData, 1);
         }
@@ -98,7 +123,7 @@ public class StackBackPack : MonoBehaviour
 
         Rigidbody rb = resourcesObj.GetComponent<Rigidbody>();
 
-        if(rb != null)
+        if (rb != null)
         {
             rb.isKinematic = true;
             rb.useGravity = false;
@@ -118,7 +143,7 @@ public class StackBackPack : MonoBehaviour
         GameObject itemObj = acquiredResources[lastIndex].gameObject;
 
         MineralItem mineralItem = itemObj.GetComponent<MineralItem>();
-        if(mineralItem != null && mineralItem.mineralData != null)
+        if (mineralItem != null && mineralItem.mineralData != null)
         {
             PlayerInventory.Instance.RemoveItem(mineralItem.mineralData, 1);
         }
@@ -139,18 +164,14 @@ public class StackBackPack : MonoBehaviour
         if (acquiredResources.Count == 0) return null;
 
         int lastIndex = acquiredResources.Count - 1;
-
-        GameObject item = acquiredResources[lastIndex].gameObject;
-
-        return item;
+        return acquiredResources[lastIndex].gameObject;
     }
 
-    //자원 테이블에 닿아 있을 때
     private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Resources")) //TODO: 자원에서 창고로 쓰이는 테이블 Tag, Layer 로 체인지
+        if (other.CompareTag("Resources"))
         {
-            if (acquiredResources.Count >= maxCapacity) return; //가방이 지정한 갯수만큼 꽉 찼으면 리턴
+            if (acquiredResources.Count >= maxCapacity) return;
 
             ResourceTable table = other.GetComponent<ResourceTable>();
             if (table != null)
@@ -165,7 +186,6 @@ public class StackBackPack : MonoBehaviour
         }
     }
 
-    // 가방 용량 늘리는 메서드
     public void AddCapacity(int amount)
     {
         maxCapacity += amount;
@@ -173,13 +193,9 @@ public class StackBackPack : MonoBehaviour
         if (maxCapacity < 0)
             maxCapacity = 0;
 
-        // 현재 보유량이 새 최대치보다 많아도 강제 처리하지 않음
-        // 단, 새로 담기는 것만 제한
         if (acquiredResources.Count < maxCapacity)
         {
             playerFullUI.Hide();
         }
     }
-
-
 }

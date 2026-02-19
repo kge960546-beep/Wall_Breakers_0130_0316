@@ -81,7 +81,7 @@ public class SellUI : MonoBehaviour
         uiPanel.SetActive(false);
     }
 
-    public void UpdateDisplay(ItemDataSO item, float duration) //전 InventoryItem
+    public void UpdateDisplay(ItemDataSO item, float duration, int finalPrice)
     {
         if (item == null)
         {
@@ -101,10 +101,13 @@ public class SellUI : MonoBehaviour
         int currentQuantity = PlayerInventory.Instance.GetItemCount(item);
         itemNameText.text = $"{item.itemName} x{currentQuantity}";
 
-        string formattedPrice = NotateNumber.ChangeNumber(item.sellPrice);
+        // 실제 적용 가격 표시
+        string formattedPrice = NotateNumber.ChangeNumber(finalPrice);
         priceText.text = $"+{formattedPrice}";
+
         progressBar.fillAmount = 0f;
     }
+
 
     public void UpdateProgress(float progress)
     {

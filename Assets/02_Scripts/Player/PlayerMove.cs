@@ -12,6 +12,9 @@ public class PlayerMove : MonoBehaviour
 
     [SerializeField] private float moveSpeed = 5f;
 
+    private float baseMoveSpeed;     // 기본 이동속도
+    private float bonusMoveSpeed;    // 강화로 인한 추가 속도
+
     private Rigidbody rb;
     private Vector3 moveDirection;
     public Vector3 MoveDirection => moveDirection;
@@ -25,6 +28,20 @@ public class PlayerMove : MonoBehaviour
 
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeRotation;
+
+        baseMoveSpeed = moveSpeed; // 기본값 저장
+    }
+
+    private void OnEnable()
+    {
+        if (UpgradeEffectManager.Instance != null)
+            UpgradeEffectManager.Instance.OnPlayerMoveSpeedChanged += HandleMoveSpeedChanged;
+    }
+
+    private void OnDisable()
+    {
+        if (UpgradeEffectManager.Instance != null)
+            UpgradeEffectManager.Instance.OnPlayerMoveSpeedChanged -= HandleMoveSpeedChanged;
     }
 
     private void FixedUpdate()
@@ -47,6 +64,13 @@ public class PlayerMove : MonoBehaviour
     {
         moveSpeed += value;
         moveSpeed = Mathf.Max(0f, moveSpeed); // 음수 방지
+    }
+
+    // 업그레이드 적용
+    private void HandleMoveSpeedChanged(float totalBonus)
+    {
+        bonusMoveSpeed = totalBonus;
+        moveSpeed = baseMoveSpeed + bonusMoveSpeed;
     }
 
     // 실제 이동 처리
