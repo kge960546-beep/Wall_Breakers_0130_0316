@@ -35,6 +35,9 @@ public class MiningNode : MonoBehaviour
 
     private float mineTimer;
 
+    [Header("데이터 연결")]
+    [SerializeField] int sectionIndex;
+
     /// <summary>
     /// 채굴 시도
     /// - MiningTrigger / MiningState 등에서 호출
@@ -87,7 +90,14 @@ public class MiningNode : MonoBehaviour
             // 채굴 결과를 창고(ResourceTable)에 적재
             resourceTable.AddResources(item);
             currentMineCount++;
+
+            if(SceneGameDataManager.instance != null)
+            {
+                //각 지정한 배열 인덱스에 저장
+                SceneGameDataManager.instance.sectionMineralCount[sectionIndex]++;
+            }
         }    
+
         if(currentMineCount == maxMineCount)
         {
             foreach (GameObject mineral in mineMineral)

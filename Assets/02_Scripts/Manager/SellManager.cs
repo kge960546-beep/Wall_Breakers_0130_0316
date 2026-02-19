@@ -133,7 +133,7 @@ public class SellManager : MonoBehaviour
 
             // 아이템 판매 완료
             if (soldItem != null) //전 PlayerInventory.Instance.RemoveItem(itemToSell.itemData, 1)
-            {
+            {              
                 // 크레딧을 직접 추가하지 않고 오브젝트로 생성
                 creditSpawner.SpawnCredit(earnedCredits);
 

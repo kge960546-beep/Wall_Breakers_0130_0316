@@ -19,6 +19,8 @@ public class ProcessResource : MonoBehaviour
 
     bool isProcessing = false;  //가공 중인지 여부
 
+    public int sectionIndex; //섹션별 인덱스
+
     [Header("Lever")]
     [SerializeField] Transform leverHandle;   // 레버 손잡이
     [SerializeField] float leverUpY = 0.33f;  // 기본 위치
@@ -66,6 +68,24 @@ public class ProcessResource : MonoBehaviour
         return processableMinerals.Contains(mineralItem.mineralData);
     }
 
+    public void RebuildProcessedStack(int amount)
+    {
+        foreach(var item in processingTable)
+        {
+            if (item != null) PoolManager.instance.ReturnIt(processableMinerals[0].processedResult.mineralPrefab, item.gameObject);
+        }
+        processingTable.Clear();
+
+        for(int i = 0; i < amount; i++)
+        {
+            GameObject prefab = processableMinerals[0].processedResult.mineralPrefab;
+            GameObject processedItem = PoolManager.instance.Get(prefab, processingPoint.position, Quaternion.identity);
+
+            processingTable.Add(processedItem.transform);
+            processedItem.transform.SetParent(processingPoint, true);
+        }
+    }
+
     //플레이어한테서 자원 받기
     public void AddStock(GameObject rawMaterial)
     {
@@ -93,12 +113,15 @@ public class ProcessResource : MonoBehaviour
     IEnumerator SuccessProcessed(GameObject rawMaterial, ItemDataSO data)
     {
         isProcessing = true;
-
         yield return StartCoroutine(MoveLeverY(leverDownY));
 
-        int resourceQuantity = data.inputAmountPerProcess;
-
+        int resourceQuantity = data.inputAmountPerProcess;       
         if (resourceQuantity <= 0) resourceQuantity = 1;
+
+        if(SceneGameDataManager.instance != null)
+        {
+            SceneGameDataManager.instance.sectionMineralCount[sectionIndex] -= resourceQuantity;
+        }
 
         List<GameObject> destroyResources = new List<GameObject>();
         for (int i = 0; i < resourceQuantity; i++)
@@ -122,10 +145,14 @@ public class ProcessResource : MonoBehaviour
         yield return wait;
 
         if (data.processedResult != null && data.processedResult.mineralPrefab != null)
-        {
-            //TODO: 풀링으로 변경 예정
-            GameObject processedItem = PoolManager.instance.Get(data.processedResult.mineralPrefab, processingPoint.position, Quaternion.identity);            
+        {            
+            GameObject processedItem = PoolManager.instance.Get(data.processedResult.mineralPrefab, processingPoint.position, Quaternion.identity);
 
+            if (SceneGameDataManager.instance != null)
+            {
+                SceneGameDataManager.instance.sectionProcessMineralCount[sectionIndex] += 1;
+            }
+            
             processingTable.Add(processedItem.transform);
             processedItem.transform.SetParent(processingPoint, true);
         }
