@@ -15,40 +15,81 @@ using UnityEngine;
 /// </summary>
 public class MiningNode : MonoBehaviour
 {
-    [Header("채굴 설정")]    
-    [SerializeField] private ItemDataSO mineralData;  // 채굴 결과 SO
-    [SerializeField] private float mineInterval = 1f; // 채굴 주기 (초)
-    [SerializeField] private float autoMineInterval = 3f; // 채굴 주기 (초)    
-    [SerializeField] float mineDelay = 5f;           // 채굴 쿨타임(초)
-    [SerializeField] int maxMineCount = 10;           // 최대 채굴 가능 횟수
-    [SerializeField] int currentMineCount = 0;          //현재 채굴한 횟수
-    [SerializeField] GameObject[] mineMineral;        // 채굴 광물 오브젝트
+    [Header("채굴 설정")]
+    [SerializeField] private ItemDataSO mineralData;
+    [SerializeField] private float mineInterval = 1f;
+    [SerializeField] private float autoMineInterval = 3f;
+    [SerializeField] float mineDelay = 5f;
+    [SerializeField] int maxMineCount = 10;
+    [SerializeField] int currentMineCount = 0;
+    [SerializeField] GameObject[] mineMineral;
     [SerializeField] new WaitForSeconds wait = new WaitForSeconds(5f);
     public bool canMine => currentMineCount < maxMineCount;
 
     [Header("연결 대상")]
-    [SerializeField] private ResourceTable resourceTable; // 채굴기 옆 창고
-    [SerializeField] private Transform spawnPoint;        // 생성 위치
+    [SerializeField] private ResourceTable resourceTable;
+    [SerializeField] private Transform spawnPoint;
 
     [Header("Guide")]
-    [SerializeField] private GuideStepSO mineGuideStep;   // 흙 채굴 가이드 스텝
-
-    private float mineTimer;
+    [SerializeField] private GuideStepSO mineGuideStep;
 
     [Header("데이터 연결")]
     [SerializeField] int sectionIndex;
 
-    /// <summary>
-    /// 채굴 시도
-    /// - MiningTrigger / MiningState 등에서 호출
-    /// </summary>
-    public void TryMine()
-    {       
-        if (!canMine) return;
+    private float mineTimer;
 
-        // 필수 참조 체크
-        if (mineralData == null || resourceTable == null)
-            return;
+    // =========================
+    // 업그레이드 관련 변수
+    // =========================
+
+    private float baseMineInterval;
+    private float baseAutoMineInterval;
+    private float bonusMineSpeed;
+
+    private int baseMineAmount = 1;
+    private int bonusMineAmount;
+
+    private void Awake()
+    {
+        baseMineInterval = mineInterval;
+        baseAutoMineInterval = autoMineInterval;
+    }
+
+    private void OnEnable()
+    {
+        if (UpgradeEffectManager.Instance != null)
+        {
+            UpgradeEffectManager.Instance.OnPlayerMineSpeedChanged += HandleMineSpeedChanged;
+            UpgradeEffectManager.Instance.OnPlayerMineAmountChanged += HandleMineAmountChanged;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (UpgradeEffectManager.Instance != null)
+        {
+            UpgradeEffectManager.Instance.OnPlayerMineSpeedChanged -= HandleMineSpeedChanged;
+            UpgradeEffectManager.Instance.OnPlayerMineAmountChanged -= HandleMineAmountChanged;
+        }
+    }
+
+    private void HandleMineSpeedChanged(float totalBonus)
+    {
+        bonusMineSpeed = totalBonus;
+
+        mineInterval = baseMineInterval / (1f + bonusMineSpeed);
+        autoMineInterval = baseAutoMineInterval / (1f + bonusMineSpeed);
+    }
+
+    private void HandleMineAmountChanged(float totalBonus)
+    {
+        bonusMineAmount = Mathf.FloorToInt(totalBonus);
+    }
+
+    public void TryMine()
+    {
+        if (!canMine) return;
+        if (mineralData == null || resourceTable == null) return;
 
         mineTimer += Time.deltaTime;
 
@@ -56,16 +97,13 @@ public class MiningNode : MonoBehaviour
             return;
 
         mineTimer = 0f;
-
         Mine();
     }
-    public void AutoUnitTryMine()
-    {       
-        if (!canMine) return;
 
-        // 필수 참조 체크
-        if (mineralData == null || resourceTable == null)
-            return;
+    public void AutoUnitTryMine()
+    {
+        if (!canMine) return;
+        if (mineralData == null || resourceTable == null) return;
 
         mineTimer += Time.deltaTime;
 
@@ -73,44 +111,45 @@ public class MiningNode : MonoBehaviour
             return;
 
         mineTimer = 0f;
-
         Mine();
     }
 
-    /// <summary>
-    /// 실제 채굴 처리
-    /// </summary>
     private void Mine()
     {
         if (currentMineCount < maxMineCount)
         {
-            GameObject item = PoolManager.instance.Get(mineralData.mineralPrefab, spawnPoint.position, Quaternion.identity);
-            item.transform.SetParent(spawnPoint);
+            int totalAmount = baseMineAmount + bonusMineAmount;
 
-            // 채굴 결과를 창고(ResourceTable)에 적재
-            resourceTable.AddResources(item);
-            currentMineCount++;
-
-            if(SceneGameDataManager.instance != null)
+            for (int i = 0; i < totalAmount; i++)
             {
-                //각 지정한 배열 인덱스에 저장
-                SceneGameDataManager.instance.sectionMineralCount[sectionIndex]++;
-            }
-        }    
+                if (currentMineCount >= maxMineCount)
+                    break;
 
-        if(currentMineCount == maxMineCount)
+                GameObject item = PoolManager.instance.Get(
+                    mineralData.mineralPrefab,
+                    spawnPoint.position,
+                    Quaternion.identity);
+
+                item.transform.SetParent(spawnPoint);
+
+                resourceTable.AddResources(item);
+                currentMineCount++;
+
+                if (SceneGameDataManager.instance != null)
+                {
+                    SceneGameDataManager.instance.sectionMineralCount[sectionIndex]++;
+                }
+            }
+        }
+
+        if (currentMineCount == maxMineCount)
         {
             foreach (GameObject mineral in mineMineral)
-            {
                 mineral.SetActive(false);
-            }
 
             StartCoroutine(mineMineralSpawn());
         }
 
-          
-
-        // 가이드 진행도 증가 (현재 스텝일 때만)
         if (GuideManager.Instance != null &&
             mineGuideStep != null &&
             GuideManager.Instance.IsCurrentStep(mineGuideStep))
@@ -122,14 +161,13 @@ public class MiningNode : MonoBehaviour
         Debug.Log($"[MiningNode] {mineralData.itemName} 채굴 → ResourceTable 적재");
 #endif
     }
+
     IEnumerator mineMineralSpawn()
     {
         yield return wait;
         currentMineCount = 0;
 
         foreach (GameObject mineral in mineMineral)
-        {
             mineral.SetActive(true);
-        }
     }
 }
