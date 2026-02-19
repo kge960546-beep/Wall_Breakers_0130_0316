@@ -27,7 +27,7 @@ public class GridManager : MonoBehaviour
 
                 //샘플링하여 막힌 셀인지 확인, QueryTriggerInteraction.Ignore로 트리거 무시
                 blocked[y, x] = Physics.CheckBox(center, halfExtents, Quaternion.identity, obstacleLayer, QueryTriggerInteraction.Ignore);
-                if (blocked[y, x]) Utils.DebugLog($"{x}, {y} 좌표는 막혀있다");
+                //if (blocked[y, x]) Utils.DebugLog($"{x}, {y} 좌표는 막혀있다");
             }
         }
     }

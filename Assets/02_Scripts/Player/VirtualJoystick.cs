@@ -8,6 +8,9 @@ public class VirtualJoystick : MonoBehaviour
     [SerializeField] private RectTransform background;
     [SerializeField] private RectTransform handle;
 
+    [Header("조이스틱 범위 제한")]
+    [SerializeField] private RectTransform touchArea;
+
     [Header("Settings")]
     [SerializeField] private float maxRadius = 100f;
 
@@ -31,7 +34,8 @@ public class VirtualJoystick : MonoBehaviour
     {
         // 클릭 시작 시점에서만 UI 클릭 여부 체크
         if (Input.GetMouseButtonDown(0))
-        {
+        { 
+
             // UI 위 클릭이면 조이스틱 시작 안 함
             if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
                 return;

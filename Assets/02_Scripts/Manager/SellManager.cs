@@ -23,28 +23,6 @@ public class SellManager : MonoBehaviour
     [SerializeField] WaitForSeconds wait = new WaitForSeconds(0.5f);
     [SerializeField] WaitForSeconds shortWait = new WaitForSeconds(0.1f);
 
-    // =========================
-    // 업그레이드 관련 추가
-    // =========================
-    private float bonusSellPrice = 0f; // 비율 누적값 (예: 0.2 = 20%)
-
-    private void OnEnable()
-    {
-        if (UpgradeEffectManager.Instance != null)
-            UpgradeEffectManager.Instance.OnPlayerSellPriceChanged += HandleSellPriceChanged;
-    }
-
-    private void OnDisable()
-    {
-        if (UpgradeEffectManager.Instance != null)
-            UpgradeEffectManager.Instance.OnPlayerSellPriceChanged -= HandleSellPriceChanged;
-    }
-
-    private void HandleSellPriceChanged(float totalBonus)
-    {
-        bonusSellPrice = totalBonus; // 정수 변환 제거 (비율 유지)
-    }
-
     private void Start()
     {
         if (stackBackPack == null)
@@ -109,11 +87,23 @@ public class SellManager : MonoBehaviour
     {
         while (isSelling)
         {
+            //var itemToSell = PlayerInventory.Instance.GetMostExpensiveItem();            
+
+            //ItemDataSO itemData = PlayerInventory.Instance.GetItem();
+
+            //if (itemData == null) //전 itemToSell == null
+            //{
+            //    // 판매할 아이템이 없으면 대기
+            //    sellUI.UpdateDisplay(null, 0);
+            //    yield return new WaitForSeconds(0.5f);
+            //    continue;
+            //}
+
             GameObject topItem = stackBackPack.PeekResource();
             if (topItem == null)
             {
                 // 판매할 아이템이 없으면 대기
-                sellUI.UpdateDisplay(null, 0 , 0);
+                sellUI.UpdateDisplay(null, 0);
                 yield return wait;
                 continue;
             }
@@ -122,13 +112,11 @@ public class SellManager : MonoBehaviour
             ItemDataSO itemData = mineral.mineralData;
 
             // 판매 시간 계산 (상점 레벨에 따른 배수 적용)
-            float sellDuration = itemData.sellDuration * shopData.GetSpeedMultiplier();
-
-            // 비율 증가 적용
-            int earnedCredits = Mathf.RoundToInt(itemData.sellPrice * (1f + bonusSellPrice));
+            float sellDuration = itemData.sellDuration * shopData.GetSpeedMultiplier(); //전 itemToSell.itemData.sellDuration
+            int earnedCredits = itemData.sellPrice;
 
             // UI 업데이트 (판매 시작)
-            sellUI.UpdateDisplay(itemData, sellDuration, earnedCredits);
+            sellUI.UpdateDisplay(itemData, sellDuration); //전 itemToSell
 
             // 판매 진행 시간
             float elapsedTime = 0f;
@@ -144,16 +132,16 @@ public class SellManager : MonoBehaviour
             GameObject soldItem = stackBackPack.MinusResource();
 
             // 아이템 판매 완료
-            if (soldItem != null)
-            {
+            if (soldItem != null) //전 PlayerInventory.Instance.RemoveItem(itemToSell.itemData, 1)
+            {              
                 // 크레딧을 직접 추가하지 않고 오브젝트로 생성
                 creditSpawner.SpawnCredit(earnedCredits);
 
-                OnItemSold?.Invoke(itemData, earnedCredits);
+                OnItemSold?.Invoke(itemData, earnedCredits); //전 itemToSell
 
-                Debug.Log($"Sold {itemData.itemName} for {earnedCredits} credits");
+                Debug.Log($"Sold {itemData.itemName} for {earnedCredits} credits"); //전 itemToSell
 
-                if (itemData.mineralPrefab != null)
+                if(itemData.mineralPrefab != null)
                 {
                     PoolManager.instance.ReturnIt(itemData.mineralPrefab, soldItem);
                 }
