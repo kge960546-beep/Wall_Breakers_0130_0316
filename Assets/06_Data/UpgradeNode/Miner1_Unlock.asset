@@ -18,5 +18,5 @@ MonoBehaviour:
   effects:
   - upgradeType: 7
     value: 1
-  cost: 500
+  cost: 0
   section: 1

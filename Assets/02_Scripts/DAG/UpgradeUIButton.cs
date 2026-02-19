@@ -69,6 +69,16 @@ public class UpgradeUIButton : MonoBehaviour
             creditService.AddCredit(-cost);
             Debug.Log($"골드 차감 : -{cost}");
 
+            // 실제 강화 효과 적용
+            if (UpgradeEffectManager.Instance != null)
+            {
+                UpgradeEffectManager.Instance.ApplyUpgrade(targetSO);
+            }
+            else
+            {
+                Debug.LogError("[UpgradeUIButton] UpgradeEffectManager 없음");
+            }
+
             uiManager.PrintActivatedNodes();
 
             // 버튼 비활성화
