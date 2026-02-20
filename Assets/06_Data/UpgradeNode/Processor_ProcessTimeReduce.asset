@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeID: PROCESSOR_PROCESS_TIME_REDUCE
   displayName: "\uAC00\uACF5\uC2DC\uAC04 \uAC10\uC18C"
-  description: "\uAC00\uACF5\uC2DC\uAC04 -10%"
+  description: "\uAC00\uACF5\uC2DC\uAC04 0.5\uCD08 \uAC10\uC18C"
   effects:
-  - upgradeType: 18
-    value: 0.1
+  - upgradeType: 15
+    value: 0.5
+    targetID: Section1
   cost: 0
   section: 1

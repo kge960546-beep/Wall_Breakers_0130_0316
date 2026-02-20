@@ -72,7 +72,9 @@ public class UpgradeUIButton : MonoBehaviour
             // 재집계 구조 적용
             if (UpgradeEffectManager.Instance != null)
             {
+                Debug.Log("RecalculateAllEffects 호출 직전");
                 UpgradeEffectManager.Instance.RecalculateAllEffects();
+                Debug.Log("RecalculateAllEffects 호출 완료");
             }
             else
             {

@@ -13,7 +13,7 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private float moveSpeed = 5f;
 
     private float baseMoveSpeed;     // 기본 이동속도
-    private float bonusMoveSpeed;    // 강화로 인한 추가 속도
+    private float bonusMoveSpeed;    // 강화 퍼센트 (0.1 = 10%)
 
     private Rigidbody rb;
     private Vector3 moveDirection;
@@ -32,7 +32,7 @@ public class PlayerMove : MonoBehaviour
         baseMoveSpeed = moveSpeed; // 기본값 저장
     }
 
-    private void OnEnable()
+    private void Start()
     {
         if (UpgradeEffectManager.Instance != null)
             UpgradeEffectManager.Instance.OnPlayerMoveSpeedChanged += HandleMoveSpeedChanged;
@@ -46,34 +46,27 @@ public class PlayerMove : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // 게임이 일시정지 상태면 이동 불가
-        //if (!GameManager.Instance.IsPlaying())
-        //    return;
-
         Move();
     }
 
-    // 외부에서 이동 방향 설정
     public void SetMoveDirection(Vector3 dir)
     {
         moveDirection = dir;
     }
 
-    // 광고 보상 등 외부 효과로 이동속도 증감
     public void AddSpeed(float value)
     {
         moveSpeed += value;
-        moveSpeed = Mathf.Max(0f, moveSpeed); // 음수 방지
+        moveSpeed = Mathf.Max(0f, moveSpeed);
     }
 
-    // 업그레이드 적용
+    // 퍼센트 적용 방식으로 수정
     private void HandleMoveSpeedChanged(float totalBonus)
     {
-        bonusMoveSpeed = totalBonus;
-        moveSpeed = baseMoveSpeed + bonusMoveSpeed;
+        bonusMoveSpeed = totalBonus;           // 0.1 = 10%
+        moveSpeed = baseMoveSpeed * (1f + bonusMoveSpeed);
     }
 
-    // 실제 이동 처리
     private void Move()
     {
         Vector3 velocity = moveDirection * moveSpeed;

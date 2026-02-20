@@ -1,24 +1,22 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 자동 운반인 가방
-/// - ID 기반으로 UpgradeEffectManager 이벤트 구독
-/// - CarrierMaxCarry 효과를 직접 반영
+/// 가공품 전용 자동 운반 가방 (판매 전용)
+/// 기존 AutoBackPack과 완전 분리
 /// </summary>
-public class AutoBackPack : MonoBehaviour
+public class AutoBackPackV2 : MonoBehaviour
 {
-    [Header("ID")]
-    [SerializeField] private string targetID;   // CarrierController와 동일하게 입력
-
     [Header("가방 설정")]
     [SerializeField] private List<Transform> resources = new List<Transform>();
     [SerializeField] private Transform backPackPos;
     [SerializeField] private float itemHeight = 0.3f;
 
-    [Header("현재 최대 수용량 (실시간 반영)")]
-    [SerializeField] private int maxCapacity = 5;   // ← 인스펙터에 보이는 값
+    [Header("최대 수용량")]
+    [SerializeField] private int maxCapacity = 5;
+
+    [Header("Upgrade ID")]
+    [SerializeField] private string targetID;   // CarrierB와 동일하게
 
     private int baseCapacity;
     private int bonusCapacity;
@@ -28,14 +26,17 @@ public class AutoBackPack : MonoBehaviour
 
     private void Awake()
     {
-        baseCapacity = maxCapacity;   // 처음 값 저장
+        baseCapacity = maxCapacity;   // 기본값 저장
     }
 
     private void OnEnable()
     {
         if (UpgradeEffectManager.Instance != null)
         {
-            UpgradeEffectManager.Instance.OnCarrierMaxCarryChanged += HandleMaxCarry;
+            UpgradeEffectManager.Instance.OnCarrierMaxCarryChanged += HandleMaxCarryChanged;
+
+            // 현재 활성화된 노드 반영
+            UpgradeEffectManager.Instance.RecalculateAllEffects();
         }
     }
 
@@ -43,31 +44,22 @@ public class AutoBackPack : MonoBehaviour
     {
         if (UpgradeEffectManager.Instance != null)
         {
-            UpgradeEffectManager.Instance.OnCarrierMaxCarryChanged -= HandleMaxCarry;
+            UpgradeEffectManager.Instance.OnCarrierMaxCarryChanged -= HandleMaxCarryChanged;
         }
     }
-
-    private void HandleMaxCarry(string id, int bonus)
-    {
-        if (id != targetID) return;
-
-        bonusCapacity = bonus;
-        maxCapacity = baseCapacity + bonusCapacity;
-    }
-
     private void Update()
     {
         if (resources.Count == 0) return;
 
         for (int i = 0; i < resources.Count; i++)
         {
-            Transform currentResource = resources[i];
+            Transform current = resources[i];
 
             Vector3 targetPos = backPackPos.position + Vector3.up * itemHeight * i;
             Quaternion targetRot = backPackPos.rotation;
 
-            currentResource.position = Vector3.Lerp(currentResource.position, targetPos, Time.deltaTime * 10f);
-            currentResource.rotation = Quaternion.Lerp(currentResource.rotation, targetRot, Time.deltaTime * 10f);
+            current.position = Vector3.Lerp(current.position, targetPos, Time.deltaTime * 10f);
+            current.rotation = Quaternion.Lerp(current.rotation, targetRot, Time.deltaTime * 10f);
         }
     }
 
@@ -99,19 +91,14 @@ public class AutoBackPack : MonoBehaviour
         return item;
     }
 
-    private void OnTriggerStay(Collider other)
+    private void HandleMaxCarryChanged(string id, int bonus)
     {
-        if (other.CompareTag("Resources") && !IsFullBackPack())
-        {
-            var table = other.GetComponent<ResourceTable>();
+        if (id != targetID) return;
 
-            if (table != null)
-            {
-                GameObject item = table.GiveItem();
+        bonusCapacity = bonus;
 
-                if (item != null)
-                    AddResource(item);
-            }
-        }
+        maxCapacity = baseCapacity + bonusCapacity;
+
+        Debug.Log($"[AutoBackPackV2:{targetID}] 최대 적재량 적용 → {maxCapacity}");
     }
 }

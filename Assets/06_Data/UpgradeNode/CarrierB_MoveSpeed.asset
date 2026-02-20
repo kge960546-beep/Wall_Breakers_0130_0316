@@ -16,7 +16,8 @@ MonoBehaviour:
   displayName: "\uC6B4\uBC18\uC778 B \uC774\uB3D9\uC18D\uB3C4 \uC99D\uAC00"
   description: "\uC774\uB3D9\uC18D\uB3C4 +15%"
   effects:
-  - upgradeType: 13
+  - upgradeType: 10
     value: 0.15
+    targetID: CarrierB
   cost: 0
   section: 1

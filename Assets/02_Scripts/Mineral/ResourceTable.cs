@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ResourceTable : MonoBehaviour
 {
-    [SerializeField] List<Transform> resourceInTable = new List<Transform>();
+     List<Transform> resourceInTable = new List<Transform>();
     [SerializeField] Transform tablePos; //테이블 위치
     [SerializeField] float itemHeight = 0.3f; //아이템 높이 간격
 
@@ -12,11 +12,50 @@ public class ResourceTable : MonoBehaviour
     [SerializeField] int sectionIndex;
     [SerializeField] GameObject mineralPrefab;
 
+    [Header("최대 저장 용량")]
+    [SerializeField] private int maxCapacity = 20;
+
+    [Header("Upgrade ID")]
+    [SerializeField] private string targetID;
+
+    private int baseCapacity;
+    private int bonusCapacity;
+
     public int SectionIndex => sectionIndex;
     public int CurrentCount => resourceInTable.Count;
-    
+
+    public bool IsFull => resourceInTable.Count >= maxCapacity;
+
+    private void Awake()
+    {
+        baseCapacity = maxCapacity;
+    }
+
+    private void OnEnable()
+    {
+        if (UpgradeEffectManager.Instance != null)
+        {
+            UpgradeEffectManager.Instance.OnMiningAreaMaxStorageChanged += HandleMaxStorageChanged;
+            UpgradeEffectManager.Instance.RecalculateAllEffects();
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (UpgradeEffectManager.Instance != null)
+        {
+            UpgradeEffectManager.Instance.OnMiningAreaMaxStorageChanged -= HandleMaxStorageChanged;
+        }
+    }
+
     void Update()
     {
+        for (int i = resourceInTable.Count - 1; i >= 0; i--)
+        {
+            if (resourceInTable[i] == null)
+                resourceInTable.RemoveAt(i);
+        }
+
         if (resourceInTable.Count == 0) return;
 
         //테이블 시작 위치
@@ -44,32 +83,38 @@ public class ResourceTable : MonoBehaviour
     {
         if (resources == null) return;
 
-        resourceInTable.Add(resources.transform);       
+        if (resourceInTable.Count >= maxCapacity)
+        {
+            PoolManager.instance.ReturnIt(mineralPrefab, resources);
+            Debug.Log("채굴구역 저장공간 가득 참 → 추가 채굴 반영 안됨");
+            return;
+        }
 
+        resourceInTable.Add(resources.transform);
         resources.transform.SetParent(tablePos, true);
 
-        Collider col = resources.GetComponent<Collider>();
-        if (col) col.enabled = false;        
+        if (resources.TryGetComponent<Collider>(out var col))
+            col.enabled = false;
 
-        Rigidbody rb = resources.GetComponent<Rigidbody>();
-
-        if(rb != null)
+        if (resources.TryGetComponent<Rigidbody>(out var rb))
         {
             rb.isKinematic = true;
             rb.useGravity = false;
-        }        
+        }
     }
 
     //플레이어에게 자원 주기
     public GameObject GiveItem()
     {
-        if(resourceInTable.Count == 0) return null;
+        if (resourceInTable.Count == 0) return null;
 
         int lastIndex = resourceInTable.Count - 1;
         Transform itemTr = resourceInTable[lastIndex];
 
         resourceInTable.RemoveAt(lastIndex);
-        
+
+        if (itemTr == null) return null;
+
         return itemTr.gameObject;
     }
 
@@ -101,5 +146,14 @@ public class ResourceTable : MonoBehaviour
 
             AddResources(item);
         }
+    }
+    private void HandleMaxStorageChanged(string id, int bonus)
+    {
+        if (id != targetID) return;
+
+        bonusCapacity = bonus;
+        maxCapacity = baseCapacity + bonusCapacity;
+
+        Debug.Log($"[MiningArea:{targetID}] 최대 저장공간 → {maxCapacity}");
     }
 }

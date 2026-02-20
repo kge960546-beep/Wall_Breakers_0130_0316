@@ -18,5 +18,6 @@ MonoBehaviour:
   effects:
   - upgradeType: 9
     value: 1
+    targetID: CarrierA
   cost: 0
   section: 1

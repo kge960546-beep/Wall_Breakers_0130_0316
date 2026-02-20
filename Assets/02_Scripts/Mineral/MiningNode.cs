@@ -4,27 +4,28 @@ using UnityEngine;
 
 /// <summary>
 /// 채굴 대상(광산, 채굴기)에 붙는 컴포넌트
-/// - 채굴 타이머 관리
-/// - 채굴 결과 생성
-/// - 채굴 결과를 ResourceTable(창고)에 적재
-/// 
-/// ※ 주의
-/// - 백팩(StackBackPack)과 직접 연동하지 않음
-/// - 용량 판단, 상태 전환은 여기서 하지 않음
-/// - 취합 테스트용 최소 책임만 가짐
+/// 플레이어 채굴과 광부 채굴을 명확히 분리
 /// </summary>
 public class MiningNode : MonoBehaviour
 {
     [Header("채굴 설정")]
     [SerializeField] private ItemDataSO mineralData;
-    [SerializeField] private float mineInterval = 1f;
-    [SerializeField] private float autoMineInterval = 3f;
-    [SerializeField] float mineDelay = 5f;
-    [SerializeField] int maxMineCount = 10;
-    [SerializeField] int currentMineCount = 0;
-    [SerializeField] GameObject[] mineMineral;
-    [SerializeField] new WaitForSeconds wait = new WaitForSeconds(5f);
+    [SerializeField] private float mineInterval = 1f;        // 플레이어
+    [SerializeField] private float autoMineInterval = 3f;    // 광부
+    [SerializeField] private int maxMineCount = 10;
+    [SerializeField] private int currentMineCount = 0;
+    [SerializeField] private GameObject[] mineMineral;
+    [SerializeField] private float respawnTime = 5f;
+
+    private float baseRespawnTime;
+    private float bonusRespawnReduction;
+
+    [SerializeField] private string miningAreaID;
+
     public bool canMine => currentMineCount < maxMineCount;
+
+    [Header("광부 식별자")]
+    [SerializeField] private string minerID;
 
     [Header("연결 대상")]
     [SerializeField] private ResourceTable resourceTable;
@@ -34,33 +35,43 @@ public class MiningNode : MonoBehaviour
     [SerializeField] private GuideStepSO mineGuideStep;
 
     [Header("데이터 연결")]
-    [SerializeField] int sectionIndex;
+    [SerializeField] private int sectionIndex;
 
     private float mineTimer;
 
     // =========================
-    // 업그레이드 관련 변수
+    // 기본값 저장
     // =========================
 
     private float baseMineInterval;
     private float baseAutoMineInterval;
-    private float bonusMineSpeed;
+
+    // =========================
+    // 업그레이드 누적값 (분리!)
+    // =========================
+
+    private float bonusPlayerMineSpeed;
+    private float bonusMinerMineSpeed;
 
     private int baseMineAmount = 1;
-    private int bonusMineAmount;
+    private int bonusPlayerMineAmount;   // 플레이어 전용
 
     private void Awake()
     {
         baseMineInterval = mineInterval;
         baseAutoMineInterval = autoMineInterval;
+        baseRespawnTime = respawnTime;
     }
 
-    private void OnEnable()
+    private void Start()
     {
         if (UpgradeEffectManager.Instance != null)
         {
-            UpgradeEffectManager.Instance.OnPlayerMineSpeedChanged += HandleMineSpeedChanged;
-            UpgradeEffectManager.Instance.OnPlayerMineAmountChanged += HandleMineAmountChanged;
+            UpgradeEffectManager.Instance.OnPlayerMineSpeedChanged += HandlePlayerMineSpeedChanged;
+            UpgradeEffectManager.Instance.OnPlayerMineAmountChanged += HandlePlayerMineAmountChanged;
+            UpgradeEffectManager.Instance.OnMinerMineSpeedChanged += HandleMinerMineSpeedChanged;
+
+            UpgradeEffectManager.Instance.OnMiningAreaRespawnTimeChanged += HandleRespawnTimeChanged;
         }
     }
 
@@ -68,77 +79,114 @@ public class MiningNode : MonoBehaviour
     {
         if (UpgradeEffectManager.Instance != null)
         {
-            UpgradeEffectManager.Instance.OnPlayerMineSpeedChanged -= HandleMineSpeedChanged;
-            UpgradeEffectManager.Instance.OnPlayerMineAmountChanged -= HandleMineAmountChanged;
+            UpgradeEffectManager.Instance.OnPlayerMineSpeedChanged -= HandlePlayerMineSpeedChanged;
+            UpgradeEffectManager.Instance.OnPlayerMineAmountChanged -= HandlePlayerMineAmountChanged;
+            UpgradeEffectManager.Instance.OnMinerMineSpeedChanged -= HandleMinerMineSpeedChanged;
+
+            UpgradeEffectManager.Instance.OnMiningAreaRespawnTimeChanged -= HandleRespawnTimeChanged;
         }
     }
 
-    private void HandleMineSpeedChanged(float totalBonus)
-    {
-        bonusMineSpeed = totalBonus;
+    // =========================
+    // 이벤트 수신
+    // =========================
 
-        mineInterval = baseMineInterval / (1f + bonusMineSpeed);
-        autoMineInterval = baseAutoMineInterval / (1f + bonusMineSpeed);
+    private void HandlePlayerMineSpeedChanged(float totalBonus)
+    {
+        bonusPlayerMineSpeed = totalBonus;
     }
 
-    private void HandleMineAmountChanged(float totalBonus)
+    private void HandlePlayerMineAmountChanged(float totalBonus)
     {
-        bonusMineAmount = Mathf.FloorToInt(totalBonus);
+        bonusPlayerMineAmount = Mathf.FloorToInt(totalBonus);
     }
+
+    private void HandleMinerMineSpeedChanged(string id, float totalBonus)
+    {
+        if (id == minerID)
+        {
+            bonusMinerMineSpeed = totalBonus;
+        }
+    }
+
+    private void HandleRespawnTimeChanged(string id, float reduction)
+    {
+        if (id != miningAreaID) return;
+
+        bonusRespawnReduction = reduction;
+
+        respawnTime = Mathf.Max(0.5f, baseRespawnTime - bonusRespawnReduction);
+
+        Debug.Log($"[MiningArea:{id}] 리스폰 시간 → {respawnTime}");
+    }
+
+    // =========================
+    // 플레이어 채굴
+    // =========================
 
     public void TryMine()
     {
         if (!canMine) return;
         if (mineralData == null || resourceTable == null) return;
 
+        float adjustedInterval = baseMineInterval / (1f + bonusPlayerMineSpeed);
+
         mineTimer += Time.deltaTime;
 
-        if (mineTimer < mineInterval)
+        if (mineTimer < adjustedInterval)
             return;
 
         mineTimer = 0f;
-        Mine();
+
+        Mine(baseMineAmount + bonusPlayerMineAmount);
     }
+
+    // =========================
+    // 광부 채굴
+    // =========================
 
     public void AutoUnitTryMine()
     {
         if (!canMine) return;
         if (mineralData == null || resourceTable == null) return;
 
+        float adjustedInterval = baseAutoMineInterval / (1f + bonusMinerMineSpeed);
+
         mineTimer += Time.deltaTime;
 
-        if (mineTimer < autoMineInterval)
+        if (mineTimer < adjustedInterval)
             return;
 
         mineTimer = 0f;
-        Mine();
+
+        // 광부는 채굴량 업그레이드 영향 없음
+        Mine(baseMineAmount);
     }
 
-    private void Mine()
+    // =========================
+    // 실제 채굴 처리
+    // =========================
+
+    private void Mine(int totalAmount)
     {
-        if (currentMineCount < maxMineCount)
+        for (int i = 0; i < totalAmount; i++)
         {
-            int totalAmount = baseMineAmount + bonusMineAmount;
+            if (currentMineCount >= maxMineCount)
+                break;
 
-            for (int i = 0; i < totalAmount; i++)
+            GameObject item = PoolManager.instance.Get(
+                mineralData.mineralPrefab,
+                spawnPoint.position,
+                Quaternion.identity);
+
+            item.transform.SetParent(spawnPoint);
+
+            resourceTable.AddResources(item);
+            currentMineCount++;
+
+            if (SceneGameDataManager.instance != null)
             {
-                if (currentMineCount >= maxMineCount)
-                    break;
-
-                GameObject item = PoolManager.instance.Get(
-                    mineralData.mineralPrefab,
-                    spawnPoint.position,
-                    Quaternion.identity);
-
-                item.transform.SetParent(spawnPoint);
-
-                resourceTable.AddResources(item);
-                currentMineCount++;
-
-                if (SceneGameDataManager.instance != null)
-                {
-                    SceneGameDataManager.instance.sectionMineralCount[sectionIndex]++;
-                }
+                SceneGameDataManager.instance.sectionMineralCount[sectionIndex]++;
             }
         }
 
@@ -156,15 +204,12 @@ public class MiningNode : MonoBehaviour
         {
             GuideManager.Instance.AddProgress(1);
         }
-
-#if UNITY_EDITOR
-        Debug.Log($"[MiningNode] {mineralData.itemName} 채굴 → ResourceTable 적재");
-#endif
     }
 
-    IEnumerator mineMineralSpawn()
+    private IEnumerator mineMineralSpawn()
     {
-        yield return wait;
+        yield return new WaitForSeconds(respawnTime);
+
         currentMineCount = 0;
 
         foreach (GameObject mineral in mineMineral)

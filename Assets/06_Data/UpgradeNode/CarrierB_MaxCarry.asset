@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeID: CARRIER_B_MAX_CARRY
   displayName: "\uC6B4\uBC18\uC778 B \uCD5C\uB300 \uC801\uC7AC\uB7C9 \uC99D\uAC00"
-  description: "\uC801\uC7AC\uB7C9 +10"
+  description: "\uC801\uC7AC\uB7C9 +5"
   effects:
-  - upgradeType: 14
-    value: 10
+  - upgradeType: 11
+    value: 5
+    targetID: CarrierB
   cost: 0
   section: 1
