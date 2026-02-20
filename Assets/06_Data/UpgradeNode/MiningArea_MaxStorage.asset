@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeID: MINING_AREA_MAX_STORAGE
   displayName: "\uCC44\uAD74\uAD6C\uC5ED \uCD5C\uB300 \uC800\uC7A5\uACF5\uAC04 \uD655\uC7A5"
-  description: "\uC800\uC7A5\uACF5\uAC04 +20"
+  description: "\uC800\uC7A5\uACF5\uAC04 +10"
   effects:
   - upgradeType: 12
-    value: 20
+    value: 10
     targetID: Section1
   cost: 0
   section: 1

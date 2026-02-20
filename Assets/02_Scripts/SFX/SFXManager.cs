@@ -19,6 +19,9 @@ public class SFXManager : MonoBehaviour
     [SerializeField] string[] bgmPlayList;
     int currentBGMIndex = 0;
 
+    // BGM 코루틴 저장용
+    Coroutine bgmRoutine;
+
     private void Awake()
     {
         if(instance == null)
@@ -79,10 +82,12 @@ public class SFXManager : MonoBehaviour
 
     public void StartPlayBGM()
     {
-        if(bgmPlayList != null && bgmPlayList.Length > 0)
+        if (bgmPlayList != null && bgmPlayList.Length > 0)
         {
-            StopAllCoroutines();
-            StartCoroutine(BGMQueueRoutine());
+            if (bgmRoutine != null)
+                StopCoroutine(bgmRoutine);
+
+            bgmRoutine = StartCoroutine(BGMQueueRoutine());
         }
     }
 
@@ -110,6 +115,27 @@ public class SFXManager : MonoBehaviour
             }
 
             currentBGMIndex = (currentBGMIndex + 1) % bgmPlayList.Length;
+        }
+    }
+
+    public void PauseBGM()
+    {
+        if (bgmRoutine != null)
+        {
+            StopCoroutine(bgmRoutine);
+            bgmRoutine = null;
+        }
+
+        if (bgmPlayer.isPlaying)
+            bgmPlayer.Pause();
+    }
+
+    public void ResumeBGM()
+    {
+        if (bgmPlayer.clip != null)
+        {
+            bgmPlayer.UnPause();
+            bgmRoutine = StartCoroutine(BGMQueueRoutine());
         }
     }
 }
