@@ -18,5 +18,6 @@ MonoBehaviour:
   effects:
   - upgradeType: 7
     value: 1
+    targetID: MINER_2
   cost: 0
   section: 1

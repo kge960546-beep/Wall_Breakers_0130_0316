@@ -28,12 +28,6 @@ public class StackBackPack : MonoBehaviour
         baseCapacity = maxCapacity; // 기본값 저장
     }
 
-    private void OnEnable()
-    {
-        if (UpgradeEffectManager.Instance != null)
-            UpgradeEffectManager.Instance.OnPlayerMaxCarryChanged += HandleMaxCarryChanged;
-    }
-
     private void OnDisable()
     {
         if (UpgradeEffectManager.Instance != null)
@@ -57,6 +51,9 @@ public class StackBackPack : MonoBehaviour
         {
             backPackPos = GameObject.Find("BackPackPos").transform;
         }
+
+        if (UpgradeEffectManager.Instance != null)
+            UpgradeEffectManager.Instance.OnPlayerMaxCarryChanged += HandleMaxCarryChanged;
     }
 
     private void Update()

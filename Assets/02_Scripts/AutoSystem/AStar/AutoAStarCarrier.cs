@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum aStarCurrentState { Idle, MovingToTable, MovingMachine, Processing }
+
 public class AutoAStarCarrier : MonoBehaviour
 {
     [SerializeField] private AutoBackPack autoBackPack; //가방 스크립트 참조
     [SerializeField] private Animator anim;
     [SerializeField] AStarFindPath pathFinder;    //A스타 경로 찾기 스크립트 참조
 
+    [Header("ID")]
+    [SerializeField] private string targetID;     // UpgradeEffectManager targetID와 동일하게 입력
 
     [SerializeField] Transform resourceTable;        //자원 놓는 테이블 위치
     [SerializeField] Transform processingMachine;    //가공기 위치
@@ -18,6 +21,9 @@ public class AutoAStarCarrier : MonoBehaviour
 
     [SerializeField] private float moveSpeed = 5f;   //이동 속도
     [SerializeField] private float rotateSpeed = 30f; //회전 속도
+
+    private float baseMoveSpeed;                     // 기본 속도 저장
+    private float bonusMoveSpeed;                    // 업그레이드 보너스
 
     private Rigidbody rb;
     private Vector3 moveDirection;
@@ -33,6 +39,8 @@ public class AutoAStarCarrier : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeRotation;
         anim = GetComponent<Animator>();
+
+        baseMoveSpeed = moveSpeed;   // 초기값 저장
     }
 
     private void Start()
@@ -41,6 +49,40 @@ public class AutoAStarCarrier : MonoBehaviour
         {
             autoBackPack = GetComponent<AutoBackPack>();
         }
+        
+    }
+    private void OnEnable()
+    {
+        Debug.Log("Carrier Enable");
+        if (UpgradeEffectManager.Instance != null)
+        {
+            UpgradeEffectManager.Instance.OnCarrierMoveSpeedChanged += HandleMoveSpeed;
+        }
+    }
+
+    private void OnDisable()
+    {
+        Debug.Log("Carrier Disable");
+
+        if (UpgradeEffectManager.Instance != null)
+        {
+            UpgradeEffectManager.Instance.OnCarrierMoveSpeedChanged -= HandleMoveSpeed;
+        }
+    }
+
+    // =========================
+    // 이동속도 이벤트 수신
+    // =========================
+    private void HandleMoveSpeed(string id, float bonus)
+    {
+        Debug.Log($"이벤트 수신! id:{id} / 내 id:{targetID} / bonus:{bonus}");
+
+        if (id != targetID) return;
+
+        bonusMoveSpeed = bonus;
+        moveSpeed = baseMoveSpeed * (1f + bonusMoveSpeed);
+
+        Debug.Log($"적용됨 → {moveSpeed}");
     }
 
     private void FixedUpdate()
@@ -56,11 +98,12 @@ public class AutoAStarCarrier : MonoBehaviour
 
         SetMoveDirection(Vector3.zero);
         currentPath = null;
-        
+
         yield return new WaitForSeconds(moveDelay);
-        
+
         state = aStarCurrentState.Idle;
     }
+
     public void SetMoveDirection(Vector3 dir)
     {
         moveDirection = dir;
@@ -106,9 +149,11 @@ public class AutoAStarCarrier : MonoBehaviour
                     state = aStarCurrentState.MovingMachine;
                 }
                 break;
+
             case (aStarCurrentState.MovingToTable):
                 GoTargetPoint(resourceTable.position);
                 break;
+
             case (aStarCurrentState.MovingMachine):
                 GoTargetPoint(processingMachine.position);
                 break;
@@ -152,13 +197,13 @@ public class AutoAStarCarrier : MonoBehaviour
         }
         else //목적지 도착
         {
-            if(state != aStarCurrentState.Processing)
+            if (state != aStarCurrentState.Processing)
             {
                 StartCoroutine(MoveDelay());
             }
 
             SetMoveDirection(Vector3.zero);
-            currentPath = null;            
+            currentPath = null;
         }
     }
 

@@ -28,12 +28,6 @@ public class SellManager : MonoBehaviour
     // =========================
     private float bonusSellPrice = 0f;
 
-    private void OnEnable()
-    {
-        if (UpgradeEffectManager.Instance != null)
-            UpgradeEffectManager.Instance.OnPlayerSellPriceChanged += HandleSellPriceChanged;
-    }
-
     private void OnDisable()
     {
         if (UpgradeEffectManager.Instance != null)
@@ -51,6 +45,9 @@ public class SellManager : MonoBehaviour
             stackBackPack = FindObjectOfType<StackBackPack>();
 
         ValidateSetup();
+
+        if (UpgradeEffectManager.Instance != null)
+            UpgradeEffectManager.Instance.OnPlayerSellPriceChanged += HandleSellPriceChanged;
     }
 
     private void ValidateSetup()
@@ -133,5 +130,30 @@ public class SellManager : MonoBehaviour
 
             yield return shortWait;
         }
+    }
+
+    // =========================
+    // Carrier 전용 즉시 판매 함수
+    // =========================
+    public void SellFromCarrier(GameObject item)
+    {
+        if (item == null) return;
+
+        MineralItem mineral = item.GetComponent<MineralItem>();
+        if (mineral == null) return;
+
+        ItemDataSO itemData = mineral.mineralData;
+
+        if (itemData == null) return;
+
+        int earnedCredits = Mathf.RoundToInt(itemData.sellPrice * (1f + bonusSellPrice));
+
+        creditSpawner.SpawnCredit(earnedCredits);
+        OnItemSold?.Invoke(itemData, earnedCredits);
+
+        if (itemData.mineralPrefab != null)
+            PoolManager.instance.ReturnIt(itemData.mineralPrefab, item);
+        else
+            Destroy(item);
     }
 }

@@ -6,8 +6,8 @@ public class ProcessResource : MonoBehaviour
 {
     [SerializeField] List<ItemDataSO> processableMinerals = new List<ItemDataSO>(); //가공 가능한 자원 리스트
 
-    [SerializeField] List<Transform> stockingTable = new List<Transform>();     //창고 테이블
-    [SerializeField] List<Transform> processingTable = new List<Transform>();   //가공 테이블
+    private List<Transform> stockingTable = new();
+    private List<Transform> processingTable = new();
 
     [SerializeField] Transform stockingPoint;   //창고 위치
     [SerializeField] Transform processingPoint; //가공 위치
@@ -15,7 +15,11 @@ public class ProcessResource : MonoBehaviour
     [SerializeField] float itemHeight = 0.3f;   //아이템 높이 간격
 
     [SerializeField] float delay = 1.0f;        //가공 딜레이
-    [SerializeField] WaitForSeconds wait = new WaitForSeconds(1.0f);    
+    [Header("가공 시간 설정")]
+    [SerializeField] private float processTime = 1.0f;
+
+    private float baseProcessTime;
+    private float bonusProcessTimeReduction;
 
     bool isProcessing = false;  //가공 중인지 여부
 
@@ -27,13 +31,45 @@ public class ProcessResource : MonoBehaviour
     [SerializeField] float leverDownY = -0.33f; // 작동 위치
     [SerializeField] float leverMoveSpeed = 2f; // 이동 속도
 
+    [Header("가공 결과 최대 저장량")]
+    [SerializeField] private int maxProcessedCapacity = 5;
+
+    private int baseProcessedCapacity;
+    private int bonusProcessedCapacity;
+
+    [SerializeField] private string processingAreaID;
+
+    private void Awake()
+    {
+        baseProcessedCapacity = maxProcessedCapacity;
+        baseProcessTime = processTime;
+    }
+
+    private void Start()
+    {
+        if (UpgradeEffectManager.Instance != null)
+        {
+            UpgradeEffectManager.Instance.OnProcessingMaxCapacityChanged += HandleProcessingCapacityChanged;
+            UpgradeEffectManager.Instance.OnProcessorProcessTimeChanged += HandleProcessTimeChanged;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (UpgradeEffectManager.Instance != null)
+        {
+            UpgradeEffectManager.Instance.OnProcessingMaxCapacityChanged -= HandleProcessingCapacityChanged;
+            UpgradeEffectManager.Instance.OnProcessorProcessTimeChanged -= HandleProcessTimeChanged;
+        }
+    }
+
 
     private void Update()
     {
         StackPosition(stockingTable, stockingPoint);
         StackPosition(processingTable, processingPoint);
 
-        if (!isProcessing && stockingTable.Count > 0)
+        if (!isProcessing && stockingTable.Count > 0 && !IsProcessedFull())
         {
             GameObject gameObject = stockingTable[0].gameObject;
 
@@ -142,7 +178,8 @@ public class ProcessResource : MonoBehaviour
             }
         }
 
-        yield return wait;
+        float finalProcessTime = Mathf.Max(0.1f, baseProcessTime - bonusProcessTimeReduction);
+        yield return new WaitForSeconds(finalProcessTime);
 
         if (data.processedResult != null && data.processedResult.mineralPrefab != null)
         {            
@@ -179,37 +216,60 @@ public class ProcessResource : MonoBehaviour
         if (!other.CompareTag("Player") && !other.CompareTag("AutoCarrierWorker"))
             return;
 
-        var autoBackPack = other.GetComponent<AutoBackPack>();
-
-        if(autoBackPack != null)
+        // ===============================
+        //  AutoBackPackV2 (가공품 전용 운반원)
+        // ===============================
+        var autoBackPackV2 = other.GetComponent<AutoBackPackV2>();
+        if (autoBackPackV2 != null)
         {
-            GameObject item = autoBackPack.RemoveResource();
-            if (item != null) AddStock(item);
+            // 가공품 픽업
+            if (!autoBackPackV2.IsFullBackPack() && processingTable.Count > 0)
+            {
+                GameObject processed = GiveProcessedItem();
+                if (processed != null)
+                    autoBackPackV2.AddResource(processed);
+            }
+
+            return; // V2는 여기서 끝
         }
 
+        // ===============================
+        //  기존 AutoBackPack (원자재 운반용)
+        // ===============================
+        var autoBackPack = other.GetComponent<AutoBackPack>();
+        if (autoBackPack != null)
+        {
+            GameObject item = autoBackPack.RemoveResource();
+            if (item != null)
+                AddStock(item);
+
+            return;
+        }
+
+        // ===============================
+        //  Player 처리 (기존 로직 유지)
+        // ===============================
         PlayerFSM fsm = other.GetComponent<PlayerFSM>();
         StackBackPack backPack = other.GetComponent<StackBackPack>();
 
         if (fsm == null || backPack == null)
             return;
-        
-        // ===== 1 드롭 우선 =====
+
+        // 드롭 우선
         if (TryDrop(backPack))
         {
-            // 실제 드롭이 발생했을 때 상태 전환 요청
             fsm.EnterDropping(DropType.Process);
             return;
         }
 
-        // ===== 2 픽업 =====
+        // 픽업
         if (TryPickUp(backPack))
         {
-            // 실제 픽업이 발생했을 때 상태 전환 요청
             fsm.EnterPickingUp(PickupType.ProcessedItem);
             return;
         }
     }
-    
+
     // 드롭 처리    
     bool TryDrop(StackBackPack backPack)
     {
@@ -257,6 +317,35 @@ public class ProcessResource : MonoBehaviour
         }
 
         leverHandle.localPosition = targetPos;
+    }
+
+    private bool IsProcessedFull()
+    {
+        return processingTable.Count >= maxProcessedCapacity;
+    }
+
+    private void HandleProcessingCapacityChanged(string id, int bonus)
+    {
+        if (id != processingAreaID)
+            return;
+
+        bonusProcessedCapacity = bonus;
+
+        maxProcessedCapacity = baseProcessedCapacity + bonusProcessedCapacity;
+
+        Debug.Log($"[ProcessingArea:{id}] 최대 저장량 → {maxProcessedCapacity}");
+    }
+
+    private void HandleProcessTimeChanged(string id, float reduction)
+    {
+        if (id != processingAreaID)
+            return;
+
+        bonusProcessTimeReduction = reduction;
+
+        float final = Mathf.Max(0.1f, baseProcessTime - bonusProcessTimeReduction);
+
+        Debug.Log($"[ProcessingArea:{id}] 가공 시간 → {final}");
     }
 
 }

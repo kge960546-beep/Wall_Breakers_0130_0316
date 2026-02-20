@@ -16,7 +16,8 @@ MonoBehaviour:
   displayName: "\uAC00\uACF5\uAE30\uACC4 \uCD5C\uB300 \uC800\uC7A5\uACF5\uAC04 \uD655\uC7A5"
   description: "\uC800\uC7A5\uACF5\uAC04 +15"
   effects:
-  - upgradeType: 17
+  - upgradeType: 14
     value: 15
+    targetID: Section1
   cost: 0
   section: 1
