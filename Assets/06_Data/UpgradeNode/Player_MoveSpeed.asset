@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeID: PLAYER_MOVE_SPEED
   displayName: "\uD50C\uB808\uC774\uC5B4 \uC774\uB3D9\uC18D\uB3C4 \uC99D\uAC00"
-  description: "\uC774\uB3D9\uC18D\uB3C4 +10%"
+  description: "\uC774\uB3D9\uC18D\uB3C4 +20%"
   effects:
   - upgradeType: 2
-    value: 0.1
+    value: 0.2
+    targetID: 
   cost: 0
   section: 1

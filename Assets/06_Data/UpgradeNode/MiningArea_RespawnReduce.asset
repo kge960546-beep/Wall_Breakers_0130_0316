@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeID: MINING_AREA_RESPAWN_REDUCE
   displayName: "\uCC44\uAD74\uAD6C\uC5ED \uB9AC\uC2A4\uD3F0 \uC2DC\uAC04 \uAC10\uC18C"
-  description: "\uB9AC\uC2A4\uD3F0 \uC2DC\uAC04 -1\uCD08"
+  description: "\uB9AC\uC2A4\uD3F0 \uC2DC\uAC04 -40%"
   effects:
   - upgradeType: 13
-    value: 1
+    value: 2
     targetID: Section1
   cost: 0
   section: 1

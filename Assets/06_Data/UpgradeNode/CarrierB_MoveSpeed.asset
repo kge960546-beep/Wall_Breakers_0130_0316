@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeID: CARRIER_B_MOVE_SPEED
   displayName: "\uC6B4\uBC18\uC778 B \uC774\uB3D9\uC18D\uB3C4 \uC99D\uAC00"
-  description: "\uC774\uB3D9\uC18D\uB3C4 +15%"
+  description: "\uC774\uB3D9\uC18D\uB3C4 +30%"
   effects:
   - upgradeType: 10
     value: 0.15

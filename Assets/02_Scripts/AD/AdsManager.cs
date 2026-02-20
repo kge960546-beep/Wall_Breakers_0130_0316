@@ -48,6 +48,10 @@ public class AdsManager : MonoBehaviour
         adPanel.SetActive(true);
         closeButton.SetActive(false);
 
+        // 브금 재생 일시정지
+        if (SFXManager.instance != null)
+            SFXManager.instance.PauseBGM();
+
         // 영상 재생
         videoPlayer.Stop();
         videoPlayer.clip = selected.videoClip;
@@ -77,6 +81,10 @@ public class AdsManager : MonoBehaviour
         // UI 닫기
         adPanel.SetActive(false);
         closeButton.SetActive(false);
+
+        // BGM 재개
+        if (SFXManager.instance != null)
+            SFXManager.instance.ResumeBGM();
 
         // 보상 지급
         if (pendingReward != null)

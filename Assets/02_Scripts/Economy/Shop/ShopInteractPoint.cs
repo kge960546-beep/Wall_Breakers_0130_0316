@@ -14,7 +14,8 @@ public class ShopInteractPoint : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!other.CompareTag("Player"))
+        if (!other.CompareTag("Player") &&
+            !other.CompareTag("AutoCarrierWorker"))
             return;
 
         shopAnimator.SetBool(IsCheeringHash, true);
@@ -22,7 +23,8 @@ public class ShopInteractPoint : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (!other.CompareTag("Player"))
+        if (!other.CompareTag("Player") &&
+            !other.CompareTag("AutoCarrierWorker"))
             return;
 
         shopAnimator.SetBool(IsCheeringHash, false);

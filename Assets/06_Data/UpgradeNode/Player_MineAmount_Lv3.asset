@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeID: PLAYER_MINE_AMOUNT_LV3
   displayName: "\uCC44\uAD74 \uC218\uB7C9 3\uB2E8\uACC4"
-  description: "1\uD68C \uCC44\uAD74\uB7C9 +2"
+  description: "1\uD68C \uCC44\uAD74\uB7C9 +3"
   effects:
   - upgradeType: 5
-    value: 2
+    value: 3
+    targetID: 
   cost: 0
   section: 1

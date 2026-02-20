@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeID: PLAYER_MINE_SPEED_LV1
   displayName: "\uCC44\uAD74 \uC18D\uB3C4 1\uB2E8\uACC4"
-  description: "\uCC44\uAD74 \uC18D\uB3C4 +10%"
+  description: "\uCC44\uAD74 \uC18D\uB3C4 +15%"
   effects:
   - upgradeType: 3
-    value: 0.1
+    value: 0.15
+    targetID: 
   cost: 0
   section: 1
