@@ -55,6 +55,8 @@ public class MiningNode : MonoBehaviour
 
     private int baseMineAmount = 1;
     private int bonusPlayerMineAmount;   // 플레이어 전용
+                                         
+    private int bonusMinerMineAmount;    // 광부 전용
 
     private void Awake()
     {
@@ -72,6 +74,7 @@ public class MiningNode : MonoBehaviour
             UpgradeEffectManager.Instance.OnMinerMineSpeedChanged += HandleMinerMineSpeedChanged;
 
             UpgradeEffectManager.Instance.OnMiningAreaRespawnTimeChanged += HandleRespawnTimeChanged;
+            UpgradeEffectManager.Instance.OnMinerMineAmountChanged += HandleMinerMineAmountChanged;
         }
     }
 
@@ -84,6 +87,7 @@ public class MiningNode : MonoBehaviour
             UpgradeEffectManager.Instance.OnMinerMineSpeedChanged -= HandleMinerMineSpeedChanged;
 
             UpgradeEffectManager.Instance.OnMiningAreaRespawnTimeChanged -= HandleRespawnTimeChanged;
+            UpgradeEffectManager.Instance.OnMinerMineAmountChanged -= HandleMinerMineAmountChanged;
         }
     }
 
@@ -118,6 +122,14 @@ public class MiningNode : MonoBehaviour
         respawnTime = Mathf.Max(0.5f, baseRespawnTime - bonusRespawnReduction);
 
         Debug.Log($"[MiningArea:{id}] 리스폰 시간 → {respawnTime}");
+    }
+
+    private void HandleMinerMineAmountChanged(string id, int totalBonus)
+    {
+        if (id == minerID)
+        {
+            bonusMinerMineAmount = totalBonus;
+        }
     }
 
     // =========================
@@ -159,8 +171,7 @@ public class MiningNode : MonoBehaviour
 
         mineTimer = 0f;
 
-        // 광부는 채굴량 업그레이드 영향 없음
-        Mine(baseMineAmount);
+        Mine(baseMineAmount + bonusMinerMineAmount);
     }
 
     // =========================

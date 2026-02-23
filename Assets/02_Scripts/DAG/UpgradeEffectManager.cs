@@ -15,19 +15,20 @@ public class UpgradeEffectManager : MonoBehaviour
     [SerializeField] private UpgradeGraphBuilder graphBuilder;
 
     // =========================
-    // 플레이어 누적값
+    // 플레이어 누적값(총합 저장용 변수)
     // =========================
 
     private float totalPlayerMoveSpeed;
     private float totalPlayerMineSpeed;
     private int totalPlayerMaxCarry;
     private float totalPlayerMineAmount;
-    private float totalPlayerSellPrice;
+    private float totalPlayerRawSellPrice;
+    private float totalProcessedSellPrice;
 
     private int totalMinerUnlockCount;
 
     // =========================
-    // ID 기반 자동화 유닛
+    // ID 기반 자동화 유닛(유닛ID와 누적된 강화수치를 개별 적용하기 위함)
     // =========================
 
     private Dictionary<string, float> minerMineSpeedById = new();
@@ -38,6 +39,7 @@ public class UpgradeEffectManager : MonoBehaviour
     private Dictionary<string, float> miningAreaRespawnReduceById = new();
     private Dictionary<string, int> processingMaxCapacityById = new();
     private Dictionary<string, float> processorProcessTimeReduceById = new();
+    private Dictionary<string, int> minerMineAmountById = new();
 
     // =========================
     // 이벤트
@@ -47,7 +49,8 @@ public class UpgradeEffectManager : MonoBehaviour
     public event Action<float> OnPlayerMineSpeedChanged;
     public event Action<int> OnPlayerMaxCarryChanged;
     public event Action<float> OnPlayerMineAmountChanged;
-    public event Action<float> OnPlayerSellPriceChanged;
+    public event Action<float> OnPlayerRawSellPriceChanged;
+    public event Action<float> OnProcessedSellPriceChanged;
 
     public event Action<int> OnMinerUnlockChanged;
     public event Action<string, float> OnMinerMineSpeedChanged;
@@ -62,6 +65,8 @@ public class UpgradeEffectManager : MonoBehaviour
     public event Action<string, int> OnProcessingMaxCapacityChanged;
     public event Action<string, float> OnProcessorProcessTimeChanged;
 
+    public event Action<string, int> OnMinerMineAmountChanged;
+
     private void Awake()
     {
         if (Instance == null)
@@ -75,6 +80,11 @@ public class UpgradeEffectManager : MonoBehaviour
         RecalculateAllEffects();
     }
 
+    // 기존 누적값 초기화
+    // 현재 활성화된 노드 가져오기
+    // 각 노드의 effect순회
+    // Accumulate로 누적
+    // Dispatch로 통보하는 형태
     public void RecalculateAllEffects()
     {
         ResetAllTotals();
@@ -117,8 +127,12 @@ public class UpgradeEffectManager : MonoBehaviour
                 totalPlayerMineAmount += effect.value;
                 break;
 
-            case UpgradeType.PlayerSellPrice:
-                totalPlayerSellPrice += effect.value;
+            case UpgradeType.PlayerRawSellPrice:
+                totalPlayerRawSellPrice += effect.value;
+                break;
+
+            case UpgradeType.ProcessedSellPrice:
+                totalProcessedSellPrice += effect.value;
                 break;
 
             case UpgradeType.MinerUnlock:
@@ -201,16 +215,30 @@ public class UpgradeEffectManager : MonoBehaviour
                     processorProcessTimeReduceById[effect.targetID] += effect.value;
                 }
                 break;
+
+            case UpgradeType.MinerMineAmount:
+                if (!string.IsNullOrEmpty(effect.targetID))
+                {
+                    if (!minerMineAmountById.ContainsKey(effect.targetID))
+                        minerMineAmountById[effect.targetID] = 0;
+
+                    minerMineAmountById[effect.targetID] += (int)effect.value;
+                }
+                break;
         }
     }
 
+    // 기존 강화 누적값 전부 0으로 초기화
+    // 증분 방식이 아닌 재계산 방식이라
+    // 매번 처음부터 다시 합산하는 형태
     private void ResetAllTotals()
     {
         totalPlayerMoveSpeed = 0f;
         totalPlayerMineSpeed = 0f;
         totalPlayerMaxCarry = 0;
         totalPlayerMineAmount = 0f;
-        totalPlayerSellPrice = 0f;
+        totalPlayerRawSellPrice = 0f;
+        totalProcessedSellPrice = 0f;
 
         totalMinerUnlockCount = 0;
 
@@ -222,15 +250,18 @@ public class UpgradeEffectManager : MonoBehaviour
         miningAreaRespawnReduceById.Clear();
         processingMaxCapacityById.Clear();
         processorProcessTimeReduceById.Clear();
+        minerMineAmountById.Clear();
     }
 
+    // 이벤트 통보
     private void DispatchAllEvents()
     {
         OnPlayerMoveSpeedChanged?.Invoke(totalPlayerMoveSpeed);
         OnPlayerMineSpeedChanged?.Invoke(totalPlayerMineSpeed);
         OnPlayerMaxCarryChanged?.Invoke(totalPlayerMaxCarry);
         OnPlayerMineAmountChanged?.Invoke(totalPlayerMineAmount);
-        OnPlayerSellPriceChanged?.Invoke(totalPlayerSellPrice);
+        OnPlayerRawSellPriceChanged?.Invoke(totalPlayerRawSellPrice);
+        OnProcessedSellPriceChanged?.Invoke(totalProcessedSellPrice);
 
         OnMinerUnlockChanged?.Invoke(totalMinerUnlockCount);
 
@@ -260,5 +291,8 @@ public class UpgradeEffectManager : MonoBehaviour
 
         foreach (var pair in processorProcessTimeReduceById.ToList())
             OnProcessorProcessTimeChanged?.Invoke(pair.Key, pair.Value);
+
+        foreach (var pair in minerMineAmountById)
+            OnMinerMineAmountChanged?.Invoke(pair.Key, pair.Value);
     }
 }
