@@ -13,6 +13,9 @@ public class PlayerAnimator : MonoBehaviour
     private Animator animator;
     private PlayerFSM fsm;
     private PlayerMove move;
+    private ToolsEquip toolsEquip;
+
+    private bool trailActive;
 
     private readonly int IsMovingHash = Animator.StringToHash("IsMoving");
     private readonly int IsMiningHash = Animator.StringToHash("IsMining");
@@ -22,6 +25,7 @@ public class PlayerAnimator : MonoBehaviour
         animator = GetComponent<Animator>();
         fsm = GetComponent<PlayerFSM>();
         move = GetComponent<PlayerMove>();
+        toolsEquip = GetComponent<ToolsEquip>();
     }
 
     private void OnEnable()
@@ -49,6 +53,10 @@ public class PlayerAnimator : MonoBehaviour
         UpdateLookDirection();
     }
 
+    private void LateUpdate()
+    {
+        HandleMiningTrail();
+    }
     /// <summary>
     /// Idle ↔ Running 제어
     /// (Free 상태에서만 이동 애니메이션 허용)
@@ -102,5 +110,46 @@ public class PlayerAnimator : MonoBehaviour
             targetRot,
             Time.deltaTime * 10f
         );
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void HandleMiningTrail()
+    {
+        if(fsm.CurrentStateType != PlayerStateType.Mining)
+        {
+            if(trailActive)
+            {
+                toolsEquip.TrailOff();
+                trailActive = false;
+            }
+            return;
+        }
+
+        AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+
+        if (!state.IsName("Chopping")) 
+            return;
+
+        float time = state.normalizedTime;
+
+        // 루프 애니메이션 보정
+        if (time > 1f)
+            time -= Mathf.Floor(time);
+
+        // 실제 타격 구간
+        bool shouldTrail = time >= 0f && time <= 0.3f;
+
+        if(shouldTrail && !trailActive)
+        {
+            toolsEquip.TrailOn();
+            trailActive = true;
+        }
+        else if (!shouldTrail && trailActive)
+        {
+            toolsEquip.TrailOff();
+            trailActive = false;
+        }
     }
 }
