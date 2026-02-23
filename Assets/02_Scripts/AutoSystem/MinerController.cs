@@ -13,6 +13,9 @@ public class MinerController : MonoBehaviour
 
     public string MinerID => minerID;
 
+    private int mineAmountBonus = 0;
+    public int MineAmountBonus => mineAmountBonus;
+
     private void Start()
     {
         gameObject.SetActive(false);
@@ -20,6 +23,7 @@ public class MinerController : MonoBehaviour
         if (UpgradeEffectManager.Instance != null)
         {
             UpgradeEffectManager.Instance.OnMinerUnlockChanged += HandleMinerUnlockChanged;
+            UpgradeEffectManager.Instance.OnMinerMineAmountChanged += HandleMinerMineAmountChanged;
         }
     }
 
@@ -28,6 +32,15 @@ public class MinerController : MonoBehaviour
         if (UpgradeEffectManager.Instance != null)
         {
             UpgradeEffectManager.Instance.OnMinerUnlockChanged -= HandleMinerUnlockChanged;
+            UpgradeEffectManager.Instance.OnMinerMineAmountChanged -= HandleMinerMineAmountChanged;
+        }
+    }
+
+    private void HandleMinerMineAmountChanged(string id, int bonus)
+    {
+        if (id == minerID)
+        {
+            mineAmountBonus = bonus;
         }
     }
 

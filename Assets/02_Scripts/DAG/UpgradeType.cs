@@ -14,7 +14,7 @@ public enum UpgradeType
     PlayerMineSpeed,
     PlayerMaxCarry,
     PlayerMineAmount,
-    PlayerSellPrice,
+    PlayerRawSellPrice,
 
     // =========================
     // 자동화 - 광부
@@ -44,6 +44,9 @@ public enum UpgradeType
     // =========================
     // Section1 최종 효과
     // =========================
-    MiningOneTimeAmountIncrease,
-    ProcessedItemSellPriceIncrease
+    MinerMineAmount,
+    ProcessedItemSellPriceIncrease,
+
+    // 가공품 판매가격증가
+    ProcessedSellPrice
 }

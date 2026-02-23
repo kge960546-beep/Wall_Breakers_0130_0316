@@ -26,17 +26,26 @@ public class SellManager : MonoBehaviour
     // =========================
     // 업그레이드 관련 추가
     // =========================
-    private float bonusSellPrice = 0f;
+    private float playerRawSellBonus = 0f;
+    private float processedSellBonus = 0f;
 
     private void OnDisable()
     {
         if (UpgradeEffectManager.Instance != null)
-            UpgradeEffectManager.Instance.OnPlayerSellPriceChanged -= HandleSellPriceChanged;
+        {
+            UpgradeEffectManager.Instance.OnPlayerRawSellPriceChanged -= HandlePlayerRawSellChanged;
+            UpgradeEffectManager.Instance.OnProcessedSellPriceChanged -= HandleProcessedSellChanged;
+        }
     }
 
-    private void HandleSellPriceChanged(float totalBonus)
+    private void HandlePlayerRawSellChanged(float totalBonus)
     {
-        bonusSellPrice = totalBonus;
+        playerRawSellBonus = totalBonus;
+    }
+
+    private void HandleProcessedSellChanged(float totalBonus)
+    {
+        processedSellBonus = totalBonus;
     }
 
     private void Start()
@@ -47,7 +56,10 @@ public class SellManager : MonoBehaviour
         ValidateSetup();
 
         if (UpgradeEffectManager.Instance != null)
-            UpgradeEffectManager.Instance.OnPlayerSellPriceChanged += HandleSellPriceChanged;
+        {
+            UpgradeEffectManager.Instance.OnPlayerRawSellPriceChanged += HandlePlayerRawSellChanged;
+            UpgradeEffectManager.Instance.OnProcessedSellPriceChanged += HandleProcessedSellChanged;
+        }
     }
 
     private void ValidateSetup()
@@ -102,7 +114,24 @@ public class SellManager : MonoBehaviour
             ItemDataSO itemData = mineral.mineralData;
 
             float sellDuration = itemData.sellDuration * shopData.GetSpeedMultiplier();
-            int earnedCredits = Mathf.RoundToInt(itemData.sellPrice * (1f + bonusSellPrice));
+
+            // ---------------------------
+            // 판매 보너스 계산 분기
+            // ---------------------------
+            float finalBonus = 0f;
+
+            if (itemData.itemType == ItemType.RawMaterial)
+            {
+                // 플레이어 직접 판매 원석 전용
+                finalBonus = playerRawSellBonus;
+            }
+            else if (itemData.itemType == ItemType.processed)
+            {
+                // 가공품 전체 판매 증가
+                finalBonus = processedSellBonus;
+            }
+
+            int earnedCredits = Mathf.RoundToInt(itemData.sellPrice * (1f + finalBonus));
 
             sellUI.UpdateDisplay(itemData, sellDuration, earnedCredits);
 
@@ -143,10 +172,21 @@ public class SellManager : MonoBehaviour
         if (mineral == null) return;
 
         ItemDataSO itemData = mineral.mineralData;
-
         if (itemData == null) return;
 
-        int earnedCredits = Mathf.RoundToInt(itemData.sellPrice * (1f + bonusSellPrice));
+        // ---------------------------
+        // 판매 보너스 계산 분기
+        // ---------------------------
+        float finalBonus = 0f;
+
+        if (itemData.itemType == ItemType.processed)
+        {
+            // 가공품 전체 판매 증가 적용
+            finalBonus = processedSellBonus;
+        }
+        // RawMaterial은 플레이어 전용이므로 적용 안함
+
+        int earnedCredits = Mathf.RoundToInt(itemData.sellPrice * (1f + finalBonus));
 
         creditSpawner.SpawnCredit(earnedCredits);
         OnItemSold?.Invoke(itemData, earnedCredits);
