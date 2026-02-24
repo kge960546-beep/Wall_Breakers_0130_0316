@@ -37,6 +37,10 @@ public class MiningNode : MonoBehaviour
     [Header("µ•¿Ã≈Õ ø¨∞·")]
     [SerializeField] private int sectionIndex;
 
+    [Header("VFX")]
+    [SerializeField] private MiningEffectController effectController;
+    [SerializeField] private Transform mineralPoint;
+
     private float mineTimer;
 
     // =========================
@@ -169,6 +173,12 @@ public class MiningNode : MonoBehaviour
 
     private void Mine(int totalAmount)
     {
+        // √§±º ≈∏∞› ¿Ã∆Â∆Æ √ﬂ∞°
+        if(effectController != null)
+        {
+            effectController.PlayHit(mineralPoint.position);
+        }
+
         for (int i = 0; i < totalAmount; i++)
         {
             if (currentMineCount >= maxMineCount)
@@ -192,6 +202,12 @@ public class MiningNode : MonoBehaviour
 
         if (currentMineCount == maxMineCount)
         {
+            // ±§π∞ ∆ƒ±´ ¿Ã∆Â∆Æ √ﬂ∞°
+            if(effectController != null)
+            {
+                effectController.PlayDestroy(mineralPoint.position);
+            }
+
             foreach (GameObject mineral in mineMineral)
                 mineral.SetActive(false);
 

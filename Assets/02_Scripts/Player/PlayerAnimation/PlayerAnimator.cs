@@ -113,7 +113,7 @@ public class PlayerAnimator : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// √§±§ ¿Ã∆Â∆Æ
     /// </summary>
     private void HandleMiningTrail()
     {
