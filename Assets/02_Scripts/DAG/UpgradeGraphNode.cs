@@ -23,6 +23,9 @@ public class UpgradeGraphNode<T>
     // 노드 활성 상태 (외부에서 직접 수정 불가)
     public bool IsActivated { get; private set; }
 
+    // 섹션 인덱스 추가
+    public int SectionIndex { get; set; }
+
     /// <summary>
     /// 생성자
     /// 노드 생성 시 반드시 데이터가 정의되어야 함

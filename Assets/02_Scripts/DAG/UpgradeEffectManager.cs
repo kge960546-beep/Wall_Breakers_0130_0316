@@ -92,7 +92,7 @@ public class UpgradeEffectManager : MonoBehaviour
         if (graphBuilder == null)
             return;
 
-        var activated = graphBuilder.dag.GetActivatedNodes();
+        var activated = graphBuilder.DAG.GetActivatedNodes();
 
         foreach (var node in activated)
         {
