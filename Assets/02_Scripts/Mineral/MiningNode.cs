@@ -189,6 +189,7 @@ public class MiningNode : MonoBehaviour
         {
             effectController.PlayHit(mineralPoint.position);
         }
+        SFXManager.instance.PlayOnSFX("mineralMiner", transform.position);
 
         for (int i = 0; i < totalAmount; i++)
         {
@@ -218,6 +219,7 @@ public class MiningNode : MonoBehaviour
             {
                 effectController.PlayDestroy(mineralPoint.position);
             }
+            SFXManager.instance.PlayOnSFX("Break2", transform.position);
 
             foreach (GameObject mineral in mineMineral)
                 mineral.SetActive(false);

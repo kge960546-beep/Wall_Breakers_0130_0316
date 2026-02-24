@@ -133,6 +133,8 @@ public class ProcessResource : MonoBehaviour
         stockingTable.Add(rawMaterial.transform);
         rawMaterial.transform.SetParent(stockingPoint, true);
 
+        SFXManager.instance.PlayOnSFX("19987__acclivity__fingerplop1", stockingPoint.position);
+
         if (rawMaterial.TryGetComponent<Collider>(out var col)) col.enabled = false;
         if (rawMaterial.TryGetComponent<Rigidbody>(out var rb)) Destroy(rb);
     }
@@ -154,6 +156,8 @@ public class ProcessResource : MonoBehaviour
     IEnumerator SuccessProcessed(GameObject rawMaterial, ItemDataSO data)
     {
         isProcessing = true;
+
+        SFXManager.instance.PlayOnSFX("232869__lagezon__cardboard_factory_machine-004", transform.position);
 
         float finalProcessTime = Mathf.Max(0.1f, baseProcessTime - bonusProcessTimeReduction);
         float halfTime = finalProcessTime * 0.5f;
@@ -192,6 +196,8 @@ public class ProcessResource : MonoBehaviour
         {
             GameObject processedItem =
                 PoolManager.instance.Get(data.processedResult.mineralPrefab, processingPoint.position, Quaternion.identity);
+
+            SFXManager.instance.PlayOnSFX("149270__organicmanpl__ding-1", processingPoint.position);
 
             if (SceneGameDataManager.instance != null)
                 SceneGameDataManager.instance.sectionProcessMineralCount[sectionIndex] += 1;

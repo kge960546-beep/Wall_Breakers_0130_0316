@@ -20,7 +20,7 @@ public class ResourcesManager : MonoBehaviour
         PoolManager.instance.CreatePool(ironPrefab, 90);
         PoolManager.instance.CreatePool(goldPrefab, 90);
         PoolManager.instance.CreatePool(moneyPrefab, 90);
-
-        Debug.Log("풀링 완료");
+        
+        Utils.DebugLog("풀링 완료");
     }
 }

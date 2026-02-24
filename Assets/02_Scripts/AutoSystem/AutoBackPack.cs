@@ -79,6 +79,8 @@ public class AutoBackPack : MonoBehaviour
         if (item.TryGetComponent<Collider>(out var col))
             col.enabled = false;
 
+        SFXManager.instance.PlayOnSFX("Blop Sound", transform.position);
+
         if (item.TryGetComponent<Rigidbody>(out var rb))
         {
             rb.isKinematic = true;
