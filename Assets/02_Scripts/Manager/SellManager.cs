@@ -148,6 +148,8 @@ public class SellManager : MonoBehaviour
 
             if (soldItem != null)
             {
+                SFXManager.instance.PlayOnSFX("209578__zott820__cash-register-purchase", transform.position);
+
                 creditSpawner.SpawnCredit(earnedCredits);
                 OnItemSold?.Invoke(itemData, earnedCredits);
 
