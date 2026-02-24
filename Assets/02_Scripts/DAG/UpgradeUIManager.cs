@@ -6,36 +6,35 @@ public class UpgradeUIManager : MonoBehaviour
     [Header("Graph")]
     public UpgradeGraphBuilder graphBuilder;
 
-    [Header("UI")]
-    public GameObject upgradePanel;   // 업그레이드 패널 오브젝트
+    [Header("Section Panels (순서대로 Section0~Section4)")]
+    [SerializeField] private GameObject[] sectionPanels;
+
+    private int currentSectionIndex = 0;
 
     private void Start()
     {
-        // 시작 시 패널 닫혀있도록
-        if (upgradePanel != null)
-            upgradePanel.SetActive(false);
+        for (int i = 0; i < sectionPanels.Length; i++)
+        {
+            sectionPanels[i].SetActive(false);
+        }
+
+        currentSectionIndex = 0;
     }
 
-    // ===============================
     // 패널 열기
-    // ===============================
     public void OpenUpgradePanel()
     {
-        if (upgradePanel == null) return;
+        if (sectionPanels.Length == 0) return;
 
-        upgradePanel.SetActive(true);
-        Debug.Log("Upgrade Panel Opened");
+        sectionPanels[currentSectionIndex].SetActive(true);
     }
 
-    // ===============================
     // 패널 닫기
-    // ===============================
     public void CloseUpgradePanel()
     {
-        if (upgradePanel == null) return;
+        if (sectionPanels.Length == 0) return;
 
-        upgradePanel.SetActive(false);
-        Debug.Log("Upgrade Panel Closed");
+        sectionPanels[currentSectionIndex].SetActive(false);
     }
 
     // ===============================
@@ -43,7 +42,7 @@ public class UpgradeUIManager : MonoBehaviour
     // ===============================
     public void PrintActivatedNodes()
     {
-        var activated = graphBuilder.dag.GetActivatedNodes();
+        var activated = graphBuilder.DAG.GetActivatedNodes();
 
         Debug.Log("===== 현재 활성 노드 목록 =====");
 
@@ -53,5 +52,51 @@ public class UpgradeUIManager : MonoBehaviour
         }
 
         Debug.Log("총 활성 개수 : " + activated.Count);
+    }
+
+    // ===============================
+    // 섹션 완료 체크
+    // ===============================
+    public bool IsSectionComplete(int sectionIndex)
+    {
+        var nodes = graphBuilder.DAG.Nodes;
+
+        foreach (var node in nodes)
+        {
+            if (node.SectionIndex == sectionIndex)
+            {
+                if (!node.IsActivated)
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    // ===============================
+    // 다음 섹션 열기
+    // ===============================
+    public void OpenNextSection()
+    {
+        if (!IsSectionComplete(currentSectionIndex))
+            return;
+
+        int nextIndex = currentSectionIndex + 1;
+
+        if (nextIndex >= sectionPanels.Length)
+        {
+            Debug.Log("모든 섹션 완료");
+            return;
+        }
+
+        // 현재 섹션 비활성화
+        sectionPanels[currentSectionIndex].SetActive(false);
+
+        // 다음 섹션 활성화
+        sectionPanels[nextIndex].SetActive(true);
+
+        currentSectionIndex = nextIndex;
+
+        Debug.Log("다음 섹션 오픈: " + currentSectionIndex);
     }
 }

@@ -33,10 +33,22 @@ public class ResourceTable : MonoBehaviour
 
     private void OnEnable()
     {
+        Debug.Log($"[OnEnable] {targetID}");
+    }
+    private IEnumerator Start()
+    {
+        yield return null; // 한 프레임 대기
+
         if (UpgradeEffectManager.Instance != null)
         {
             UpgradeEffectManager.Instance.OnMiningAreaMaxStorageChanged += HandleMaxStorageChanged;
             UpgradeEffectManager.Instance.RecalculateAllEffects();
+
+            Debug.Log($"[구독 완료] {targetID}");
+        }
+        else
+        {
+            Debug.LogError($"[구독 실패] EffectManager 없음 - {targetID}");
         }
     }
 
@@ -149,6 +161,8 @@ public class ResourceTable : MonoBehaviour
     }
     private void HandleMaxStorageChanged(string id, int bonus)
     {
+        Debug.Log($"[이벤트 수신 시도] 나는 {targetID}, 받은ID:{id}");
+
         if (id != targetID) return;
 
         bonusCapacity = bonus;

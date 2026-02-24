@@ -45,12 +45,17 @@ public class ProcessResource : MonoBehaviour
         baseProcessTime = processTime;
     }
 
-    private void Start()
+    private IEnumerator Start()
     {
+        yield return null; // 한 프레임 대기
+
         if (UpgradeEffectManager.Instance != null)
         {
             UpgradeEffectManager.Instance.OnProcessingMaxCapacityChanged += HandleProcessingCapacityChanged;
             UpgradeEffectManager.Instance.OnProcessorProcessTimeChanged += HandleProcessTimeChanged;
+
+            // 구독 후 즉시 현재 상태 반영
+            UpgradeEffectManager.Instance.RecalculateAllEffects();
         }
     }
 
@@ -149,15 +154,15 @@ public class ProcessResource : MonoBehaviour
     IEnumerator SuccessProcessed(GameObject rawMaterial, ItemDataSO data)
     {
         isProcessing = true;
-        yield return StartCoroutine(MoveLeverY(leverDownY));
 
-        int resourceQuantity = data.inputAmountPerProcess;       
+        float finalProcessTime = Mathf.Max(0.1f, baseProcessTime - bonusProcessTimeReduction);
+        float halfTime = finalProcessTime * 0.5f;
+
+        int resourceQuantity = data.inputAmountPerProcess;
         if (resourceQuantity <= 0) resourceQuantity = 1;
 
-        if(SceneGameDataManager.instance != null)
-        {
+        if (SceneGameDataManager.instance != null)
             SceneGameDataManager.instance.sectionMineralCount[sectionIndex] -= resourceQuantity;
-        }
 
         List<GameObject> destroyResources = new List<GameObject>();
         for (int i = 0; i < resourceQuantity; i++)
@@ -173,28 +178,27 @@ public class ProcessResource : MonoBehaviour
         foreach (var obj in destroyResources)
         {
             if (data.mineralPrefab != null)
-            {
                 PoolManager.instance.ReturnIt(data.mineralPrefab, obj);
-            }
         }
 
-        float finalProcessTime = Mathf.Max(0.1f, baseProcessTime - bonusProcessTimeReduction);
-        yield return new WaitForSeconds(finalProcessTime);
+        // 레버 내림 (총시간의 절반)
+        yield return StartCoroutine(MoveLeverY(leverDownY, halfTime));
 
+        // 레버 올림 (총시간의 절반)
+        yield return StartCoroutine(MoveLeverY(leverUpY, halfTime));
+
+        // 결과 생성
         if (data.processedResult != null && data.processedResult.mineralPrefab != null)
-        {            
-            GameObject processedItem = PoolManager.instance.Get(data.processedResult.mineralPrefab, processingPoint.position, Quaternion.identity);
+        {
+            GameObject processedItem =
+                PoolManager.instance.Get(data.processedResult.mineralPrefab, processingPoint.position, Quaternion.identity);
 
             if (SceneGameDataManager.instance != null)
-            {
                 SceneGameDataManager.instance.sectionProcessMineralCount[sectionIndex] += 1;
-            }
-            
+
             processingTable.Add(processedItem.transform);
             processedItem.transform.SetParent(processingPoint, true);
         }
-
-        yield return StartCoroutine(MoveLeverY(leverUpY));
 
         isProcessing = false;
     }
@@ -303,16 +307,18 @@ public class ProcessResource : MonoBehaviour
     }
 
     // 레버 이동 코루틴
-    IEnumerator MoveLeverY(float targetY)
+    IEnumerator MoveLeverY(float targetY, float duration)
     {
         Vector3 startPos = leverHandle.localPosition;
         Vector3 targetPos = new Vector3(startPos.x, targetY, startPos.z);
 
-        while (Mathf.Abs(leverHandle.localPosition.y - targetY) > 0.001f)
-        {
-            leverHandle.localPosition =
-                Vector3.Lerp(leverHandle.localPosition, targetPos, Time.deltaTime * leverMoveSpeed);
+        float elapsed = 0f;
 
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            leverHandle.localPosition = Vector3.Lerp(startPos, targetPos, t);
             yield return null;
         }
 
@@ -338,14 +344,14 @@ public class ProcessResource : MonoBehaviour
 
     private void HandleProcessTimeChanged(string id, float reduction)
     {
+        Debug.Log($"[ProcessTime 이벤트 수신] id:{id} reduction:{reduction} / 내ID:{processingAreaID}");
+
         if (id != processingAreaID)
             return;
 
         bonusProcessTimeReduction = reduction;
 
-        float final = Mathf.Max(0.1f, baseProcessTime - bonusProcessTimeReduction);
-
-        Debug.Log($"[ProcessingArea:{id}] 가공 시간 → {final}");
+        Debug.Log($"[적용됨] bonusProcessTimeReduction = {bonusProcessTimeReduction}");
     }
 
 }

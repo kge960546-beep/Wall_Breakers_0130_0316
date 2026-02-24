@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77371abb074793c41bfca95414b04fb3, type: 3}
+  m_Name: Miner1_MineSpeed_S3
+  m_EditorClassIdentifier: 
+  upgradeID: MINER_1_MINE_SPEED_S3
+  displayName: "\uAD11\uBD80 1 \uCC44\uAD74\uC18D\uB3C4 \uC99D\uAC00"
+  description: "\uAD11\uBD80 1 \uCC44\uAD74\uC18D\uB3C4 +40%"
+  effects:
+  - upgradeType: 8
+    value: 0.4
+    targetID: MINER_5
+  cost: 0
+  section: 3

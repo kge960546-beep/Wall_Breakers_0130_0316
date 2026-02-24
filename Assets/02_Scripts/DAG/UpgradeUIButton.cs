@@ -13,8 +13,11 @@ public class UpgradeUIButton : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log($"[UIButton] GraphBuilder ID: {graphBuilder.GetInstanceID()}");
+        Debug.Log($"[UIButton] TargetSO: {targetSO.upgradeID}");
+
         // 노드 찾기
-        if (graphBuilder.dag.TryGetNode(targetSO.upgradeID, out node) == false)
+        if (graphBuilder.DAG.TryGetNode(targetSO.upgradeID, out node) == false)
         {
             Debug.LogError("노드 찾기 실패: " + targetSO.upgradeID);
         }
@@ -85,6 +88,13 @@ public class UpgradeUIButton : MonoBehaviour
 
             // 버튼 비활성화
             GetComponent<Button>().interactable = false;
+
+            int sectionIndex = node.SectionIndex;
+
+            if (uiManager.IsSectionComplete(sectionIndex))
+            {
+                uiManager.OpenNextSection();
+            }
         }
         else
         {

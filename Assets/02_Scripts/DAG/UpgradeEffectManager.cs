@@ -87,15 +87,24 @@ public class UpgradeEffectManager : MonoBehaviour
     // Dispatch로 통보하는 형태
     public void RecalculateAllEffects()
     {
+        Debug.Log($"[EffectManager] GraphBuilder ID: {graphBuilder.GetInstanceID()}");
+
         ResetAllTotals();
 
         if (graphBuilder == null)
+        {
+            Debug.LogError("[EffectManager] graphBuilder null");
             return;
+        }
 
-        var activated = graphBuilder.dag.GetActivatedNodes();
+        var activated = graphBuilder.DAG.GetActivatedNodes();
+
+        Debug.Log($"[EffectManager] 활성 노드 개수: {activated.Count}");
 
         foreach (var node in activated)
         {
+            Debug.Log($"[EffectManager] 활성노드: {node.Data.upgradeID}");
+
             foreach (var effect in node.Data.effects)
             {
                 AccumulateEffect(effect);
@@ -107,7 +116,7 @@ public class UpgradeEffectManager : MonoBehaviour
 
     private void AccumulateEffect(UpgradeEffect effect)
     {
-        Debug.Log($"[Effect 감지] 타입:{effect.upgradeType}, ID:{effect.targetID}, 값:{effect.value}");
+        Debug.Log($"[Effect 감지 RAW] 타입:{effect.upgradeType}, targetID:'{effect.targetID}', Length:{effect.targetID?.Length}");
 
         switch (effect.upgradeType)
         {
