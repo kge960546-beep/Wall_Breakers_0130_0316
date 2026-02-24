@@ -7,6 +7,7 @@ public class PoolManager : MonoBehaviour
 
     //Ç®¸µÀ» À§ÇÑ µñ¼Å³Ê¸®
     private Dictionary<GameObject, Queue<GameObject>> poolDictionary = new Dictionary<GameObject, Queue<GameObject>>();
+
     private void Awake()
     {
         if (instance == null) 
@@ -49,15 +50,15 @@ public class PoolManager : MonoBehaviour
         if (poolDictionary[poolPrefab].Count > 0)
         {
             obj = poolDictionary[poolPrefab].Dequeue();
-            obj.transform.position = position;
-            obj.transform.rotation = rotation;
-            obj.transform.SetParent(null);
-            obj.SetActive(true);
         }
         else
         {
-            obj = Instantiate(poolPrefab, position, rotation);
+            obj = Instantiate(poolPrefab);
         }
+
+        obj.transform.SetPositionAndRotation(position, rotation);
+        obj.transform.SetParent(null);
+        obj.SetActive(true);
 
         return obj;
     }
