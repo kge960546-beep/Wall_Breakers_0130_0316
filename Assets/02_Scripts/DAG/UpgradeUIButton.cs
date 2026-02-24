@@ -13,6 +13,9 @@ public class UpgradeUIButton : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log($"[UIButton] GraphBuilder ID: {graphBuilder.GetInstanceID()}");
+        Debug.Log($"[UIButton] TargetSO: {targetSO.upgradeID}");
+
         // 노드 찾기
         if (graphBuilder.DAG.TryGetNode(targetSO.upgradeID, out node) == false)
         {

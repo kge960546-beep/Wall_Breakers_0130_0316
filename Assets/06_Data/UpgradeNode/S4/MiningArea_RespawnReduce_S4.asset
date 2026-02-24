@@ -18,6 +18,6 @@ MonoBehaviour:
   effects:
   - upgradeType: 13
     value: 2
-    targetID: Section1
+    targetID: Section4
   cost: 0
   section: 4
