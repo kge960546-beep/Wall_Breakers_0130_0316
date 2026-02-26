@@ -19,7 +19,7 @@ MonoBehaviour:
   sellDuration: 2.5
   mineralPrefab: {fileID: 919132149155446097, guid: ecc0a486916caa34faefc78445de1b0d,
     type: 3}
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: f576b2c2f0fb5da4aa1abb5ec12de19e, type: 3}
   inputAmountPerProcess: 0
   processedResult: {fileID: 0}
   backPackRotationOffset: {x: 0, y: 90, z: 0}
