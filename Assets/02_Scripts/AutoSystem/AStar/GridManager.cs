@@ -40,25 +40,25 @@ public class GridManager : MonoBehaviour
         return new Vector3(worldX, sampleY, worldZ);
     }
 
-    private void OnDrawGizmos()
-    {
-        if(blocked == null)
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireCube(origin + new Vector3(width * cellSize / 2f, sampleY, height * cellSize / 2f),
-                                         new Vector3(width * cellSize, 0.1f, height * cellSize));
-            return;
-        }
-    
-        for(int y = 0; y < height; y++)
-        {
-            for(int x = 0; x < width; x++)
-            {
-                Gizmos.color = blocked[y, x] ? Color.red : Color.green;
-                Vector3 center = CellCenter(x, y);
-                Gizmos.DrawCube(center, halfExtents * 2f);
-                Gizmos.DrawWireCube(center, halfExtents * 2f);
-            }
-        }
-    }
+    //private void OnDrawGizmos()
+    //{
+    //    if(blocked == null)
+    //    {
+    //        Gizmos.color = Color.yellow;
+    //        Gizmos.DrawWireCube(origin + new Vector3(width * cellSize / 2f, sampleY, height * cellSize / 2f),
+    //                                     new Vector3(width * cellSize, 0.1f, height * cellSize));
+    //        return;
+    //    }
+    //
+    //    for(int y = 0; y < height; y++)
+    //    {
+    //        for(int x = 0; x < width; x++)
+    //        {
+    //            Gizmos.color = blocked[y, x] ? Color.red : Color.green;
+    //            Vector3 center = CellCenter(x, y);
+    //            Gizmos.DrawCube(center, halfExtents * 2f);
+    //            Gizmos.DrawWireCube(center, halfExtents * 2f);
+    //        }
+    //    }
+    //}
 }

@@ -20,15 +20,28 @@ public class MeshBake : MonoBehaviour
         // ㄴ RequireComponent를 사용하여 스크립트를 넣으면 넣어지게 구성
         MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter> ();
 
+        foreach (var filter in meshFilters) 
+        {
+            if(filter.gameObject != gameObject)
+            {
+                GetComponent<MeshRenderer>().sharedMaterial = filter.GetComponent<MeshRenderer>().sharedMaterial;
+                break;
+            }
+        }
+
         //CombineInstance[]: Mesh들을 합칠때 요구하는 입력 구조로 다른 인스턴스와 병합하여 결합된 메시를 만들 단일 메시를 설명하는 구조체
         //mesh: 실제 데이터
         //transform (mesh가 어디에 어떤 크기와 회전으로 있었는지)
         CombineInstance[] instances = new CombineInstance[meshFilters.Length];
+
+        Matrix4x4 myTransform = transform.worldToLocalMatrix;
         
 
         //각 MeshFilter를 CombineInstance로 변환하고 자식 비활성화(원본이라 생각함)
         for(int i = 0; i < meshFilters.Length; i++)
         {
+            if (meshFilters[i] == GetComponent<MeshFilter>()) continue;
+
             var meshFilter = meshFilters[i];
             instances[i] = new CombineInstance
             {
@@ -41,7 +54,7 @@ public class MeshBake : MonoBehaviour
                 //   수학적으로 약속된 형태가 4x4 행렬이다.
                 //모든 메시를 같은 좌표계로 합쳐야해서 행렬함수가 필요하다
                 //메시 자체를 이동시키는게 아닌 버텍스에 행렬을 곱해서 합쳐진 메시 안에서 같은 위치에 있도록 굽는 방식
-                transform = meshFilter.transform.localToWorldMatrix,
+                transform = myTransform * meshFilter.transform.localToWorldMatrix,
             }; 
             
             meshFilter.gameObject.SetActive (false);
@@ -50,11 +63,30 @@ public class MeshBake : MonoBehaviour
         //합쳐질 새 메시 생성
         Mesh combinedMesh = new Mesh ();
 
+        combinedMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+
         //매시 합치기
         combinedMesh.CombineMeshes (instances);
 
         //부모 MeshFilter에 결과물 넣기
         gameObject.GetComponent<MeshFilter>().sharedMesh = combinedMesh;
+
+        /*
+         추가하고 다시 넣은 이유
+        콜라이더를 미리 붙여두지 않을때가 많아서 좀더 확실하고 안전하게 콜라이더 추가를 하기위해 !=가 아닌
+        ==를 사용해서 추가한다음 새로고침 하는 방식으로 구현함
+         */
+        //콜라이더 없으면 추가하기
+        MeshCollider meshCollider = GetComponent<MeshCollider> ();
+        if (meshCollider == null)
+        {
+            meshCollider = gameObject.AddComponent<MeshCollider>();
+        }
+
+        //콜라이더를 비우고 다시 넣기
+        meshCollider.sharedMesh = null;
+        meshCollider.sharedMesh = combinedMesh;
+
         gameObject.SetActive (true);
     }
 }
