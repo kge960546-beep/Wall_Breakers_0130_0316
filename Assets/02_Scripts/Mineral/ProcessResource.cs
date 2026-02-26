@@ -39,6 +39,9 @@ public class ProcessResource : MonoBehaviour
 
     [SerializeField] private string processingAreaID;
 
+    [Header("UI Reference")]
+    [SerializeField] private ProcessorUI processorUI;
+
     private void Awake()
     {
         baseProcessedCapacity = maxProcessedCapacity;
@@ -143,55 +146,93 @@ public class ProcessResource : MonoBehaviour
         if (isProcessing) return;
 
         MineralItem item = rawMaterial.GetComponent<MineralItem>();
-        if (item != null && item.mineralData.processedResult != null)
+        if (item != null && item.mineralData != null && item.mineralData.processedResult != null)
         {
+            isProcessing = true;
             StartCoroutine(SuccessProcessed(rawMaterial, item.mineralData));
         }
-
     }
 
     //생성 로직을 타이밍 설정을 위한 코루틴
     IEnumerator SuccessProcessed(GameObject rawMaterial, ItemDataSO data)
     {
+        // 1. 즉시 중복 실행 방지 잠금
         isProcessing = true;
+        Debug.Log($"<color=cyan>[Process]</color> {data.itemName} 가공 시작");
 
+        // 2. 한 프레임 대기 (동기화 안전성)
+        yield return null;
+
+        // --- 수량 계산 로직 추가 ---
+        int inputPerProcess = data.inputAmountPerProcess > 0 ? data.inputAmountPerProcess : 1;
+        int currentStock = stockingTable.Count; // 현재 쌓여있는 원재료 총합
+
+        // 현재 재료로 가능한 총 가공 횟수 (정수 나눗셈: 20 / 3 = 6)
+        int possibleBatchCount = currentStock / inputPerProcess;
+
+        // UI에 표시할 값들
+        int totalInputVisual = possibleBatchCount * inputPerProcess; // 소모될 총 재료 (예: 18)
+        int totalOutputVisual = possibleBatchCount; // 생성될 총 결과물 (예: 6)
+                                                    // -------------------------
+
+        // 3. UI 초기화 및 표시 (계산된 수량 전달)
+        if (processorUI != null)
+        {
+            if (data != null && data.processedResult != null)
+            {
+                processorUI.SetupUI(data, data.processedResult, totalInputVisual, totalOutputVisual);
+            }
+        }
+
+        // 4. 가공 시간 확정
         float finalProcessTime = Mathf.Max(0.1f, baseProcessTime - bonusProcessTimeReduction);
-        float halfTime = finalProcessTime * 0.5f;
 
-        int resourceQuantity = data.inputAmountPerProcess;
-        if (resourceQuantity <= 0) resourceQuantity = 1;
+        // 5. 원재료 소모 (실제 가공 1회분인 resourceQuantity만큼만 소모)
+        int resourceQuantity = inputPerProcess;
 
         if (SceneGameDataManager.instance != null)
             SceneGameDataManager.instance.sectionMineralCount[sectionIndex] -= resourceQuantity;
 
-        List<GameObject> destroyResources = new List<GameObject>();
         for (int i = 0; i < resourceQuantity; i++)
         {
             if (stockingTable.Count > 0)
             {
                 GameObject obj = stockingTable[0].gameObject;
                 stockingTable.RemoveAt(0);
-                destroyResources.Add(obj);
+                if (PoolManager.instance != null)
+                    PoolManager.instance.ReturnIt(data.mineralPrefab, obj);
             }
         }
 
-        foreach (var obj in destroyResources)
+        // 6. 가공 진행 루프
+        float elapsed = 0f;
+        while (elapsed < finalProcessTime)
         {
-            if (data.mineralPrefab != null)
-                PoolManager.instance.ReturnIt(data.mineralPrefab, obj);
+            elapsed += Time.deltaTime;
+            float normalized = elapsed / finalProcessTime;
+
+            if (processorUI != null)
+                processorUI.UpdateProgress(normalized, finalProcessTime - elapsed);
+
+            if (leverHandle != null)
+            {
+                float leverY = (normalized < 0.5f)
+                    ? Mathf.Lerp(leverUpY, leverDownY, normalized * 2f)
+                    : Mathf.Lerp(leverDownY, leverUpY, (normalized - 0.5f) * 2f);
+                leverHandle.localPosition = new Vector3(leverHandle.localPosition.x, leverY, leverHandle.localPosition.z);
+            }
+
+            yield return null;
         }
 
-        // 레버 내림 (총시간의 절반)
-        yield return StartCoroutine(MoveLeverY(leverDownY, halfTime));
-
-        // 레버 올림 (총시간의 절반)
-        yield return StartCoroutine(MoveLeverY(leverUpY, halfTime));
-
-        // 결과 생성
+        // 7. 가공 결과물 생성 (1회분 생성)
         if (data.processedResult != null && data.processedResult.mineralPrefab != null)
         {
-            GameObject processedItem =
-                PoolManager.instance.Get(data.processedResult.mineralPrefab, processingPoint.position, Quaternion.identity);
+            GameObject processedItem = PoolManager.instance.Get(
+                data.processedResult.mineralPrefab,
+                processingPoint.position,
+                Quaternion.identity
+            );
 
             if (SceneGameDataManager.instance != null)
                 SceneGameDataManager.instance.sectionProcessMineralCount[sectionIndex] += 1;
@@ -199,6 +240,9 @@ public class ProcessResource : MonoBehaviour
             processingTable.Add(processedItem.transform);
             processedItem.transform.SetParent(processingPoint, true);
         }
+
+        // 8. 종료 및 UI 닫기
+        if (processorUI != null) processorUI.CloseUI();
 
         isProcessing = false;
     }
