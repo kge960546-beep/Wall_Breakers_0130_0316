@@ -20,7 +20,6 @@ public class ToolsEquip : MonoBehaviour
             Debug.LogError("PlayerFSM ¾øÀ½");
 
     }
-
     private void OnEnable()
     {
         fsm.OnMiningStarted += EquipPickaxe;
