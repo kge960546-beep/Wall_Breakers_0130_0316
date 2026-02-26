@@ -17,28 +17,50 @@ public class GridManager : MonoBehaviour
 
     private void Start()
     {
+        GridData();
+    }
+
+    public void GridData()
+    {
         blocked = new bool[height, width];
 
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
             {
-                Vector3 center = CellCenter(x, y);
+                Vector3 center = GridToWorld(x, y);
 
                 //샘플링하여 막힌 셀인지 확인, QueryTriggerInteraction.Ignore로 트리거 무시
+                /*
+                center: 스캔할 셀의 중심점으로 어디를 검사할지 결정하는 위치
+                halfExtents: 박스 크기의 절반 값으로 중심에서 얼마나 뻗어 나갈지 정하는 함수
+                Quaternion.identity: 박스를 회전시키지 않고 정방향으로 세우기위한 함수
+                obstacleLayer: 무엇을 장애물로 볼것인지 판단하기위한 레이어
+                QueryTriggerInteraction.Ignore: 트리거 체크가 된 투명한 콜라이더들은 장애물이 아니기때문에 무시하고 통과하기 위한 함수
+                 */
                 blocked[y, x] = Physics.CheckBox(center, halfExtents, Quaternion.identity, obstacleLayer, QueryTriggerInteraction.Ignore);
                 //if (blocked[y, x]) Utils.DebugLog($"{x}, {y} 좌표는 막혀있다");
             }
         }
     }
-
-    Vector3 CellCenter(int x, int y)
+    public Vector3 GridToWorld(int x, int y)
     {
         float worldX = origin.x + (x + 0.5f) * cellSize;
         float worldZ = origin.z + (y + 0.5f) * cellSize;
 
         return new Vector3(worldX, sampleY, worldZ);
     }
+
+    //오버로딩
+    public Vector3 GridToWorld(Vector2Int gridPos) => GridToWorld(gridPos.x, gridPos.y);
+
+    public Vector2Int WorldToGrid(Vector3 worldPos)
+    {
+        int x = Mathf.FloorToInt((worldPos.x - origin.x) / cellSize);
+        int y = Mathf.FloorToInt((worldPos.z - origin.z) / cellSize);
+        return new Vector2Int(x, y);
+    }
+
 
     //private void OnDrawGizmos()
     //{

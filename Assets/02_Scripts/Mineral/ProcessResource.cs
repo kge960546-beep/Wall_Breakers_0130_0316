@@ -9,12 +9,14 @@ public class ProcessResource : MonoBehaviour
     private List<Transform> stockingTable = new();
     private List<Transform> processingTable = new();
 
+    private MineralItem firstMineralItemStock;
     [SerializeField] Transform stockingPoint;   //창고 위치
     [SerializeField] Transform processingPoint; //가공 위치
 
     [SerializeField] float itemHeight = 0.3f;   //아이템 높이 간격
 
     [SerializeField] float delay = 1.0f;        //가공 딜레이
+
     [Header("가공 시간 설정")]
     [SerializeField] private float processTime = 1.0f;
 
@@ -78,12 +80,21 @@ public class ProcessResource : MonoBehaviour
         {
             GameObject gameObject = stockingTable[0].gameObject;
 
-            var mineralItem = gameObject.GetComponent<MineralItem>();
-
-            if (stockingTable.Count >= mineralItem.mineralData.inputAmountPerProcess)
+            //캐싱처리
+            if (firstMineralItemStock == null)
             {
-                StartProcessing(gameObject);
-            }
+                firstMineralItemStock = gameObject.GetComponent<MineralItem>();
+            }            
+
+            if(firstMineralItemStock != null)
+            {
+                if (stockingTable.Count >= firstMineralItemStock.mineralData.inputAmountPerProcess)
+                {
+                    StartProcessing(gameObject);
+
+                    firstMineralItemStock = null;
+                }
+            }           
         }
     }
 
