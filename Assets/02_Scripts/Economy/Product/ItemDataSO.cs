@@ -1,4 +1,3 @@
-using System.Data.Common;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Item", menuName = "Game/Item/Item Data")]
