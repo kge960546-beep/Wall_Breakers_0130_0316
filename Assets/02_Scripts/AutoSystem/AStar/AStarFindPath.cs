@@ -24,26 +24,16 @@ public class AStarFindPath : MonoBehaviour
     /// </summary>
     /// <param name="worldPos"></param>
     /// <returns></returns>
-    public Vector2Int WorldToGrid(Vector3 worldPos)
-    {
-        int x = Mathf.FloorToInt((worldPos.x - gridManager.origin.x) / gridManager.cellSize);
-        int y = Mathf.FloorToInt((worldPos.z - gridManager.origin.z) / gridManager.cellSize);
-        return new Vector2Int(x, y);
-    }
+    public Vector2Int WorldToGrid(Vector3 worldPos) => gridManager.WorldToGrid(worldPos);
+    
 
     /// <summary>
     /// 그리드 좌표를 월드 좌표로 변환하는 함수    
     /// /// </summary>
     /// <param name="gridPos"></param>
     /// <returns></returns>
-    public Vector3 GridToWorld(Vector2Int gridPos)
-    {
-        float x = gridManager.origin.x + (gridPos.x + 0.5f) * gridManager.cellSize;
-        float z = gridManager.origin.z + (gridPos.y + 0.5f) * gridManager.cellSize;
-        //float x = gridPos.x * cellSize;
-        //float z = gridPos.y * cellSize;
-        return new Vector3(x, transform.position.y, z);
-    }
+    public Vector3 GridToWorld(Vector2Int gridPos) => gridManager.GridToWorld(gridPos);
+    
 
     /// <summary>
     /// A* 알고리즘을 사용하여 시작점에서 목표점까지의 최적 경로를 찾는 함수
