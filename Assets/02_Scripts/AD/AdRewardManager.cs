@@ -51,7 +51,6 @@ public class AdRewardManager : MonoBehaviour
                 return new GoldReward((int)data.value);
 
             default:
-                Debug.LogWarning($"[AdRewardManager] Unknown reward type: {data.rewardType}");
                 return null;
         }
     }

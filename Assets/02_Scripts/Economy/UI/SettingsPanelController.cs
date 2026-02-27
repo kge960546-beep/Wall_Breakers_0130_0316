@@ -38,8 +38,6 @@ public class SettingsPanelController : MonoBehaviour
     /// </summary>
     public void QuitGame()
     {
-        Debug.Log("Game Quit Requested");
-
         // 1. 실제 빌드된 게임 종료
         Application.Quit();
 

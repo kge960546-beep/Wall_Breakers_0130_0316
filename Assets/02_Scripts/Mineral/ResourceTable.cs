@@ -33,7 +33,7 @@ public class ResourceTable : MonoBehaviour
 
     private void OnEnable()
     {
-        Debug.Log($"[OnEnable] {targetID}");
+    
     }
     private IEnumerator Start()
     {
@@ -43,12 +43,10 @@ public class ResourceTable : MonoBehaviour
         {
             UpgradeEffectManager.Instance.OnMiningAreaMaxStorageChanged += HandleMaxStorageChanged;
             UpgradeEffectManager.Instance.RecalculateAllEffects();
-
-            Debug.Log($"[구독 완료] {targetID}");
         }
         else
         {
-            Debug.LogError($"[구독 실패] EffectManager 없음 - {targetID}");
+            
         }
     }
 
@@ -98,7 +96,6 @@ public class ResourceTable : MonoBehaviour
         if (resourceInTable.Count >= maxCapacity)
         {
             PoolManager.instance.ReturnIt(mineralPrefab, resources);
-            Debug.Log("채굴구역 저장공간 가득 참 → 추가 채굴 반영 안됨");
             return;
         }
 
@@ -132,8 +129,6 @@ public class ResourceTable : MonoBehaviour
 
     public void RebuildStack(int amount)
     {
-        Debug.Log($"[Table] {gameObject.name} 복구 시작. 목표 개수: {amount}");
-
         if (mineralPrefab == null)
         {
             Debug.LogError($"{gameObject.name}의 mineralPrefab이 비어있습니다!");
@@ -161,13 +156,9 @@ public class ResourceTable : MonoBehaviour
     }
     private void HandleMaxStorageChanged(string id, int bonus)
     {
-        Debug.Log($"[이벤트 수신 시도] 나는 {targetID}, 받은ID:{id}");
-
         if (id != targetID) return;
 
         bonusCapacity = bonus;
         maxCapacity = baseCapacity + bonusCapacity;
-
-        Debug.Log($"[MiningArea:{targetID}] 최대 저장공간 → {maxCapacity}");
     }
 }

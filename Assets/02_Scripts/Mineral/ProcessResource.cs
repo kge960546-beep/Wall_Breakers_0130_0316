@@ -158,7 +158,6 @@ public class ProcessResource : MonoBehaviour
     {
         // 1. 즉시 중복 실행 방지 잠금
         isProcessing = true;
-        Debug.Log($"<color=cyan>[Process]</color> {data.itemName} 가공 시작");
 
         // 2. 한 프레임 대기 (동기화 안전성)
         yield return null;
@@ -351,23 +350,23 @@ public class ProcessResource : MonoBehaviour
     }
 
     // 레버 이동 코루틴
-    IEnumerator MoveLeverY(float targetY, float duration)
-    {
-        Vector3 startPos = leverHandle.localPosition;
-        Vector3 targetPos = new Vector3(startPos.x, targetY, startPos.z);
-
-        float elapsed = 0f;
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            float t = elapsed / duration;
-            leverHandle.localPosition = Vector3.Lerp(startPos, targetPos, t);
-            yield return null;
-        }
-
-        leverHandle.localPosition = targetPos;
-    }
+    //IEnumerator MoveLeverY(float targetY, float duration)
+    //{
+    //    Vector3 startPos = leverHandle.localPosition;
+    //    Vector3 targetPos = new Vector3(startPos.x, targetY, startPos.z);
+    //
+    //    float elapsed = 0f;
+    //
+    //    while (elapsed < duration)
+    //    {
+    //        elapsed += Time.deltaTime;
+    //        float t = elapsed / duration;
+    //        leverHandle.localPosition = Vector3.Lerp(startPos, targetPos, t);
+    //        yield return null;
+    //    }
+    //
+    //    leverHandle.localPosition = targetPos;
+    //}
 
     private bool IsProcessedFull()
     {
@@ -382,20 +381,14 @@ public class ProcessResource : MonoBehaviour
         bonusProcessedCapacity = bonus;
 
         maxProcessedCapacity = baseProcessedCapacity + bonusProcessedCapacity;
-
-        Debug.Log($"[ProcessingArea:{id}] 최대 저장량 → {maxProcessedCapacity}");
     }
 
     private void HandleProcessTimeChanged(string id, float reduction)
     {
-        Debug.Log($"[ProcessTime 이벤트 수신] id:{id} reduction:{reduction} / 내ID:{processingAreaID}");
-
         if (id != processingAreaID)
             return;
 
         bonusProcessTimeReduction = reduction;
-
-        Debug.Log($"[적용됨] bonusProcessTimeReduction = {bonusProcessTimeReduction}");
     }
 
 }

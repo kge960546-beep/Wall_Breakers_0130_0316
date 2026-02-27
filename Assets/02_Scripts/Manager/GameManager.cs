@@ -39,8 +39,6 @@ public class GameManager : MonoBehaviour
 
         // 즉시 서비스 등록
         RegisterServices();
-
-        Debug.Log("GameManager initailized and service registered");
     }
 
     private void Start()

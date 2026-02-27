@@ -24,12 +24,10 @@ public class CreditDebugSetter : MonoBehaviour
 
         if (creditService != null)
         {
-            Debug.Log($"[CreditDebugSetter] Setting credits to {debugCreditAmount}");
             creditService.SetCredit(debugCreditAmount);
         }
         else
         {
-            Debug.LogError("[CreditDebugSetter] CreditService not found!");
         }
     }
 
@@ -43,7 +41,6 @@ public class CreditDebugSetter : MonoBehaviour
         if (creditService != null)
         {
             creditService.SetCredit(debugCreditAmount);
-            Debug.Log($"[CreditDebugSetter] Debug credit manually set to {debugCreditAmount}");
         }
     }
 #endif

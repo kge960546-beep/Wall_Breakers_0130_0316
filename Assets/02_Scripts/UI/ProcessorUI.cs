@@ -33,8 +33,6 @@ public class ProcessorUI : MonoBehaviour
         if (outputIcon != null) outputIcon.sprite = outputData.icon;
         // 고정값이 아닌 전달받은 totalOutput 표시
         if (outputCountText != null) outputCountText.text = totalOutput.ToString();
-
-        Debug.Log($"[UI 업데이트] 투입재료:{totalInput}, 예상결과:{totalOutput}");
     }
 
     // 매 프레임 진행도 업데이트

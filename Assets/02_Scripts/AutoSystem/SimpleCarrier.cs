@@ -163,8 +163,6 @@ public class SimpleCarrier : MonoBehaviour
         bonusMoveSpeed = bonus;
 
         moveSpeed = baseMoveSpeed * (1f + bonusMoveSpeed);
-
-        Debug.Log($"[SimpleCarrier:{targetID}] 이동속도 적용 → {moveSpeed}");
     }
 }
 

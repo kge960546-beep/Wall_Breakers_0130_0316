@@ -49,7 +49,7 @@ public class MiningTrigger : MonoBehaviour
         else
         {
             // 점유권을 못 얻었는데(이미 다른 놈이 캐고 있는데) 
-            // 혹시 채굴 애니메이션 중이라면 강제로 끕니다.
+            // 혹시 채굴 애니메이션 중이라면 강제로 끄기
             if (fsm.CurrentStateType == PlayerStateType.Mining)
             {
                 fsm.ExitMining();

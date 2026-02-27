@@ -87,24 +87,15 @@ public class UpgradeEffectManager : MonoBehaviour
     // Dispatch로 통보하는 형태
     public void RecalculateAllEffects()
     {
-        Debug.Log($"[EffectManager] GraphBuilder ID: {graphBuilder.GetInstanceID()}");
 
         ResetAllTotals();
 
-        if (graphBuilder == null)
-        {
-            Debug.LogError("[EffectManager] graphBuilder null");
-            return;
-        }
+        if (graphBuilder == null) return;
 
         var activated = graphBuilder.DAG.GetActivatedNodes();
 
-        Debug.Log($"[EffectManager] 활성 노드 개수: {activated.Count}");
-
         foreach (var node in activated)
         {
-            Debug.Log($"[EffectManager] 활성노드: {node.Data.upgradeID}");
-
             foreach (var effect in node.Data.effects)
             {
                 AccumulateEffect(effect);
@@ -116,8 +107,6 @@ public class UpgradeEffectManager : MonoBehaviour
 
     private void AccumulateEffect(UpgradeEffect effect)
     {
-        Debug.Log($"[Effect 감지 RAW] 타입:{effect.upgradeType}, targetID:'{effect.targetID}', Length:{effect.targetID?.Length}");
-
         switch (effect.upgradeType)
         {
             case UpgradeType.PlayerMoveSpeed:
@@ -164,8 +153,6 @@ public class UpgradeEffectManager : MonoBehaviour
                 break;
 
             case UpgradeType.CarrierMoveSpeed:
-                Debug.Log("CarrierMoveSpeed 케이스 진입");
-
                 if (!string.IsNullOrEmpty(effect.targetID))
                 {
                     if (!carrierMoveSpeedById.ContainsKey(effect.targetID))
@@ -281,10 +268,7 @@ public class UpgradeEffectManager : MonoBehaviour
             OnCarrierUnlockChanged?.Invoke(pair.Key, pair.Value);
 
         foreach (var pair in carrierMoveSpeedById.ToList())
-        {
-            Debug.Log($"Dispatch CarrierMoveSpeed → {pair.Key} / {pair.Value}");
             OnCarrierMoveSpeedChanged?.Invoke(pair.Key, pair.Value);
-        }
 
         foreach (var pair in carrierMaxCarryById.ToList())
             OnCarrierMaxCarryChanged?.Invoke(pair.Key, pair.Value);

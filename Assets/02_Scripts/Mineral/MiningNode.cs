@@ -126,8 +126,6 @@ public class MiningNode : MonoBehaviour
         bonusRespawnReduction = reduction;
 
         respawnTime = Mathf.Max(0.5f, baseRespawnTime - bonusRespawnReduction);
-
-        Debug.Log($"[MiningArea:{id}] 리스폰 시간 → {respawnTime}");
     }
 
     private void HandleMinerMineAmountChanged(string id, int totalBonus)
@@ -296,7 +294,7 @@ public class MiningNode : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        // [수정] 나가는 객체가 '현재 점유자'인 경우에만 점유권을 해제합니다.
+        // 나가는 객체가 '현재 점유자'인 경우에만 점유권을 해제
         if (other.gameObject == currentMiner)
         {
             currentMiner = null;
@@ -306,7 +304,6 @@ public class MiningNode : MonoBehaviour
             {
                 miningUI.CloseUI();
             }
-            Debug.Log($"<color=blue>[MiningNode]</color> 점유자({other.name}) 이탈 - 점유권 해제");
         }
     }
 }

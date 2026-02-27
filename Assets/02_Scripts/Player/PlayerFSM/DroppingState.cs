@@ -15,7 +15,6 @@ public class DroppingState : IPlayerState
 
     public void Enter()
     {
-        Debug.Log("DroppingState 시작");
         dropped = false;
         fsm.RaiseDroppingStarted();
     }
@@ -34,7 +33,6 @@ public class DroppingState : IPlayerState
 
     public void Exit()
     {
-        Debug.Log("DroppingState 종료");
         fsm.RaiseDroppingEnded();
         fsm.ClearDropContext();
     }

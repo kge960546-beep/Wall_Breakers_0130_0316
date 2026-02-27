@@ -15,7 +15,6 @@ public class PickingUpState : IPlayerState
 
     public void Enter()
     {
-        Debug.Log("PickingUpState 시작");
         picked = false;
         fsm.RaisePickingUpStarted();
     }
@@ -44,7 +43,6 @@ public class PickingUpState : IPlayerState
 
     public void Exit()
     {
-        Debug.Log("PickingUpState 종료");
         fsm.RaisePickingUpEnded();
         fsm.ClearPickupContext();
     }
