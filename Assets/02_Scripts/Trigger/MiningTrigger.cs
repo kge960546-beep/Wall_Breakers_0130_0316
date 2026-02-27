@@ -19,30 +19,41 @@ public class MiningTrigger : MonoBehaviour
         if (fsm == null || miningNode == null)
             return;
 
-        // 상태 전환은 FSM이 관리
-        if (fsm.CurrentStateType == PlayerStateType.Free)
+        // 1. 자원 자체가 있는지 먼저 체크
+        if (!miningNode.canMine)
         {
-            fsm.EnterMining();
+            if (fsm.CurrentStateType == PlayerStateType.Mining) fsm.ExitMining();
+            return;
         }
 
-        // 실제 채굴은 MiningNode가 담당
-        if (fsm.CurrentStateType == PlayerStateType.Mining)
+        // 2. 점유권 확인 및 채굴 시도 (여기서 점유권을 따내야만 다음으로 넘어감)
+        bool isSuccess = false;
+
+        if (other.CompareTag("Player"))
         {
-            if (!miningNode.canMine)
+            isSuccess = miningNode.TryMine(other.gameObject);
+        }
+        else if (other.CompareTag("AutoMineWorker"))
+        {
+            isSuccess = miningNode.AutoUnitTryMine(other.gameObject);
+        }
+
+        // 3. 점유권 획득에 성공했을 때만 상태 전환 (애니메이션 발생 지점)
+        if (isSuccess)
+        {
+            if (fsm.CurrentStateType == PlayerStateType.Free)
+            {
+                fsm.EnterMining();
+            }
+        }
+        else
+        {
+            // 점유권을 못 얻었는데(이미 다른 놈이 캐고 있는데) 
+            // 혹시 채굴 애니메이션 중이라면 강제로 끕니다.
+            if (fsm.CurrentStateType == PlayerStateType.Mining)
             {
                 fsm.ExitMining();
-                return;
-            }                
-
-            if(other.CompareTag("Player"))
-            {
-                miningNode.TryMine();
             }
-            else if(other.CompareTag("AutoMineWorker"))
-            {
-                miningNode.AutoUnitTryMine();
-            }
-            
         }
     }
 
