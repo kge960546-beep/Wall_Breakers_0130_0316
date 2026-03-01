@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
@@ -6,6 +7,8 @@ using UnityEngine;
 public class PlayerInventory : MonoBehaviour
 {
     public static PlayerInventory Instance { get; private set; }
+
+    public event Action OnInventoryChanged;
 
     [SerializeField] private List<InventoryItem> items = new List<InventoryItem>();
 
@@ -67,6 +70,8 @@ public class PlayerInventory : MonoBehaviour
         //{
         //    items.Add(new InventoryItem(itemData, quantity));
         //}
+
+        OnInventoryChanged?.Invoke();
     }
 
     // 아이템 제거
@@ -83,6 +88,8 @@ public class PlayerInventory : MonoBehaviour
         }
 
         inventory.Remove(itemData, quantity);
+
+        OnInventoryChanged?.Invoke();
 
         return true;
 

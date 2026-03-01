@@ -19,6 +19,10 @@ public class SFXManager : MonoBehaviour
     [SerializeField] string[] bgmPlayList;
     int currentBGMIndex = 0;
 
+    [Header("Volume Settings")]
+    [Range(0f, 1f)] public float bgmVolume = 0.5f;
+    [Range(0f, 1f)] public float sfxVolume = 0.5f;
+
     // BGM 코루틴 저장용
     Coroutine bgmRoutine;
 
@@ -61,11 +65,12 @@ public class SFXManager : MonoBehaviour
         StartPlayBGM();
     }
 
+    // 볼륨변수 추가
     public void PlayOnSFX(string soundName, Vector3 soundPos)
     {
-        if(sfxClipDic.TryGetValue(soundName, out var clip))
+        if (sfxClipDic.TryGetValue(soundName, out var clip))
         {
-            AudioSource.PlayClipAtPoint(clip, soundPos);            
+            AudioSource.PlayClipAtPoint(clip, soundPos, sfxVolume);
         }
     }
 
@@ -137,5 +142,22 @@ public class SFXManager : MonoBehaviour
             bgmPlayer.UnPause();
             bgmRoutine = StartCoroutine(BGMQueueRoutine());
         }
+    }
+
+    // BGM 볼륨 조절
+    public void SetBGMVolume(float volume)
+    {
+        bgmVolume = volume;
+        if (bgmPlayer != null)
+        {
+            bgmPlayer.volume = bgmVolume;
+        }
+    }
+
+    // SFX 볼륨 조절
+    public void SetSFXVolume(float volume)
+    {
+        sfxVolume = volume;
+        // sfxPlayer.volume = sfxVolume; // sfxPlayer를 직접 쓸 경우
     }
 }

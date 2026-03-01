@@ -14,7 +14,6 @@ public class FreeState : IPlayerState
 
     public void Enter()
     {
-        Debug.Log("FreeState 시작");
         // 대기 상태 진입
         // 여기에 대기 동작 뭐 Idle 애니메이션 호출을 넣는다던가 할듯
     }
@@ -27,7 +26,6 @@ public class FreeState : IPlayerState
 
     public void Exit()
     {
-        Debug.Log("FreeState 종료");
         // Idle 애니메이션 종료
         // 대기 상태 종료
     }

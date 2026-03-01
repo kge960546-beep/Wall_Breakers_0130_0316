@@ -19,12 +19,12 @@ MonoBehaviour:
   effects:
   - upgradeType: 16
     value: 1
-    targetID: MINER_9
+    targetID: MINER_5
   - upgradeType: 18
     value: 0.2
     targetID: 
   - upgradeType: 16
     value: 1
-    targetID: MINER_10
+    targetID: MINER_6
   cost: 0
   section: 3

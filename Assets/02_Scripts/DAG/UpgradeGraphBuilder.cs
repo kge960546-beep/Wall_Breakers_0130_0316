@@ -16,8 +16,6 @@ public class UpgradeGraphBuilder : MonoBehaviour
         {
             BuildSection(sections[i], i); ;
         }
-
-        Debug.Log("Total Nodes Count : " + dag.Nodes.Count);
     }
 
     private void BuildSection(SectionUpgradeSet d, int sectionIndex)

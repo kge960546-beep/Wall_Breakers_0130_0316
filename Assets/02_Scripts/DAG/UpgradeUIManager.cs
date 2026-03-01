@@ -40,19 +40,19 @@ public class UpgradeUIManager : MonoBehaviour
     // ===============================
     // 디버그 로그
     // ===============================
-    public void PrintActivatedNodes()
-    {
-        var activated = graphBuilder.DAG.GetActivatedNodes();
-
-        Debug.Log("===== 현재 활성 노드 목록 =====");
-
-        foreach (var node in activated)
-        {
-            Debug.Log(node.Data.displayName);
-        }
-
-        Debug.Log("총 활성 개수 : " + activated.Count);
-    }
+    //public void PrintActivatedNodes()
+    //{
+    //    var activated = graphBuilder.DAG.GetActivatedNodes();
+    //
+    //    Debug.Log("===== 현재 활성 노드 목록 =====");
+    //
+    //    foreach (var node in activated)
+    //    {
+    //        Debug.Log(node.Data.displayName);
+    //    }
+    //
+    //    Debug.Log("총 활성 개수 : " + activated.Count);
+    //}
 
     // ===============================
     // 섹션 완료 체크
@@ -83,11 +83,7 @@ public class UpgradeUIManager : MonoBehaviour
 
         int nextIndex = currentSectionIndex + 1;
 
-        if (nextIndex >= sectionPanels.Length)
-        {
-            Debug.Log("모든 섹션 완료");
-            return;
-        }
+        if (nextIndex >= sectionPanels.Length) return;
 
         // 현재 섹션 비활성화
         sectionPanels[currentSectionIndex].SetActive(false);
@@ -96,7 +92,5 @@ public class UpgradeUIManager : MonoBehaviour
         sectionPanels[nextIndex].SetActive(true);
 
         currentSectionIndex = nextIndex;
-
-        Debug.Log("다음 섹션 오픈: " + currentSectionIndex);
     }
 }

@@ -13,9 +13,6 @@ public class UpgradeUIButton : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log($"[UIButton] GraphBuilder ID: {graphBuilder.GetInstanceID()}");
-        Debug.Log($"[UIButton] TargetSO: {targetSO.upgradeID}");
-
         // 노드 찾기
         if (graphBuilder.DAG.TryGetNode(targetSO.upgradeID, out node) == false)
         {
@@ -40,51 +37,33 @@ public class UpgradeUIButton : MonoBehaviour
             return;
 
         // 1. 부모 조건 먼저 체크
-        if (!node.CanActivate())
-        {
-            Debug.Log("활성화 실패 (부모 조건 미충족) : " + node.Data.displayName);
-            return;
-        }
+        if (!node.CanActivate()) return;
 
         // 2. 골드 체크
-        if (creditService == null)
-        {
-            Debug.LogError("[UpgradeUIButton] CreditService 없음");
-            return;
-        }
-
+        if (creditService == null) return;
+       
         int cost = targetSO.cost;
 
-        if (creditService.credits < cost)
-        {
-            Debug.Log("활성화 실패 (골드 부족) : " + node.Data.displayName);
-            return;
-        }
+        if (creditService.credits < cost) return;
 
         // 3. 노드 활성화 시도
         bool success = node.Activate();
 
         if (success)
         {
-            Debug.Log("활성화 성공 : " + node.Data.displayName);
-
             // 골드 차감
             creditService.AddCredit(-cost);
-            Debug.Log($"골드 차감 : -{cost}");
 
             // 재집계 구조 적용
             if (UpgradeEffectManager.Instance != null)
             {
-                Debug.Log("RecalculateAllEffects 호출 직전");
                 UpgradeEffectManager.Instance.RecalculateAllEffects();
-                Debug.Log("RecalculateAllEffects 호출 완료");
             }
             else
             {
-                Debug.LogError("[UpgradeUIButton] UpgradeEffectManager 없음");
             }
 
-            uiManager.PrintActivatedNodes();
+            //uiManager.PrintActivatedNodes();
 
             // 버튼 비활성화
             GetComponent<Button>().interactable = false;
@@ -98,7 +77,6 @@ public class UpgradeUIButton : MonoBehaviour
         }
         else
         {
-            Debug.Log("활성화 실패 (내부 조건 오류) : " + node.Data.displayName);
         }
     }
 }

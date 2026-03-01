@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ä�� ���(����, ä����)�� �ٴ� ������Ʈ
-/// �÷��̾� ä���� ���� ä���� ��Ȯ�� �и�
+/// 채굴 대상(광산, 채굴기)에 붙는 컴포넌트
+/// 플레이어 채굴과 광부 채굴을 명확히 분리
 /// </summary>
 public class MiningNode : MonoBehaviour
 {
-    [Header("ä�� ����")]
+    [Header("채굴 설정")]
     [SerializeField] private ItemDataSO mineralData;
-    [SerializeField] private float mineInterval = 1f;        // �÷��̾�
-    [SerializeField] private float autoMineInterval = 3f;    // ����
+    [SerializeField] private float mineInterval = 1f;        // 플레이어
+    [SerializeField] private float autoMineInterval = 3f;    // 광부
     [SerializeField] private int maxMineCount = 10;
     [SerializeField] private int currentMineCount = 0;
     [SerializeField] private GameObject[] mineMineral;
@@ -24,19 +24,24 @@ public class MiningNode : MonoBehaviour
 
     public bool canMine => currentMineCount < maxMineCount;
 
-    [Header("���� �ĺ���")]
+    [Header("광부 식별자")]
     [SerializeField] private string minerID;
 
-    [Header("���� ���")]
+    [Header("연결 대상")]
     [SerializeField] private ResourceTable resourceTable;
     [SerializeField] private Transform spawnPoint;
 
     [Header("Guide")]
     [SerializeField] private GuideStepSO mineGuideStep;
 
-    [Header("������ ����")]
+    [Header("데이터 연결")]
     [SerializeField] private int sectionIndex;
 
+    [Header("UI Reference")]
+    [SerializeField] private MiningUI miningUI;
+
+    [Header("Occupancy")]
+    private GameObject currentMiner; // 현재 채굴 중인 대상
     [Header("VFX")]
     [SerializeField] private MiningEffectController effectController;
     [SerializeField] private Transform mineralPoint;
@@ -44,23 +49,23 @@ public class MiningNode : MonoBehaviour
     private float mineTimer;
 
     // =========================
-    // �⺻�� ����
+    // 기본값 저장
     // =========================
 
     private float baseMineInterval;
     private float baseAutoMineInterval;
 
     // =========================
-    // ���׷��̵� ������ (�и�!)
+    // 업그레이드 누적값 (분리!)
     // =========================
 
     private float bonusPlayerMineSpeed;
     private float bonusMinerMineSpeed;
 
     private int baseMineAmount = 1;
-    private int bonusPlayerMineAmount;   // �÷��̾� ����
+    private int bonusPlayerMineAmount;   // 플레이어 전용
                                          
-    private int bonusMinerMineAmount;    // ���� ����
+    private int bonusMinerMineAmount;    // 광부 전용
 
     private void Awake()
     {
@@ -96,7 +101,7 @@ public class MiningNode : MonoBehaviour
     }
 
     // =========================
-    // �̺�Ʈ ����
+    // 이벤트 수신
     // =========================
 
     private void HandlePlayerMineSpeedChanged(float totalBonus)
@@ -124,8 +129,6 @@ public class MiningNode : MonoBehaviour
         bonusRespawnReduction = reduction;
 
         respawnTime = Mathf.Max(0.5f, baseRespawnTime - bonusRespawnReduction);
-
-        Debug.Log($"[MiningArea:{id}] ������ �ð� �� {respawnTime}");
     }
 
     private void HandleMinerMineAmountChanged(string id, int totalBonus)
@@ -137,54 +140,103 @@ public class MiningNode : MonoBehaviour
     }
 
     // =========================
-    // �÷��̾� ä��
+    // 플레이어 채굴
     // =========================
 
-    public void TryMine()
+    public bool TryMine(GameObject miner)
     {
-        if (!canMine) return;
-        if (mineralData == null || resourceTable == null) return;
+        // [1] 점유권 체크: 주인이 없으면 등록, 주인이 내가 아니면 즉시 차단
+        if (currentMiner == null)
+        {
+            currentMiner = miner;
+            mineTimer = 0f; // 주인이 새로 바뀌었으므로 타이머 리셋
+        }
 
+        if (currentMiner != miner) return false;
+
+        // [2] 채굴 가능 상태 체크
+        if (!canMine || mineralData == null || resourceTable == null)
+        {
+            if (miningUI != null) miningUI.CloseUI();
+            // 자원 고갈 상태라면 점유 해제 (Mine 함수에서도 처리하지만 이중 방어)
+            if (currentMiner == miner) currentMiner = null;
+            return false;
+        }
+
+        // [3] 속도 보정 및 타이머 진행
         float adjustedInterval = baseMineInterval / (1f + bonusPlayerMineSpeed);
-
         mineTimer += Time.deltaTime;
 
-        if (mineTimer < adjustedInterval)
-            return;
+        // [4] UI 업데이트
+        if (miningUI != null)
+        {
+            miningUI.OpenUI(mineralData.icon, baseMineAmount + bonusPlayerMineAmount);
+            miningUI.UpdateAmount(baseMineAmount + bonusPlayerMineAmount);
+            miningUI.UpdateProgress(Mathf.Clamp01(mineTimer / adjustedInterval));
+        }
 
-        mineTimer = 0f;
+        // [5] 타이머 체크 및 실제 채굴 실행
+        if (mineTimer >= adjustedInterval)
+        {
+            mineTimer = 0f;
+            Mine(baseMineAmount + bonusPlayerMineAmount);
+        }
 
-        Mine(baseMineAmount + bonusPlayerMineAmount);
+        return true;
     }
 
     // =========================
-    // ���� ä��
+    // 광부 채굴
     // =========================
 
-    public void AutoUnitTryMine()
+    public bool AutoUnitTryMine(GameObject miner)
     {
-        if (!canMine) return;
-        if (mineralData == null || resourceTable == null) return;
+        // [1] 점유권 체크: 주인이 없으면 등록, 주인이 내가 아니면 즉시 차단
+        if (currentMiner == null)
+        {
+            currentMiner = miner;
+            mineTimer = 0f; // 주인이 새로 바뀌었으므로 타이머 리셋
+        }
 
+        if (currentMiner != miner) return false;
+
+        // [2] 채굴 가능 상태 체크
+        if (!canMine || mineralData == null || resourceTable == null)
+        {
+            if (miningUI != null) miningUI.CloseUI();
+            if (currentMiner == miner) currentMiner = null;
+            return false;
+        }
+
+        // [3] 광부 전용 속도 보정 및 타이머 진행
         float adjustedInterval = baseAutoMineInterval / (1f + bonusMinerMineSpeed);
-
         mineTimer += Time.deltaTime;
 
-        if (mineTimer < adjustedInterval)
-            return;
+        // [4] UI 업데이트
+        if (miningUI != null)
+        {
+            miningUI.OpenUI(mineralData.icon, baseMineAmount + bonusMinerMineAmount);
+            miningUI.UpdateAmount(baseMineAmount + bonusMinerMineAmount);
+            miningUI.UpdateProgress(Mathf.Clamp01(mineTimer / adjustedInterval));
+        }
 
-        mineTimer = 0f;
+        // [5] 타이머 체크 및 실제 채굴 실행
+        if (mineTimer >= adjustedInterval)
+        {
+            mineTimer = 0f;
+            Mine(baseMineAmount + bonusMinerMineAmount);
+        }
 
-        Mine(baseMineAmount + bonusMinerMineAmount);
+        return true;
     }
 
     // =========================
-    // ���� ä�� ó��
+    // 실제 채굴 처리
     // =========================
 
     private void Mine(int totalAmount)
     {
-        // ä�� Ÿ�� ����Ʈ �߰�
+        // 채굴 타격 이펙트 추가
         if(effectController != null)
         {
             effectController.PlayHit(mineralPoint.position);
@@ -214,7 +266,18 @@ public class MiningNode : MonoBehaviour
 
         if (currentMineCount == maxMineCount)
         {
-            // ���� �ı� ����Ʈ �߰�
+            // 1. 점유 상태 해제
+            currentMiner = null;
+
+            // 2. 채굴 타이머 초기화
+            mineTimer = 0f;
+
+            // 자원이 다 소모되었으므로 채굴 UI를 즉시 닫기
+            if (miningUI != null)
+            {
+                miningUI.CloseUI();
+            }
+            // 광물 파괴 이펙트 추가
             if(effectController != null)
             {
                 effectController.PlayDestroy(mineralPoint.position);
@@ -243,5 +306,20 @@ public class MiningNode : MonoBehaviour
 
         foreach (GameObject mineral in mineMineral)
             mineral.SetActive(true);
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        // 나가는 객체가 '현재 점유자'인 경우에만 점유권을 해제
+        if (other.gameObject == currentMiner)
+        {
+            currentMiner = null;
+            mineTimer = 0f;
+
+            if (miningUI != null)
+            {
+                miningUI.CloseUI();
+            }
+        }
     }
 }

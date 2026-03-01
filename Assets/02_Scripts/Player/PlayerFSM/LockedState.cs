@@ -15,7 +15,6 @@ public class LockedState : IPlayerState
 
     public void Enter()
     {
-        Debug.Log("LockedState 시작");
         // 이 State 진입 시점에서
         // - 플레이어 입력 차단
         // - 컷씬 / 연출 / UI 블로킹 시작
@@ -43,7 +42,6 @@ public class LockedState : IPlayerState
 
     public void Exit()
     {
-        Debug.Log("LockedState 종료");
         // 입력 복구, 연출 종료 등
         // 역시 FSM 외부에서 처리
         fsm.RaiseUnlocked();

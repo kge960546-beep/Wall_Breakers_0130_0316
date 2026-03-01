@@ -10,7 +10,6 @@ public class MoveSpeedReward : IAdReward
 
     public void Apply()
     {
-        // PlayerMove는 싱글톤으로 사용된다는 전제
         if (PlayerMove.Instance == null)
             return;
 

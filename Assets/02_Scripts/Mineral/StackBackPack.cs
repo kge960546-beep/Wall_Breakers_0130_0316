@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class StackBackPack : MonoBehaviour
 {
@@ -12,7 +13,11 @@ public class StackBackPack : MonoBehaviour
     private int baseCapacity;                      //기본 수용량
     private int bonusCapacity;                     //강화 수용량
 
+    public event Action OnBackpackChanged;
+
     public bool IsFullBackPack() => acquiredResources.Count >= maxCapacity;
+    public int CurrentCount => acquiredResources.Count;
+    public int MaxCapacity => maxCapacity;
 
     [SerializeField] private PlayerFullUI playerFullUI;
 
@@ -43,6 +48,8 @@ public class StackBackPack : MonoBehaviour
         {
             playerFullUI.Hide();
         }
+
+        OnBackpackChanged?.Invoke();
     }
 
     private void Start()
@@ -132,6 +139,8 @@ public class StackBackPack : MonoBehaviour
         {
             playerFullUI.Show();
         }
+
+        OnBackpackChanged?.Invoke();
     }
 
     public GameObject MinusResource()
@@ -154,6 +163,8 @@ public class StackBackPack : MonoBehaviour
         {
             playerFullUI.Hide();
         }
+
+        OnBackpackChanged?.Invoke();
 
         return itemObj;
     }
@@ -196,5 +207,7 @@ public class StackBackPack : MonoBehaviour
         {
             playerFullUI.Hide();
         }
+
+        OnBackpackChanged?.Invoke();
     }
 }

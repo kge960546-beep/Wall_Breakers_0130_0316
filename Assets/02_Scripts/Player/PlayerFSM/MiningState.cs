@@ -14,7 +14,6 @@ public class MiningState : IPlayerState
 
     public void Enter()
     {
-        Debug.Log("MiningState 시작");
         // 채굴 상태 진입 알림
         fsm.RaiseMiningStarted();
     }
@@ -32,7 +31,6 @@ public class MiningState : IPlayerState
 
     public void Exit()
     {
-        Debug.Log("MiningState 종료");
         // 채굴 상태 종료 알림
         fsm.RaiseMiningEnded();
     }
