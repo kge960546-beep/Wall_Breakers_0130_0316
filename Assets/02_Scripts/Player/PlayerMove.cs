@@ -19,6 +19,10 @@ public class PlayerMove : MonoBehaviour
     private Vector3 moveDirection;
     public Vector3 MoveDirection => moveDirection;
 
+    [Header("Footstep")]
+    [SerializeField] float FootstepInterval = 0.5f;
+    private float footstepTimer;
+
     private void Awake()
     {
         if (Instance == null)
@@ -47,6 +51,30 @@ public class PlayerMove : MonoBehaviour
     private void FixedUpdate()
     {
         Move();
+        Footsteps();
+    }
+
+    public void Footsteps()
+    {
+        Vector2 horizontalSound = new Vector2(rb.velocity.x, rb.velocity.z);
+
+        if(horizontalSound.magnitude > 0.1f)
+        {
+            footstepTimer -= Time.fixedDeltaTime;
+
+            if(footstepTimer <= 0)
+            {
+                SFXManager.instance.PlayOnSFX("Footstep2", transform.position);
+            }
+
+            //걷는속도에따라 효과음 조절
+            float currentStepInterval = FootstepInterval / (moveSpeed / baseMoveSpeed);
+            footstepTimer = currentStepInterval;
+        }
+        else
+        {
+            footstepTimer = 0f;
+        }
     }
 
     public void SetMoveDirection(Vector3 dir)

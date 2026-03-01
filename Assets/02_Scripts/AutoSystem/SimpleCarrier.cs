@@ -166,8 +166,6 @@ public class SimpleCarrier : MonoBehaviour
     }
 }
 
-
-
 public enum CarrierState
 {
     ToMachine,

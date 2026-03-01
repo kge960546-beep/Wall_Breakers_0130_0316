@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Ã¤±¼ ´ë»ó(±¤»ê, Ã¤±¼±â)¿¡ ºÙ´Â ÄÄÆ÷³ÍÆ®
-/// ÇÃ·¹ÀÌ¾î Ã¤±¼°ú ±¤ºÎ Ã¤±¼À» ¸íÈ®È÷ ºĞ¸®
+/// ì±„êµ´ ëŒ€ìƒ(ê´‘ì‚°, ì±„êµ´ê¸°)ì— ë¶™ëŠ” ì»´í¬ë„ŒíŠ¸
+/// í”Œë ˆì´ì–´ ì±„êµ´ê³¼ ê´‘ë¶€ ì±„êµ´ì„ ëª…í™•íˆ ë¶„ë¦¬
 /// </summary>
 public class MiningNode : MonoBehaviour
 {
-    [Header("Ã¤±¼ ¼³Á¤")]
+    [Header("ì±„êµ´ ì„¤ì •")]
     [SerializeField] private ItemDataSO mineralData;
-    [SerializeField] private float mineInterval = 1f;        // ÇÃ·¹ÀÌ¾î
-    [SerializeField] private float autoMineInterval = 3f;    // ±¤ºÎ
+    [SerializeField] private float mineInterval = 1f;        // í”Œë ˆì´ì–´
+    [SerializeField] private float autoMineInterval = 3f;    // ê´‘ë¶€
     [SerializeField] private int maxMineCount = 10;
     [SerializeField] private int currentMineCount = 0;
     [SerializeField] private GameObject[] mineMineral;
@@ -24,45 +24,48 @@ public class MiningNode : MonoBehaviour
 
     public bool canMine => currentMineCount < maxMineCount;
 
-    [Header("±¤ºÎ ½Äº°ÀÚ")]
+    [Header("ê´‘ë¶€ ì‹ë³„ì")]
     [SerializeField] private string minerID;
 
-    [Header("¿¬°á ´ë»ó")]
+    [Header("ì—°ê²° ëŒ€ìƒ")]
     [SerializeField] private ResourceTable resourceTable;
     [SerializeField] private Transform spawnPoint;
 
     [Header("Guide")]
     [SerializeField] private GuideStepSO mineGuideStep;
 
-    [Header("µ¥ÀÌÅÍ ¿¬°á")]
+    [Header("ë°ì´í„° ì—°ê²°")]
     [SerializeField] private int sectionIndex;
 
     [Header("UI Reference")]
     [SerializeField] private MiningUI miningUI;
 
     [Header("Occupancy")]
-    private GameObject currentMiner; // ÇöÀç Ã¤±¼ ÁßÀÎ ´ë»ó
+    private GameObject currentMiner; // í˜„ì¬ ì±„êµ´ ì¤‘ì¸ ëŒ€ìƒ
+    [Header("VFX")]
+    [SerializeField] private MiningEffectController effectController;
+    [SerializeField] private Transform mineralPoint;
 
     private float mineTimer;
 
     // =========================
-    // ±âº»°ª ÀúÀå
+    // ê¸°ë³¸ê°’ ì €ì¥
     // =========================
 
     private float baseMineInterval;
     private float baseAutoMineInterval;
 
     // =========================
-    // ¾÷±×·¹ÀÌµå ´©Àû°ª (ºĞ¸®!)
+    // ì—…ê·¸ë ˆì´ë“œ ëˆ„ì ê°’ (ë¶„ë¦¬!)
     // =========================
 
     private float bonusPlayerMineSpeed;
     private float bonusMinerMineSpeed;
 
     private int baseMineAmount = 1;
-    private int bonusPlayerMineAmount;   // ÇÃ·¹ÀÌ¾î Àü¿ë
+    private int bonusPlayerMineAmount;   // í”Œë ˆì´ì–´ ì „ìš©
                                          
-    private int bonusMinerMineAmount;    // ±¤ºÎ Àü¿ë
+    private int bonusMinerMineAmount;    // ê´‘ë¶€ ì „ìš©
 
     private void Awake()
     {
@@ -98,7 +101,7 @@ public class MiningNode : MonoBehaviour
     }
 
     // =========================
-    // ÀÌº¥Æ® ¼ö½Å
+    // ì´ë²¤íŠ¸ ìˆ˜ì‹ 
     // =========================
 
     private void HandlePlayerMineSpeedChanged(float totalBonus)
@@ -137,34 +140,34 @@ public class MiningNode : MonoBehaviour
     }
 
     // =========================
-    // ÇÃ·¹ÀÌ¾î Ã¤±¼
+    // í”Œë ˆì´ì–´ ì±„êµ´
     // =========================
 
     public bool TryMine(GameObject miner)
     {
-        // [1] Á¡À¯±Ç Ã¼Å©: ÁÖÀÎÀÌ ¾øÀ¸¸é µî·Ï, ÁÖÀÎÀÌ ³»°¡ ¾Æ´Ï¸é Áï½Ã Â÷´Ü
+        // [1] ì ìœ ê¶Œ ì²´í¬: ì£¼ì¸ì´ ì—†ìœ¼ë©´ ë“±ë¡, ì£¼ì¸ì´ ë‚´ê°€ ì•„ë‹ˆë©´ ì¦‰ì‹œ ì°¨ë‹¨
         if (currentMiner == null)
         {
             currentMiner = miner;
-            mineTimer = 0f; // ÁÖÀÎÀÌ »õ·Î ¹Ù²î¾úÀ¸¹Ç·Î Å¸ÀÌ¸Ó ¸®¼Â
+            mineTimer = 0f; // ì£¼ì¸ì´ ìƒˆë¡œ ë°”ë€Œì—ˆìœ¼ë¯€ë¡œ íƒ€ì´ë¨¸ ë¦¬ì…‹
         }
 
         if (currentMiner != miner) return false;
 
-        // [2] Ã¤±¼ °¡´É »óÅÂ Ã¼Å©
+        // [2] ì±„êµ´ ê°€ëŠ¥ ìƒíƒœ ì²´í¬
         if (!canMine || mineralData == null || resourceTable == null)
         {
             if (miningUI != null) miningUI.CloseUI();
-            // ÀÚ¿ø °í°¥ »óÅÂ¶ó¸é Á¡À¯ ÇØÁ¦ (Mine ÇÔ¼ö¿¡¼­µµ Ã³¸®ÇÏÁö¸¸ ÀÌÁß ¹æ¾î)
+            // ìì› ê³ ê°ˆ ìƒíƒœë¼ë©´ ì ìœ  í•´ì œ (Mine í•¨ìˆ˜ì—ì„œë„ ì²˜ë¦¬í•˜ì§€ë§Œ ì´ì¤‘ ë°©ì–´)
             if (currentMiner == miner) currentMiner = null;
             return false;
         }
 
-        // [3] ¼Óµµ º¸Á¤ ¹× Å¸ÀÌ¸Ó ÁøÇà
+        // [3] ì†ë„ ë³´ì • ë° íƒ€ì´ë¨¸ ì§„í–‰
         float adjustedInterval = baseMineInterval / (1f + bonusPlayerMineSpeed);
         mineTimer += Time.deltaTime;
 
-        // [4] UI ¾÷µ¥ÀÌÆ®
+        // [4] UI ì—…ë°ì´íŠ¸
         if (miningUI != null)
         {
             miningUI.OpenUI(mineralData.icon, baseMineAmount + bonusPlayerMineAmount);
@@ -172,7 +175,7 @@ public class MiningNode : MonoBehaviour
             miningUI.UpdateProgress(Mathf.Clamp01(mineTimer / adjustedInterval));
         }
 
-        // [5] Å¸ÀÌ¸Ó Ã¼Å© ¹× ½ÇÁ¦ Ã¤±¼ ½ÇÇà
+        // [5] íƒ€ì´ë¨¸ ì²´í¬ ë° ì‹¤ì œ ì±„êµ´ ì‹¤í–‰
         if (mineTimer >= adjustedInterval)
         {
             mineTimer = 0f;
@@ -183,21 +186,21 @@ public class MiningNode : MonoBehaviour
     }
 
     // =========================
-    // ±¤ºÎ Ã¤±¼
+    // ê´‘ë¶€ ì±„êµ´
     // =========================
 
     public bool AutoUnitTryMine(GameObject miner)
     {
-        // [1] Á¡À¯±Ç Ã¼Å©: ÁÖÀÎÀÌ ¾øÀ¸¸é µî·Ï, ÁÖÀÎÀÌ ³»°¡ ¾Æ´Ï¸é Áï½Ã Â÷´Ü
+        // [1] ì ìœ ê¶Œ ì²´í¬: ì£¼ì¸ì´ ì—†ìœ¼ë©´ ë“±ë¡, ì£¼ì¸ì´ ë‚´ê°€ ì•„ë‹ˆë©´ ì¦‰ì‹œ ì°¨ë‹¨
         if (currentMiner == null)
         {
             currentMiner = miner;
-            mineTimer = 0f; // ÁÖÀÎÀÌ »õ·Î ¹Ù²î¾úÀ¸¹Ç·Î Å¸ÀÌ¸Ó ¸®¼Â
+            mineTimer = 0f; // ì£¼ì¸ì´ ìƒˆë¡œ ë°”ë€Œì—ˆìœ¼ë¯€ë¡œ íƒ€ì´ë¨¸ ë¦¬ì…‹
         }
 
         if (currentMiner != miner) return false;
 
-        // [2] Ã¤±¼ °¡´É »óÅÂ Ã¼Å©
+        // [2] ì±„êµ´ ê°€ëŠ¥ ìƒíƒœ ì²´í¬
         if (!canMine || mineralData == null || resourceTable == null)
         {
             if (miningUI != null) miningUI.CloseUI();
@@ -205,11 +208,11 @@ public class MiningNode : MonoBehaviour
             return false;
         }
 
-        // [3] ±¤ºÎ Àü¿ë ¼Óµµ º¸Á¤ ¹× Å¸ÀÌ¸Ó ÁøÇà
+        // [3] ê´‘ë¶€ ì „ìš© ì†ë„ ë³´ì • ë° íƒ€ì´ë¨¸ ì§„í–‰
         float adjustedInterval = baseAutoMineInterval / (1f + bonusMinerMineSpeed);
         mineTimer += Time.deltaTime;
 
-        // [4] UI ¾÷µ¥ÀÌÆ®
+        // [4] UI ì—…ë°ì´íŠ¸
         if (miningUI != null)
         {
             miningUI.OpenUI(mineralData.icon, baseMineAmount + bonusMinerMineAmount);
@@ -217,7 +220,7 @@ public class MiningNode : MonoBehaviour
             miningUI.UpdateProgress(Mathf.Clamp01(mineTimer / adjustedInterval));
         }
 
-        // [5] Å¸ÀÌ¸Ó Ã¼Å© ¹× ½ÇÁ¦ Ã¤±¼ ½ÇÇà
+        // [5] íƒ€ì´ë¨¸ ì²´í¬ ë° ì‹¤ì œ ì±„êµ´ ì‹¤í–‰
         if (mineTimer >= adjustedInterval)
         {
             mineTimer = 0f;
@@ -228,11 +231,18 @@ public class MiningNode : MonoBehaviour
     }
 
     // =========================
-    // ½ÇÁ¦ Ã¤±¼ Ã³¸®
+    // ì‹¤ì œ ì±„êµ´ ì²˜ë¦¬
     // =========================
 
     private void Mine(int totalAmount)
     {
+        // ì±„êµ´ íƒ€ê²© ì´í™íŠ¸ ì¶”ê°€
+        if(effectController != null)
+        {
+            effectController.PlayHit(mineralPoint.position);
+        }
+        SFXManager.instance.PlayOnSFX("mineralMiner", transform.position);
+
         for (int i = 0; i < totalAmount; i++)
         {
             if (currentMineCount >= maxMineCount)
@@ -256,17 +266,23 @@ public class MiningNode : MonoBehaviour
 
         if (currentMineCount == maxMineCount)
         {
-            // 1. Á¡À¯ »óÅÂ ÇØÁ¦
+            // 1. ì ìœ  ìƒíƒœ í•´ì œ
             currentMiner = null;
 
-            // 2. Ã¤±¼ Å¸ÀÌ¸Ó ÃÊ±âÈ­
+            // 2. ì±„êµ´ íƒ€ì´ë¨¸ ì´ˆê¸°í™”
             mineTimer = 0f;
 
-            // ÀÚ¿øÀÌ ´Ù ¼Ò¸ğµÇ¾úÀ¸¹Ç·Î Ã¤±¼ UI¸¦ Áï½Ã ´İ±â
+            // ìì›ì´ ë‹¤ ì†Œëª¨ë˜ì—ˆìœ¼ë¯€ë¡œ ì±„êµ´ UIë¥¼ ì¦‰ì‹œ ë‹«ê¸°
             if (miningUI != null)
             {
                 miningUI.CloseUI();
             }
+            // ê´‘ë¬¼ íŒŒê´´ ì´í™íŠ¸ ì¶”ê°€
+            if(effectController != null)
+            {
+                effectController.PlayDestroy(mineralPoint.position);
+            }
+            SFXManager.instance.PlayOnSFX("Break2", transform.position);
 
             foreach (GameObject mineral in mineMineral)
                 mineral.SetActive(false);
@@ -294,7 +310,7 @@ public class MiningNode : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        // ³ª°¡´Â °´Ã¼°¡ 'ÇöÀç Á¡À¯ÀÚ'ÀÎ °æ¿ì¿¡¸¸ Á¡À¯±ÇÀ» ÇØÁ¦
+        // ë‚˜ê°€ëŠ” ê°ì²´ê°€ 'í˜„ì¬ ì ìœ ì'ì¸ ê²½ìš°ì—ë§Œ ì ìœ ê¶Œì„ í•´ì œ
         if (other.gameObject == currentMiner)
         {
             currentMiner = null;
