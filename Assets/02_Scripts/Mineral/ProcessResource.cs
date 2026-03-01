@@ -4,36 +4,36 @@ using UnityEngine;
 
 public class ProcessResource : MonoBehaviour
 {
-    [SerializeField] List<ItemDataSO> processableMinerals = new List<ItemDataSO>(); //°¡°ø °¡´ÉÇÑ ÀÚ¿ø ¸®½ºÆ®
+    [SerializeField] List<ItemDataSO> processableMinerals = new List<ItemDataSO>(); //ê°€ê³µ ê°€ëŠ¥í•œ ìì› ë¦¬ìŠ¤íŠ¸
 
     private List<Transform> stockingTable = new();
     private List<Transform> processingTable = new();
 
     private MineralItem firstMineralItemStock;
-    [SerializeField] Transform stockingPoint;   //Ã¢°í À§Ä¡
-    [SerializeField] Transform processingPoint; //°¡°ø À§Ä¡
+    [SerializeField] Transform stockingPoint;   //ì°½ê³  ìœ„ì¹˜
+    [SerializeField] Transform processingPoint; //ê°€ê³µ ìœ„ì¹˜
 
-    [SerializeField] float itemHeight = 0.3f;   //¾ÆÀÌÅÛ ³ôÀÌ °£°İ
+    [SerializeField] float itemHeight = 0.3f;   //ì•„ì´í…œ ë†’ì´ ê°„ê²©
 
-    [SerializeField] float delay = 1.0f;        //°¡°ø µô·¹ÀÌ
+    [SerializeField] float delay = 1.0f;        //ê°€ê³µ ë”œë ˆì´
 
-    [Header("°¡°ø ½Ã°£ ¼³Á¤")]
+    [Header("ê°€ê³µ ì‹œê°„ ì„¤ì •")]
     [SerializeField] private float processTime = 1.0f;
 
     private float baseProcessTime;
     private float bonusProcessTimeReduction;
 
-    bool isProcessing = false;  //°¡°ø ÁßÀÎÁö ¿©ºÎ
+    bool isProcessing = false;  //ê°€ê³µ ì¤‘ì¸ì§€ ì—¬ë¶€
 
-    public int sectionIndex; //¼½¼Çº° ÀÎµ¦½º
+    public int sectionIndex; //ì„¹ì…˜ë³„ ì¸ë±ìŠ¤
 
     [Header("Lever")]
-    [SerializeField] Transform leverHandle;   // ·¹¹ö ¼ÕÀâÀÌ
-    [SerializeField] float leverUpY = 0.33f;  // ±âº» À§Ä¡
-    [SerializeField] float leverDownY = -0.33f; // ÀÛµ¿ À§Ä¡
-    [SerializeField] float leverMoveSpeed = 2f; // ÀÌµ¿ ¼Óµµ
+    [SerializeField] Transform leverHandle;   // ë ˆë²„ ì†ì¡ì´
+    [SerializeField] float leverUpY = 0.33f;  // ê¸°ë³¸ ìœ„ì¹˜
+    [SerializeField] float leverDownY = -0.33f; // ì‘ë™ ìœ„ì¹˜
+    [SerializeField] float leverMoveSpeed = 2f; // ì´ë™ ì†ë„
 
-    [Header("°¡°ø °á°ú ÃÖ´ë ÀúÀå·®")]
+    [Header("ê°€ê³µ ê²°ê³¼ ìµœëŒ€ ì €ì¥ëŸ‰")]
     [SerializeField] private int maxProcessedCapacity = 5;
 
     private int baseProcessedCapacity;
@@ -52,14 +52,14 @@ public class ProcessResource : MonoBehaviour
 
     private IEnumerator Start()
     {
-        yield return null; // ÇÑ ÇÁ·¹ÀÓ ´ë±â
+        yield return null; // í•œ í”„ë ˆì„ ëŒ€ê¸°
 
         if (UpgradeEffectManager.Instance != null)
         {
             UpgradeEffectManager.Instance.OnProcessingMaxCapacityChanged += HandleProcessingCapacityChanged;
             UpgradeEffectManager.Instance.OnProcessorProcessTimeChanged += HandleProcessTimeChanged;
 
-            // ±¸µ¶ ÈÄ Áï½Ã ÇöÀç »óÅÂ ¹İ¿µ
+            // êµ¬ë… í›„ ì¦‰ì‹œ í˜„ì¬ ìƒíƒœ ë°˜ì˜
             UpgradeEffectManager.Instance.RecalculateAllEffects();
         }
     }
@@ -83,7 +83,7 @@ public class ProcessResource : MonoBehaviour
         {
             GameObject gameObject = stockingTable[0].gameObject;
 
-            //Ä³½ÌÃ³¸®
+            //ìºì‹±ì²˜ë¦¬
             if (firstMineralItemStock == null)
             {
                 firstMineralItemStock = gameObject.GetComponent<MineralItem>();
@@ -101,7 +101,7 @@ public class ProcessResource : MonoBehaviour
         }
     }
 
-    //½×ÀÌ´Â ¾ÆÀÌÅÛ °ø¿ëÇÔ¼ö
+    //ìŒ“ì´ëŠ” ì•„ì´í…œ ê³µìš©í•¨ìˆ˜
     public void StackPosition(List<Transform> list, Transform basePos)
     {
         for (int i = 0; i < list.Count; i++)
@@ -141,7 +141,7 @@ public class ProcessResource : MonoBehaviour
         }
     }
 
-    //ÇÃ·¹ÀÌ¾îÇÑÅ×¼­ ÀÚ¿ø ¹Ş±â
+    //í”Œë ˆì´ì–´í•œí…Œì„œ ìì› ë°›ê¸°
     public void AddStock(GameObject rawMaterial)
     {
         stockingTable.Add(rawMaterial.transform);
@@ -153,7 +153,7 @@ public class ProcessResource : MonoBehaviour
         if (rawMaterial.TryGetComponent<Rigidbody>(out var rb)) Destroy(rb);
     }
 
-    //°¡°ø½ÃÀÛ
+    //ê°€ê³µì‹œì‘
     public void StartProcessing(GameObject rawMaterial)
     {
         if (isProcessing) return;
@@ -166,35 +166,28 @@ public class ProcessResource : MonoBehaviour
         }
     }
 
-    //»ı¼º ·ÎÁ÷À» Å¸ÀÌ¹Ö ¼³Á¤À» À§ÇÑ ÄÚ·çÆ¾
+    //ìƒì„± ë¡œì§ì„ íƒ€ì´ë° ì„¤ì •ì„ ìœ„í•œ ì½”ë£¨í‹´
     IEnumerator SuccessProcessed(GameObject rawMaterial, ItemDataSO data)
     {
-        // 1. Áï½Ã Áßº¹ ½ÇÇà ¹æÁö Àá±İ
+        // 1. ì¦‰ì‹œ ì¤‘ë³µ ì‹¤í–‰ ë°©ì§€ ì ê¸ˆ
         isProcessing = true;
 
-<<<<<<< HEAD
-        // 2. ÇÑ ÇÁ·¹ÀÓ ´ë±â (µ¿±âÈ­ ¾ÈÀü¼º)
+        // 2. í•œ í”„ë ˆì„ ëŒ€ê¸° (ë™ê¸°í™” ì•ˆì „ì„±)
         yield return null;
-=======
-        SFXManager.instance.PlayOnSFX("232869__lagezon__cardboard_factory_machine-004", transform.position);
 
-        float finalProcessTime = Mathf.Max(0.1f, baseProcessTime - bonusProcessTimeReduction);
-        float halfTime = finalProcessTime * 0.5f;
->>>>>>> 3c939ae04eb15b4e4532f0aa026df7f381bfc14f
-
-        // --- ¼ö·® °è»ê ·ÎÁ÷ Ãß°¡ ---
+        // --- ìˆ˜ëŸ‰ ê³„ì‚° ë¡œì§ ì¶”ê°€ ---
         int inputPerProcess = data.inputAmountPerProcess > 0 ? data.inputAmountPerProcess : 1;
-        int currentStock = stockingTable.Count; // ÇöÀç ½×¿©ÀÖ´Â ¿øÀç·á ÃÑÇÕ
+        int currentStock = stockingTable.Count; // í˜„ì¬ ìŒ“ì—¬ìˆëŠ” ì›ì¬ë£Œ ì´í•©
 
-        // ÇöÀç Àç·á·Î °¡´ÉÇÑ ÃÑ °¡°ø È½¼ö (Á¤¼ö ³ª´°¼À: 20 / 3 = 6)
+        // í˜„ì¬ ì¬ë£Œë¡œ ê°€ëŠ¥í•œ ì´ ê°€ê³µ íšŸìˆ˜ (ì •ìˆ˜ ë‚˜ëˆ—ì…ˆ: 20 / 3 = 6)
         int possibleBatchCount = currentStock / inputPerProcess;
 
-        // UI¿¡ Ç¥½ÃÇÒ °ªµé
-        int totalInputVisual = possibleBatchCount * inputPerProcess; // ¼Ò¸ğµÉ ÃÑ Àç·á (¿¹: 18)
-        int totalOutputVisual = possibleBatchCount; // »ı¼ºµÉ ÃÑ °á°ú¹° (¿¹: 6)
+        // UIì— í‘œì‹œí•  ê°’ë“¤
+        int totalInputVisual = possibleBatchCount * inputPerProcess; // ì†Œëª¨ë  ì´ ì¬ë£Œ (ì˜ˆ: 18)
+        int totalOutputVisual = possibleBatchCount; // ìƒì„±ë  ì´ ê²°ê³¼ë¬¼ (ì˜ˆ: 6)
                                                     // -------------------------
 
-        // 3. UI ÃÊ±âÈ­ ¹× Ç¥½Ã (°è»êµÈ ¼ö·® Àü´Ş)
+        // 3. UI ì´ˆê¸°í™” ë° í‘œì‹œ (ê³„ì‚°ëœ ìˆ˜ëŸ‰ ì „ë‹¬)
         if (processorUI != null)
         {
             if (data != null && data.processedResult != null)
@@ -203,10 +196,12 @@ public class ProcessResource : MonoBehaviour
             }
         }
 
-        // 4. °¡°ø ½Ã°£ È®Á¤
+        // 4. ê°€ê³µ ì‹œê°„ í™•ì •
+        SFXManager.instance.PlayOnSFX("232869__lagezon__cardboard_factory_machine-004", transform.position);
+
         float finalProcessTime = Mathf.Max(0.1f, baseProcessTime - bonusProcessTimeReduction);
 
-        // 5. ¿øÀç·á ¼Ò¸ğ (½ÇÁ¦ °¡°ø 1È¸ºĞÀÎ resourceQuantity¸¸Å­¸¸ ¼Ò¸ğ)
+        // 5. ì›ì¬ë£Œ ì†Œëª¨ (ì‹¤ì œ ê°€ê³µ 1íšŒë¶„ì¸ resourceQuantityë§Œí¼ë§Œ ì†Œëª¨)
         int resourceQuantity = inputPerProcess;
 
         if (SceneGameDataManager.instance != null)
@@ -223,7 +218,7 @@ public class ProcessResource : MonoBehaviour
             }
         }
 
-        // 6. °¡°ø ÁøÇà ·çÇÁ
+        // 6. ê°€ê³µ ì§„í–‰ ë£¨í”„
         float elapsed = 0f;
         while (elapsed < finalProcessTime)
         {
@@ -244,7 +239,7 @@ public class ProcessResource : MonoBehaviour
             yield return null;
         }
 
-        // 7. °¡°ø °á°ú¹° »ı¼º (1È¸ºĞ »ı¼º)
+        // 7. ê°€ê³µ ê²°ê³¼ë¬¼ ìƒì„± (1íšŒë¶„ ìƒì„±)
         if (data.processedResult != null && data.processedResult.mineralPrefab != null)
         {
             GameObject processedItem = PoolManager.instance.Get(
@@ -262,7 +257,7 @@ public class ProcessResource : MonoBehaviour
             processedItem.transform.SetParent(processingPoint, true);
         }
 
-        // 8. Á¾·á ¹× UI ´İ±â
+        // 8. ì¢…ë£Œ ë° UI ë‹«ê¸°
         if (processorUI != null) processorUI.CloseUI();
 
         isProcessing = false;
@@ -286,12 +281,12 @@ public class ProcessResource : MonoBehaviour
             return;
 
         // ===============================
-        //  AutoBackPackV2 (°¡°øÇ° Àü¿ë ¿î¹İ¿ø)
+        //  AutoBackPackV2 (ê°€ê³µí’ˆ ì „ìš© ìš´ë°˜ì›)
         // ===============================
         var autoBackPackV2 = other.GetComponent<AutoBackPackV2>();
         if (autoBackPackV2 != null)
         {
-            // °¡°øÇ° ÇÈ¾÷
+            // ê°€ê³µí’ˆ í”½ì—…
             if (!autoBackPackV2.IsFullBackPack() && processingTable.Count > 0)
             {
                 GameObject processed = GiveProcessedItem();
@@ -299,11 +294,11 @@ public class ProcessResource : MonoBehaviour
                     autoBackPackV2.AddResource(processed);
             }
 
-            return; // V2´Â ¿©±â¼­ ³¡
+            return; // V2ëŠ” ì—¬ê¸°ì„œ ë
         }
 
         // ===============================
-        //  ±âÁ¸ AutoBackPack (¿øÀÚÀç ¿î¹İ¿ë)
+        //  ê¸°ì¡´ AutoBackPack (ì›ìì¬ ìš´ë°˜ìš©)
         // ===============================
         var autoBackPack = other.GetComponent<AutoBackPack>();
         if (autoBackPack != null)
@@ -316,7 +311,7 @@ public class ProcessResource : MonoBehaviour
         }
 
         // ===============================
-        //  Player Ã³¸® (±âÁ¸ ·ÎÁ÷ À¯Áö)
+        //  Player ì²˜ë¦¬ (ê¸°ì¡´ ë¡œì§ ìœ ì§€)
         // ===============================
         PlayerFSM fsm = other.GetComponent<PlayerFSM>();
         StackBackPack backPack = other.GetComponent<StackBackPack>();
@@ -324,14 +319,14 @@ public class ProcessResource : MonoBehaviour
         if (fsm == null || backPack == null)
             return;
 
-        // µå·Ó ¿ì¼±
+        // ë“œë¡­ ìš°ì„ 
         if (TryDrop(backPack))
         {
             fsm.EnterDropping(DropType.Process);
             return;
         }
 
-        // ÇÈ¾÷
+        // í”½ì—…
         if (TryPickUp(backPack))
         {
             fsm.EnterPickingUp(PickupType.ProcessedItem);
@@ -339,7 +334,7 @@ public class ProcessResource : MonoBehaviour
         }
     }
 
-    // µå·Ó Ã³¸®    
+    // ë“œë¡­ ì²˜ë¦¬    
     bool TryDrop(StackBackPack backPack)
     {
         GameObject topItem = backPack.PeekResource();
@@ -354,7 +349,7 @@ public class ProcessResource : MonoBehaviour
         return true;
     }
     
-    // ÇÈ¾÷ Ã³¸®    
+    // í”½ì—… ì²˜ë¦¬    
     bool TryPickUp(StackBackPack backPack)
     {
         if (processingTable.Count == 0)
@@ -371,7 +366,7 @@ public class ProcessResource : MonoBehaviour
         return true;
     }
 
-    // ·¹¹ö ÀÌµ¿ ÄÚ·çÆ¾
+    // ë ˆë²„ ì´ë™ ì½”ë£¨í‹´
     //IEnumerator MoveLeverY(float targetY, float duration)
     //{
     //    Vector3 startPos = leverHandle.localPosition;
