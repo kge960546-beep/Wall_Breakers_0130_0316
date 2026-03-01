@@ -9,12 +9,14 @@ public class ProcessResource : MonoBehaviour
     private List<Transform> stockingTable = new();
     private List<Transform> processingTable = new();
 
+    private MineralItem firstMineralItemStock;
     [SerializeField] Transform stockingPoint;   //창고 위치
     [SerializeField] Transform processingPoint; //가공 위치
 
     [SerializeField] float itemHeight = 0.3f;   //아이템 높이 간격
 
     [SerializeField] float delay = 1.0f;        //가공 딜레이
+
     [Header("가공 시간 설정")]
     [SerializeField] private float processTime = 1.0f;
 
@@ -81,12 +83,21 @@ public class ProcessResource : MonoBehaviour
         {
             GameObject gameObject = stockingTable[0].gameObject;
 
-            var mineralItem = gameObject.GetComponent<MineralItem>();
-
-            if (stockingTable.Count >= mineralItem.mineralData.inputAmountPerProcess)
+            //캐싱처리
+            if (firstMineralItemStock == null)
             {
-                StartProcessing(gameObject);
-            }
+                firstMineralItemStock = gameObject.GetComponent<MineralItem>();
+            }            
+
+            if(firstMineralItemStock != null)
+            {
+                if (stockingTable.Count >= firstMineralItemStock.mineralData.inputAmountPerProcess)
+                {
+                    StartProcessing(gameObject);
+
+                    firstMineralItemStock = null;
+                }
+            }           
         }
     }
 
@@ -136,6 +147,8 @@ public class ProcessResource : MonoBehaviour
         stockingTable.Add(rawMaterial.transform);
         rawMaterial.transform.SetParent(stockingPoint, true);
 
+        SFXManager.instance.PlayOnSFX("19987__acclivity__fingerplop1", stockingPoint.position);
+
         if (rawMaterial.TryGetComponent<Collider>(out var col)) col.enabled = false;
         if (rawMaterial.TryGetComponent<Rigidbody>(out var rb)) Destroy(rb);
     }
@@ -159,8 +172,15 @@ public class ProcessResource : MonoBehaviour
         // 1. 즉시 중복 실행 방지 잠금
         isProcessing = true;
 
+<<<<<<< HEAD
         // 2. 한 프레임 대기 (동기화 안전성)
         yield return null;
+=======
+        SFXManager.instance.PlayOnSFX("232869__lagezon__cardboard_factory_machine-004", transform.position);
+
+        float finalProcessTime = Mathf.Max(0.1f, baseProcessTime - bonusProcessTimeReduction);
+        float halfTime = finalProcessTime * 0.5f;
+>>>>>>> 3c939ae04eb15b4e4532f0aa026df7f381bfc14f
 
         // --- 수량 계산 로직 추가 ---
         int inputPerProcess = data.inputAmountPerProcess > 0 ? data.inputAmountPerProcess : 1;
@@ -232,6 +252,8 @@ public class ProcessResource : MonoBehaviour
                 processingPoint.position,
                 Quaternion.identity
             );
+
+            SFXManager.instance.PlayOnSFX("149270__organicmanpl__ding-1", processingPoint.position);
 
             if (SceneGameDataManager.instance != null)
                 SceneGameDataManager.instance.sectionProcessMineralCount[sectionIndex] += 1;

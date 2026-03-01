@@ -37,11 +37,17 @@ public class MiningNode : MonoBehaviour
     [Header("데이터 연결")]
     [SerializeField] private int sectionIndex;
 
+<<<<<<< HEAD
     [Header("UI Reference")]
     [SerializeField] private MiningUI miningUI;
 
     [Header("Occupancy")]
     private GameObject currentMiner; // 현재 채굴 중인 대상
+=======
+    [Header("VFX")]
+    [SerializeField] private MiningEffectController effectController;
+    [SerializeField] private Transform mineralPoint;
+>>>>>>> 3c939ae04eb15b4e4532f0aa026df7f381bfc14f
 
     private float mineTimer;
 
@@ -233,6 +239,13 @@ public class MiningNode : MonoBehaviour
 
     private void Mine(int totalAmount)
     {
+        // 채굴 타격 이펙트 추가
+        if(effectController != null)
+        {
+            effectController.PlayHit(mineralPoint.position);
+        }
+        SFXManager.instance.PlayOnSFX("mineralMiner", transform.position);
+
         for (int i = 0; i < totalAmount; i++)
         {
             if (currentMineCount >= maxMineCount)
@@ -256,6 +269,7 @@ public class MiningNode : MonoBehaviour
 
         if (currentMineCount == maxMineCount)
         {
+<<<<<<< HEAD
             // 1. 점유 상태 해제
             currentMiner = null;
 
@@ -267,6 +281,14 @@ public class MiningNode : MonoBehaviour
             {
                 miningUI.CloseUI();
             }
+=======
+            // 광물 파괴 이펙트 추가
+            if(effectController != null)
+            {
+                effectController.PlayDestroy(mineralPoint.position);
+            }
+            SFXManager.instance.PlayOnSFX("Break2", transform.position);
+>>>>>>> 3c939ae04eb15b4e4532f0aa026df7f381bfc14f
 
             foreach (GameObject mineral in mineMineral)
                 mineral.SetActive(false);

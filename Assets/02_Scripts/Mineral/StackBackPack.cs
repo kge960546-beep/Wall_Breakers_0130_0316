@@ -114,6 +114,8 @@ public class StackBackPack : MonoBehaviour
             return;
         }
 
+        SFXManager.instance.PlayOnSFX("Blop Sound", transform.position);
+
         if (mineralItem != null && mineralItem.mineralData != null)
         {
             PlayerInventory.Instance.AddItem(mineralItem.mineralData, 1);
