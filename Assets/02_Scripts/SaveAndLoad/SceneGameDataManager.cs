@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class SceneGameDataManager : MonoBehaviour
 {
@@ -29,6 +30,12 @@ public class SceneGameDataManager : MonoBehaviour
         }
         else Destroy(gameObject);
     }
+
+    private void Start()
+    {
+       
+    }
+        
     private void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
@@ -88,10 +95,31 @@ public class SceneGameDataManager : MonoBehaviour
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        SetupButtonUI();
+
         if (isPendingLoad)
         {
             isPendingLoad = false;
             StartCoroutine(SceneLoadSaveData());
+        }
+    }
+
+    void SetupButtonUI()
+    {
+        GameObject saveBtn = GameObject.Find("SaveButton");         
+        if (saveBtn != null)
+        {
+            Button saveButton = saveBtn.GetComponent<Button>();
+            saveButton.onClick.RemoveAllListeners();
+            saveButton.onClick.AddListener(() => SceneGameDataManager.instance.SaveGame());
+        }
+
+        GameObject loadBtn = GameObject.Find("LoadButton");        
+        if (loadBtn != null)
+        {
+            Button loadButton = loadBtn.GetComponent<Button>();
+            loadButton.onClick.RemoveAllListeners();
+            loadButton.onClick.AddListener(() => SceneGameDataManager.instance.LoadGame());
         }
     }
 

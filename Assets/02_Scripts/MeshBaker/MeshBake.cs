@@ -87,6 +87,11 @@ public class MeshBake : MonoBehaviour
         meshCollider.sharedMesh = null;
         meshCollider.sharedMesh = combinedMesh;
 
+        GridManager grid = FindAnyObjectByType<GridManager> ();
+        if (grid != null) 
+        {
+            grid.GridData();
+        }
         gameObject.SetActive (true);
     }
 }
