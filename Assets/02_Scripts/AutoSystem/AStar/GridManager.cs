@@ -13,12 +13,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] float sampleY = 0.5f; // 샘플링 높이
     [SerializeField] Vector3 halfExtents = new Vector3(0.45f, 1.0f, 0.45f); // 샘플링 반경
 
-    public bool[,] blocked; // 그리드의 막힌 셀 정보
-
-    private void Start()
-    {
-        GridData();
-    }
+    public bool[,] blocked; // 그리드의 막힌 셀 정보   
 
     public void GridData()
     {
