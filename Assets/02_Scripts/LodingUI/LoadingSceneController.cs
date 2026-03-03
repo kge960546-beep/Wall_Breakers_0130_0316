@@ -30,11 +30,10 @@ public class LoadingSceneController : MonoBehaviour
 
             return instance;
         }
-    }
-    #endregion
+    }    
 
     /// <summary>
-    /// 모든씬에서 득별한 설정 없이 불러오기
+    /// 모든씬에서 특별한 설정 없이 불러오기
     /// 한번만하면 싱글톤이기 때문에 더이상 로드를 하지않아도됩니다
     /// 이유:DontDestroyOnLoad를 통해 로딩 화면이 씬 A에서 씬 B로 넘어가는 공백기를 메꿔주는 역할을 하기 때문
     /// </summary>
@@ -43,27 +42,31 @@ public class LoadingSceneController : MonoBehaviour
     {
         return Instantiate(Resources.Load<LoadingSceneController>("LoadingUI"));
     }
-
-    private void Awake()
-    {
-        if (Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        DontDestroyOnLoad(gameObject);
-    }
+    #endregion
 
     [SerializeField] private CanvasGroup canvasGroup;       //페이드 인 아웃 효과를 주기위한 그룹
     [SerializeField] private Image progressBar;             //로딩이 얼마나 되었는지 보여주느귀한 이미지
-    [SerializeField] private TextMeshProUGUI toolTipLable;  //로딩 화면 도중 정보를 텍스트로 제공하기 위한 툴팁 라벨
+    [SerializeField] private TextMeshProUGUI toolTipLabel;  //로딩 화면 도중 정보를 텍스트로 제공하기 위한 툴팁 라벨
+   
     [SerializeField][TextArea] String[] toolTips;           //제공할 툴팁을 미리 정한다.
-
     private string loadSceneName;
 
     Action onSceneLoadAction;                               //로딩할때 함수를 인자로 추가로 전달했다면 해당 함수를 호출하기위한 Action
 
+
+    private void Awake()
+    {
+        if(instance == null)
+        {
+            instance=this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else if(instance != this)
+        {
+            Destroy(gameObject);
+        }        
+    }
+        
     /// <summary>
     /// 싱글턴을 이용하여 외부에서 호출하여 씬을 로드
     /// action을 추가하여 씬을 완전히 로드한 후 한 프레임이 지난 LateStart 시점에 함수를 호출  
@@ -73,12 +76,15 @@ public class LoadingSceneController : MonoBehaviour
     public void LoadScene(string sceneName, Action? action = null)
     {
         gameObject.SetActive(true);
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        loadSceneName = sceneName;
         onSceneLoadAction = action;
 
-        loadSceneName = sceneName;
+        SceneManager.sceneLoaded += OnSceneLoaded;
 
-        toolTipLable.text = toolTips[UnityEngine.Random.Range(0, toolTips.Length)];
+        if (toolTips.Length > 0)
+        {
+            toolTipLabel.text = toolTips[UnityEngine.Random.Range(0, toolTips.Length)];
+        }       
 
         StartCoroutine(LoadSceneProcessCo());
     }
@@ -96,11 +102,12 @@ public class LoadingSceneController : MonoBehaviour
     {
         progressBar.fillAmount = 0.0f;
 
+        //1. 해당 캔버스를 검게 페이드인
         yield return StartCoroutine(Fade(true));
 
+        //2. 비동기 씬로드 시작
         AsyncOperation op = SceneManager.LoadSceneAsync(loadSceneName);
-
-        op.allowSceneActivation = false;
+        op.allowSceneActivation = false; //90%에서 로딩대기
 
         float process = 0.0f;
 
@@ -110,15 +117,18 @@ public class LoadingSceneController : MonoBehaviour
 
             if (op.progress < 0.9f)
             {
+                //로딩 진핼률 반영
                 progressBar.fillAmount = op.progress;
             }
             else
             {
-                process += Time.deltaTime * 5.0f;
+                //90% 이후는 가짜로딩으로 자연스러운 연출
+                process += Time.deltaTime * 1.5f; //속도
                 progressBar.fillAmount = Mathf.Lerp(0.9f, 1.0f, process);
 
                 if (process > 1.0f)
                 {
+                    //로딩바가100% 가되면 씬 활성화
                     op.allowSceneActivation = true;
                     yield break;
                 }
@@ -135,8 +145,9 @@ public class LoadingSceneController : MonoBehaviour
     {
         if (arg0.name == loadSceneName)
         {
-            StartCoroutine(Fade(false));
+            //구독해지
             SceneManager.sceneLoaded -= OnSceneLoaded;
+            StartCoroutine(Fade(false));
         }
     }
 
@@ -150,22 +161,20 @@ public class LoadingSceneController : MonoBehaviour
         yield return new WaitForEndOfFrame();
 
         onSceneLoadAction?.Invoke();
+        onSceneLoadAction = null;
+
+        gameObject.SetActive(false);
     }
 
     /// <summary>
     /// 페이드인 아웃을 주기위한 코루틴
-    /// 
+    /// 페이드이후 로직처리
     /// </summary>
     /// <param name="isFadeIn"></param>
     /// <returns></returns>
     IEnumerator Fade(bool isFadeIn)
     {
         float process = 0f;
-
-        if (!isFadeIn)
-        {
-            StartCoroutine(LateStartCo());
-        }
 
         while (process < 1.0f)
         {
@@ -176,6 +185,8 @@ public class LoadingSceneController : MonoBehaviour
         }
 
         if (!isFadeIn)
-            gameObject.SetActive(false);
+        {
+            StartCoroutine(LateStartCo());            
+        }     
     }
 }
