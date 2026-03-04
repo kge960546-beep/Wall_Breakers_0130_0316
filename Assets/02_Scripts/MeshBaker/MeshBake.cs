@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 //MeshFilter, MesgRenderer 속성을 스크립트를 넣으면 적용되게 하기위한 코드
 [RequireComponent (typeof(MeshFilter), typeof(MeshRenderer))]
 public class MeshBake : MonoBehaviour

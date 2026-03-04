@@ -15,6 +15,10 @@ public class GridManager : MonoBehaviour
 
     public bool[,] blocked; // ±×¸®µåÀÇ ¸·Èù ¼¿ Á¤º¸   
 
+    private void Start()
+    {
+        GridData();
+    }
     public void GridData()
     {
         blocked = new bool[height, width];
