@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a91ab8e0f2f81f14595e28f1e4aa0b76, type: 3}
   m_Name: Dig 10000 pieces of dirt
   m_EditorClassIdentifier: 
-  id: Dirt_10000
+  id: Section_0_Mine
   title: "\uD759 10000\uAC1C \uCE90\uAE30"
   description: "\uC139\uC1581 \uC790\uC6D0\uC778 \uD759\uC744 10000\uAC1C \uCE90\uC2DC\uC624"
   targetValue: 10000

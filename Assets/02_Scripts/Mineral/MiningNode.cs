@@ -261,6 +261,10 @@ public class MiningNode : MonoBehaviour
             if (SceneGameDataManager.instance != null)
             {
                 SceneGameDataManager.instance.sectionMineralCount[sectionIndex]++;
+
+                string sectionAchievementID = $"Section_{sectionIndex}_Mine";
+                int currentSectionTotal = SceneGameDataManager.instance.sectionMineralCount[sectionIndex];
+                AchievementsManager.instance.ProgressAchievement(sectionAchievementID, currentSectionTotal);
             }
         }
 

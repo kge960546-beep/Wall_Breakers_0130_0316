@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,6 +9,16 @@ public class AchievementsManager : MonoBehaviour
 
     private HashSet<string> unlockIDs = new HashSet<string>();
 
+    private System.Action<AchievementSO> onAchievementUnlocked;
+
+    public void SubscribeonAchievementUnlocked(Action<AchievementSO> action )
+    {
+        onAchievementUnlocked += action;
+    }
+    public void UnsubscribeonAchievementUnlocked(Action<AchievementSO> action)
+    {
+        onAchievementUnlocked -= action;
+    }
     private void Awake()
     {
         if (instance == null)
@@ -73,7 +84,7 @@ public class AchievementsManager : MonoBehaviour
         SceneGameDataManager.instance.SaveGame();
 
         Utils.DebugLog($"업적달성: {a.title}");
-
-        //TODO: UI연출 넣기
+        
+        onAchievementUnlocked?.Invoke(a);
     }   
 }
