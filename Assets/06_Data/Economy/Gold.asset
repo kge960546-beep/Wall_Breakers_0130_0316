@@ -15,7 +15,7 @@ MonoBehaviour:
   Id: 8
   itemName: "\uAE08"
   itemType: 0
-  sellPrice: 50
+  sellPrice: 250
   sellDuration: 1
   mineralPrefab: {fileID: 919132149155446097, guid: bd75572054aef2c40bbc272c74d66b2c,
     type: 3}

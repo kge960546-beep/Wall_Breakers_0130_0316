@@ -1,7 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class UpgradeUIButton : MonoBehaviour
+public class UpgradeUIButton : MonoBehaviour,
+    IPointerEnterHandler,
+    IPointerExitHandler
 {
     public UpgradeGraphBuilder graphBuilder;
     public UpgradeUIManager uiManager;
@@ -11,8 +14,12 @@ public class UpgradeUIButton : MonoBehaviour
     private UpgradeGraphNode<UpgradeDataSO> node;
     private CreditService creditService;
 
+    private Image sourceImage;
+
     private void Start()
     {
+        sourceImage = GetComponent<Image>();
+
         // 노드 찾기
         if (graphBuilder.DAG.TryGetNode(targetSO.upgradeID, out node) == false)
         {
@@ -36,36 +43,26 @@ public class UpgradeUIButton : MonoBehaviour
         if (node == null)
             return;
 
-        // 1. 부모 조건 먼저 체크
+        // 부모 조건 체크
         if (!node.CanActivate()) return;
 
-        // 2. 골드 체크
         if (creditService == null) return;
-       
+
         int cost = targetSO.cost;
 
         if (creditService.credits < cost) return;
 
-        // 3. 노드 활성화 시도
         bool success = node.Activate();
 
         if (success)
         {
-            // 골드 차감
             creditService.AddCredit(-cost);
 
-            // 재집계 구조 적용
             if (UpgradeEffectManager.Instance != null)
             {
                 UpgradeEffectManager.Instance.RecalculateAllEffects();
             }
-            else
-            {
-            }
 
-            //uiManager.PrintActivatedNodes();
-
-            // 버튼 비활성화
             GetComponent<Button>().interactable = false;
 
             int sectionIndex = node.SectionIndex;
@@ -75,8 +72,32 @@ public class UpgradeUIButton : MonoBehaviour
                 uiManager.OpenNextSection();
             }
         }
-        else
-        {
-        }
+    }
+
+    // =========================
+    // Hover Enter
+    // =========================
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (UpgradeTooltipManager.Instance == null) return;
+
+        UpgradeTooltipManager.Instance.Show(
+            sourceImage.sprite,
+            targetSO.displayName,
+            targetSO.description,
+            targetSO.cost
+        );
+    }
+
+    // =========================
+    // Hover Exit
+    // =========================
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (UpgradeTooltipManager.Instance == null) return;
+
+        UpgradeTooltipManager.Instance.Hide();
     }
 }

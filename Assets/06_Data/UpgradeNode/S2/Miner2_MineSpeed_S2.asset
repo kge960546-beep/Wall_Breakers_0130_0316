@@ -19,5 +19,6 @@ MonoBehaviour:
   - upgradeType: 8
     value: 0.5
     targetID: MINER_4
-  cost: 0
+    sectionIndex: 0
+  cost: 3600
   section: 2

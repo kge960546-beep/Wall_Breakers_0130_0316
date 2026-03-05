@@ -17,7 +17,8 @@ MonoBehaviour:
   description: "\uC774\uB3D9\uC18D\uB3C4 +30%"
   effects:
   - upgradeType: 10
-    value: 0.15
+    value: 0.3
     targetID: CarrierF
-  cost: 0
+    sectionIndex: 0
+  cost: 6000
   section: 3

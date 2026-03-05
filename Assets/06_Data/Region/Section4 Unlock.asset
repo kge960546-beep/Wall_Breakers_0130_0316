@@ -16,6 +16,6 @@ MonoBehaviour:
   regionName: Section 4
   regionIcon: {fileID: 0}
   unlockRequirement:
-    requiredCredits: 2000
+    requiredCredits: 120000
     requiredItems: []
   description: Do You want to unlock Section4 ?

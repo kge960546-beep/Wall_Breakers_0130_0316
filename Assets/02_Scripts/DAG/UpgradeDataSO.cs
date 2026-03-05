@@ -9,6 +9,8 @@ public class UpgradeEffect
 
     [Header("광부 / 운반인 ID (개별 적용용)")]
     public string targetID;
+
+    public int sectionIndex;
 }
 
 [CreateAssetMenu(menuName = "Upgrade/Upgrade Data")]
