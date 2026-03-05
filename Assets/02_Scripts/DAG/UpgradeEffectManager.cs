@@ -265,6 +265,8 @@ public class UpgradeEffectManager : MonoBehaviour
     // 이벤트 통보
     private void DispatchAllEvents()
     {
+        OnPlayerMoveSpeedChanged?.Invoke(totalPlayerMoveSpeed);
+
         foreach (var pair in playerMineSpeedBySection)
         {
             OnPlayerMineSpeedChanged?.Invoke(pair.Key, pair.Value);
