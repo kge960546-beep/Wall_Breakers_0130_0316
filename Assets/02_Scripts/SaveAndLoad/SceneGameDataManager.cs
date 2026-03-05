@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -17,6 +18,7 @@ public class SceneGameDataManager : MonoBehaviour
     public int[] sectionFillAmount;
     public int autoNPCLevel;
     public int playerPowerLevel;
+    public List<string> savedAchievements = new List<string>();    
 
     private bool isPendingLoad = false;
 
@@ -29,12 +31,7 @@ public class SceneGameDataManager : MonoBehaviour
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else Destroy(gameObject);
-    }
-
-    private void Start()
-    {
-       
-    }
+    }    
         
     private void OnDestroy()
     {
@@ -56,6 +53,9 @@ public class SceneGameDataManager : MonoBehaviour
         data.unCollectedMoney = this.unCollectedMoney;
         data.unlockedSections = (bool[])this.unlockedSections.Clone(); //배열은 복제해서 저장하는게 좋음
         data.sectionFillAmount = (int[])this.sectionFillAmount.Clone();
+
+        data.achievementProgess = AchievementsManager.instance.GetUnlockedIds();
+
         data.autoNPCLevel = this.autoNPCLevel;
         data.playerPowerLevel = this.playerPowerLevel;
 
@@ -81,15 +81,10 @@ public class SceneGameDataManager : MonoBehaviour
             this.autoNPCLevel = data.autoNPCLevel;
             this.playerPowerLevel = data.playerPowerLevel;
 
+            this.savedAchievements = data.achievementProgess;
+
             isPendingLoad = true;
-
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-
-            Debug.Log($"[LoadGame] 파일에서 읽은 데이터 확인 - 섹션1: {data.sectionMineralCount[0]}개");
-            Debug.Log($"[LoadGame] 파일에서 읽은 데이터 확인 - 섹션2: {data.sectionMineralCount[1]}개");
-            Debug.Log($"[LoadGame] 파일에서 읽은 데이터 확인 - 섹션3: {data.sectionMineralCount[2]}개");
-            Debug.Log($"[LoadGame] 파일에서 읽은 데이터 확인 - 섹션4: {data.sectionMineralCount[3]}개");
-            Debug.Log($"[LoadGame] 파일에서 읽은 데이터 확인 - 섹션5: {data.sectionMineralCount[4]}개");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);            
         }
     }
 
@@ -124,21 +119,20 @@ public class SceneGameDataManager : MonoBehaviour
     }
 
     IEnumerator SceneLoadSaveData()
-    {
+    {      
         yield return new WaitForEndOfFrame();
 
-        Debug.Log($"복구 시작 - 섹션1 데이터: {sectionMineralCount[0]}");
-        Debug.Log($"복구 시작 - 섹션2 데이터: {sectionMineralCount[1]}");
-        Debug.Log($"복구 시작 - 섹션3 데이터: {sectionMineralCount[2]}");
-        Debug.Log($"복구 시작 - 섹션4 데이터: {sectionMineralCount[3]}");
-        Debug.Log($"복구 시작 - 섹션5 데이터: {sectionMineralCount[4]}");
+        if (AchievementsManager.instance != null && savedAchievements != null)
+        {
+            AchievementsManager.instance.InitializeAchievements(savedAchievements);
+        }
 
         var creditService = GameManager.Instance.GetService<CreditService>();
         if (creditService != null)
         {
             creditService?.SetCredit(currentGold);
             Debug.Log($"<color=gold>[Load] CreditService 데이터 복구 완료: {currentGold}</color>");
-        }
+        }       
 
         RestorePendingCredits();
 
