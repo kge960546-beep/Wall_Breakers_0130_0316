@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/01_Scenes/Won 2.unity
     guid: aa50fb9611e3bc440b37192772cce9e0
+  - enabled: 1
+    path: Assets/01_Scenes/TestMapAStar.unity
+    guid: f0ee44e4bcfa17d47bc81f53013bad2a
   m_configObjects: {}

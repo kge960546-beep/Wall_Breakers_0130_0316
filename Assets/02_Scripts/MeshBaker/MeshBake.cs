@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 //MeshFilter, MesgRenderer 속성을 스크립트를 넣으면 적용되게 하기위한 코드
 [RequireComponent (typeof(MeshFilter), typeof(MeshRenderer))]
 public class MeshBake : MonoBehaviour
@@ -14,12 +15,13 @@ public class MeshBake : MonoBehaviour
     void Start()
     {
         //현재 게임오브젝트의 자식들까지 전부 훑어서 MeshFilter 컴포넌트를 배열로 가져옴
-        //MeshFilter: 어떤 Mesh를 렌더러가 그릴지 들고있는 컴포넌트fh Mesh에 접근하기 위한 클래스
+        //MeshFilter: 메시의 "데이터(정점, 삼각형 등)"를 담는 바구니
 
         //MEshFilter 컴포넌트는 원래 가지고있는건지 직접 넣어야하는건지?
         // ㄴ RequireComponent를 사용하여 스크립트를 넣으면 넣어지게 구성
         MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter> ();
 
+        //머티리얼은 1개만 적용할 수 있어서 첫번째 자식의 머티리얼을 부모의 머티리얼로 복사하기
         foreach (var filter in meshFilters) 
         {
             if(filter.gameObject != gameObject)
@@ -63,6 +65,7 @@ public class MeshBake : MonoBehaviour
         //합쳐질 새 메시 생성
         Mesh combinedMesh = new Mesh ();
 
+        //Mesh는 약 65,000개의 정점까지만 가질 수 있어서 한계를 늘리는 설정
         combinedMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
 
         //매시 합치기
@@ -87,6 +90,11 @@ public class MeshBake : MonoBehaviour
         meshCollider.sharedMesh = null;
         meshCollider.sharedMesh = combinedMesh;
 
+        GridManager grid = FindAnyObjectByType<GridManager> ();
+        if (grid != null) 
+        {
+            grid.GridData();
+        }
         gameObject.SetActive (true);
     }
 }
