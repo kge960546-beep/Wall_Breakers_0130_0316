@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeID: PROCESSOR_MAX_STORAGE_S5
   displayName: "\uAC00\uACF5\uAE30\uACC4 \uCD5C\uB300 \uC800\uC7A5\uACF5\uAC04 \uD655\uC7A5"
-  description: "\uC800\uC7A5\uACF5\uAC04 +15"
+  description: "\uC800\uC7A5\uACF5\uAC04 +10"
   effects:
   - upgradeType: 14
-    value: 15
+    value: 10
     targetID: Section5
-  cost: 0
+    sectionIndex: 0
+  cost: 200000
   section: 5

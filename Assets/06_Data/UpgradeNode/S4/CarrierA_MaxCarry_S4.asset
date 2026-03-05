@@ -19,5 +19,6 @@ MonoBehaviour:
   - upgradeType: 11
     value: 5
     targetID: CarrierG
-  cost: 0
+    sectionIndex: 0
+  cost: 42000
   section: 4

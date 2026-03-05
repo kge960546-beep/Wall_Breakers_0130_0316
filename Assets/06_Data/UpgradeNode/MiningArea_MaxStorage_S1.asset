@@ -17,7 +17,8 @@ MonoBehaviour:
   description: "\uC800\uC7A5\uACF5\uAC04 +10"
   effects:
   - upgradeType: 12
-    value: 10
+    value: 20
     targetID: Section1
-  cost: 0
+    sectionIndex: 0
+  cost: 800
   section: 1

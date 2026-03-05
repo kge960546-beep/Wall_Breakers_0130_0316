@@ -19,5 +19,6 @@ MonoBehaviour:
   - upgradeType: 9
     value: 1
     targetID: CarrierC
-  cost: 0
+    sectionIndex: 0
+  cost: 1000
   section: 2
