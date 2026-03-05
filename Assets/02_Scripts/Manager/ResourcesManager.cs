@@ -14,12 +14,12 @@ public class ResourcesManager : MonoBehaviour
 
     private void Start()
     {
-        PoolManager.instance.CreatePool(earthPrefab, 90);
-        PoolManager.instance.CreatePool(rockPrefab, 90);
-        PoolManager.instance.CreatePool(copperPrefab, 90);
-        PoolManager.instance.CreatePool(ironPrefab, 90);
-        PoolManager.instance.CreatePool(goldPrefab, 90);
-        PoolManager.instance.CreatePool(moneyPrefab, 90);
+        PoolManager.instance.CreatePool(earthPrefab, 900);
+        PoolManager.instance.CreatePool(rockPrefab, 900);
+        PoolManager.instance.CreatePool(copperPrefab, 900);
+        PoolManager.instance.CreatePool(ironPrefab, 900);
+        PoolManager.instance.CreatePool(goldPrefab, 900);
+        PoolManager.instance.CreatePool(moneyPrefab, 900);
         
         Utils.DebugLog("풀링 완료");
     }
