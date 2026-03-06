@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a91ab8e0f2f81f14595e28f1e4aa0b76, type: 3}
-  m_Name: Dig 100 pieces of dirt
+  m_Name: Dig 1000 pieces of gold
   m_EditorClassIdentifier: 
-  id: Section_0_Mine
-  title: "\uD759 100\uAC1C \uCE90\uAE30"
-  description: "\uC139\uC1581 \uC790\uC6D0\uC778 \uD759\uC744 100\uAC1C \uCE90\uC2DC\uC624"
-  targetValue: 10
-  isUnlocked: 1
+  id: Section_4_Mine
+  title: "\uAE08 1000\uAC1C \uCE90\uAE30"
+  description: "\uAE08\uC744 1000\uAC1C \uCE90\uC2DC\uC624"
+  targetValue: 1000
+  isUnlocked: 0
