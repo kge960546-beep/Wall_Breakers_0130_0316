@@ -34,6 +34,7 @@ public class AchievementsManager : MonoBehaviour
         }        
     }
 
+    //게임 시작시 메모리 상의 데이터 초기화
     private void ResetAllAchievements()
     {
         foreach (var achievement in achievements)
@@ -43,7 +44,7 @@ public class AchievementsManager : MonoBehaviour
         }
     }
 
-    //세이브매니저 호출하는 함수
+    //세이브매니저 호출하는 함수로 업적 달성 저장을 불러오기
     public void InitializeAchievements(List<string> savedIDs)
     {
         unlockIDs = new HashSet<string> (savedIDs);
@@ -54,11 +55,13 @@ public class AchievementsManager : MonoBehaviour
         }
     }
 
+    //세이브 데이터용 함수로 HashSet내부 데이터를 외부에서 읽을 수 있게 변환하는 함수
     public List<string> GetUnlockedIds()
     {
         return new List<string> (unlockIDs);
     }
 
+    //업적 달성조건에 부합하면 달성함수 호출
     public void ProgressAchievement(string id, int amount)
     {
         if (unlockIDs.Contains(id)) return;
@@ -74,6 +77,7 @@ public class AchievementsManager : MonoBehaviour
         }
     }
 
+    //업적 달성시 UI갱신
     public void UnlockAchievement(AchievementSO a)
     {
         if (unlockIDs.Contains(a.id)) return;
