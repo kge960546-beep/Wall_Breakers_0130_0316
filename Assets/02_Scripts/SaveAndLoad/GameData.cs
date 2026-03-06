@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
@@ -21,4 +22,7 @@ public class GameData
     [Header("NPC업그래이드, 플레이어 업그래이드")]
     public int autoNPCLevel;
     public int playerPowerLevel;
+
+    [Header("업적 저장 리스트")]
+    public List<string> achievementProgess = new List<string>();
 }
