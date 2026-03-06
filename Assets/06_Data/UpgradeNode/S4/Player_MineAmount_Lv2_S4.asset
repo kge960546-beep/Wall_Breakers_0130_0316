@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Player_MineAmount_Lv2_S4
   m_EditorClassIdentifier: 
   upgradeID: PLAYER_MINE_AMOUNT_LV2_S4
-  displayName: "\uCC44\uAD74 \uC218\uB7C9 2\uB2E8\uACC4"
-  description: "1\uD68C \uCC44\uAD74\uB7C9 +2"
+  displayName: "\uC219\uB828\uB3C4 \uD5A5\uC0C1 Lv.2"
+  description: "\uC139\uC1584 \uD50C\uB808\uC774\uC5B4 \uCC44\uAD74\uB7C9 +1"
   effects:
   - upgradeType: 5
-    value: 2
+    value: 1
     targetID: 
     sectionIndex: 4
   cost: 77760

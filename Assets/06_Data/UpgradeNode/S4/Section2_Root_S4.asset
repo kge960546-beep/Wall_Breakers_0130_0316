@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeID: SECTION4_ROOT
   displayName: Section 4
-  description: "\uC139\uC158 1 \uC644\uB8CC \uC2DC \uD574\uAE08"
+  description: "\uC139\uC1584 \uAC15\uD654 \uC2DC\uC791!"
   effects:
   - upgradeType: 1
     value: 0
     targetID: 
+    sectionIndex: 0
   cost: 0
   section: 4

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: CarrierA_MaxCarry_S4
   m_EditorClassIdentifier: 
   upgradeID: CARRIER_A_MAX_CARRY_S4
-  displayName: "\uC6B4\uBC18\uC778 A \uCD5C\uB300 \uC801\uC7AC\uB7C9 \uC99D\uAC00"
-  description: "\uC801\uC7AC\uB7C9 +5"
+  displayName: "\uC778\uAC04 \uCCA0 \uD2B8\uB808\uC77C\uB7EC"
+  description: "\uC6B4\uBC18\uC778\uC6D0A \uC801\uC7AC\uB7C9 \uC99D\uAC00"
   effects:
   - upgradeType: 11
     value: 5
