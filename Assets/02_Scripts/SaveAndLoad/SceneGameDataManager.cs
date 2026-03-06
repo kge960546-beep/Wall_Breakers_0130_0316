@@ -31,8 +31,20 @@ public class SceneGameDataManager : MonoBehaviour
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else Destroy(gameObject);
-    }    
-        
+    }
+
+    private void OnEnable()
+    {
+        AutoLoadOnStart();
+    }
+    private void OnDisable()
+    {
+        SaveGame();
+    }
+    private void OnApplicationPause(bool pause)
+    {
+        if (pause) SaveGame();
+    }
     private void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
@@ -41,6 +53,8 @@ public class SceneGameDataManager : MonoBehaviour
     public void SaveGame()
     {
         SaveGoldObject();
+
+        SaveUnlockSection();
 
         GameData data = new GameData();
 
@@ -88,6 +102,35 @@ public class SceneGameDataManager : MonoBehaviour
         }
     }
 
+    private void AutoLoadOnStart()
+    {
+        GameData data = SaveSystem.Load();
+
+        if(data != null)
+        {
+            this.currentGold = data.currentGold;
+            this.sectionMineralCount = (int[])data.sectionMineralCount.Clone();
+            this.sectionProcessMineralCount = (int[])data.sectionProcessMineralCount.Clone();
+            this.unlockedSections = (bool[])data.unlockedSections.Clone();
+            this.unCollectedMoney = data.unCollectedMoney;
+            this.sectionFillAmount = (int[])data.sectionFillAmount.Clone();
+            this.autoNPCLevel = data.autoNPCLevel;
+            this.playerPowerLevel = data.playerPowerLevel;
+            this.savedAchievements = data.achievementProgess;
+
+            StartCoroutine(SceneLoadSaveData());
+        }
+    }
+
+    public void SaveUnlockSection()
+    {
+        if (RegionUnlockService.Instance != null)
+        {
+            this.unlockedSections = RegionUnlockService.Instance.GetUnlockedStates(5);
+            RegionUnlockService.Instance.SaveUnlockedRegions();
+        }
+    }
+
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         SetupButtonUI();
@@ -121,12 +164,27 @@ public class SceneGameDataManager : MonoBehaviour
     IEnumerator SceneLoadSaveData()
     {      
         yield return new WaitForEndOfFrame();
+        #region 섹션해금
+        if (RegionUnlockService.Instance != null)
+        {
+            RegionUnlockService.Instance.LoadUnlockedRegions();
+        }
 
+        RegionUnlockZone[] allzones = FindObjectsByType<RegionUnlockZone>(FindObjectsSortMode.None);
+        foreach (var zone in allzones)
+        {
+            zone.UpdateGateState();
+        }
+        #endregion
+
+        #region 업적
         if (AchievementsManager.instance != null && savedAchievements != null)
         {
             AchievementsManager.instance.InitializeAchievements(savedAchievements);
         }
+        #endregion
 
+        #region 판매 크래딧
         var creditService = GameManager.Instance.GetService<CreditService>();
         if (creditService != null)
         {
@@ -135,6 +193,7 @@ public class SceneGameDataManager : MonoBehaviour
         }       
 
         RestorePendingCredits();
+        #endregion
 
         ResourceTableLoad();
         ProcessTableLoad();
