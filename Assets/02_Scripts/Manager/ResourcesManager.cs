@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ResourcesManager : MonoBehaviour
@@ -20,7 +18,7 @@ public class ResourcesManager : MonoBehaviour
         PoolManager.instance.CreatePool(ironPrefab, 9000);
         PoolManager.instance.CreatePool(goldPrefab, 9000);
         PoolManager.instance.CreatePool(moneyPrefab, 9000);
-        
+
         Utils.DebugLog("풀링 완료");
     }
 }
