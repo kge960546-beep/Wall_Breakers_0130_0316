@@ -14,11 +14,11 @@ public class UpgradeSyncScript : MonoBehaviour
             {
                 data.playerMaxCarry = (int)value; data.SaveGame();
             };
-            UpgradeEffectManager.Instance.OnPlayerMineAmountChanged += (value) =>
+            UpgradeEffectManager.Instance.OnPlayerMineAmountChanged += (sectionIndex, value) =>
             {
                 data.playerMineAmount = (float)value; data.SaveGame();
             };
-            UpgradeEffectManager.Instance.OnPlayerMineSpeedChanged += (value) =>
+            UpgradeEffectManager.Instance.OnPlayerMineSpeedChanged += (sectionIndex, value) =>
             {
                 data.playerMineSpeed = (float)value; data.SaveGame();
             };
