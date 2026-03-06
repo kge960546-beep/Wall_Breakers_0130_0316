@@ -16,6 +16,14 @@ public class UpgradeUIButton : MonoBehaviour,
 
     private Image sourceImage;
 
+    private Material runtimeMat;
+
+    private bool isPurchased = false;
+    
+    [SerializeField] private Image[] connectedLines;
+
+
+
     private void Start()
     {
         sourceImage = GetComponent<Image>();
@@ -36,14 +44,22 @@ public class UpgradeUIButton : MonoBehaviour,
                 Debug.LogError("[UpgradeUIButton] CreditService 연결 실패");
             }
         }
+
+        // 머티리얼 인스턴스 생성
+        runtimeMat = Instantiate(sourceImage.material);
+        sourceImage.material = runtimeMat;
+
+        // 처음 상태 = 흑백
+        runtimeMat.SetFloat("_GrayAmount", 1f);
     }
 
     public void OnClickUpgrade()
     {
+        if (isPurchased) return;
+
         if (node == null)
             return;
 
-        // 부모 조건 체크
         if (!node.CanActivate()) return;
 
         if (creditService == null) return;
@@ -56,6 +72,8 @@ public class UpgradeUIButton : MonoBehaviour,
 
         if (success)
         {
+            isPurchased = true;
+
             creditService.AddCredit(-cost);
 
             if (UpgradeEffectManager.Instance != null)
@@ -63,7 +81,26 @@ public class UpgradeUIButton : MonoBehaviour,
                 UpgradeEffectManager.Instance.RecalculateAllEffects();
             }
 
-            GetComponent<Button>().interactable = false;
+            // =========================
+            // 연결된 선 색 변경
+            // =========================
+
+            foreach (var line in connectedLines)
+            {
+                if (line == null) continue;
+
+                line.color = Color.yellow;
+            }
+
+            // =========================
+            // 노드 컬러 전환
+            // =========================
+
+            runtimeMat.SetFloat("_GrayAmount", 0f);
+
+            // =========================
+            // 섹션 완료 체크
+            // =========================
 
             int sectionIndex = node.SectionIndex;
 

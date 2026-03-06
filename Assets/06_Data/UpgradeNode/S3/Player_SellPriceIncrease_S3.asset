@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Player_SellPriceIncrease_S3
   m_EditorClassIdentifier: 
   upgradeID: PLAYER_DIRECT_SELL_PRICE_UP_S3
-  displayName: "\uC9C1\uC811 \uD310\uB9E4 \uAC00\uACA9 \uC0C1\uC2B9"
+  displayName: "\uD611\uC0C1\uC758 \uADC0\uC7AC Lv.3"
   description: "\uD50C\uB808\uC774\uC5B4 \uAD11\uBB3C \uC9C1\uC811 \uD310\uB9E4 \uAC00\uACA9
     + 20%"
   effects:

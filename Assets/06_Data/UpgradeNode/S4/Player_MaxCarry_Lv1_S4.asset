@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Player_MaxCarry_Lv1_S4
   m_EditorClassIdentifier: 
   upgradeID: PLAYER_MAX_CARRY_LV1_S4
-  displayName: "\uCD5C\uB300 \uC801\uC7AC\uB7C9 1\uB2E8\uACC4"
-  description: "\uC801\uC7AC\uB7C9 +2"
+  displayName: "\uD558\uCCB4 \uD2BC\uD2BC Lv.10"
+  description: "\uD50C\uB808\uC774\uC5B4 \uC801\uC7AC\uB7C9 +2"
   effects:
   - upgradeType: 4
     value: 2
