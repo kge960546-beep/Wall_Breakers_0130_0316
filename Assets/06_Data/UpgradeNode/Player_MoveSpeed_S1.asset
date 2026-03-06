@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Player_MoveSpeed_S1
   m_EditorClassIdentifier: 
   upgradeID: PLAYER_MOVE_SPEED_S1
-  displayName: "\uD50C\uB808\uC774\uC5B4 \uC774\uB3D9\uC18D\uB3C4 \uC99D\uAC00"
-  description: "\uC774\uB3D9\uC18D\uB3C4 +20%"
+  displayName: "\uB178\uB828\uD55C \uBC1C\uAC78\uC74C Lv.1"
+  description: "\uD50C\uB808\uC774\uC5B4 \uC774\uB3D9\uC18D\uB3C4 \uC99D\uAC00"
   effects:
   - upgradeType: 2
     value: 0.2
     targetID: 
-  cost: 0
+    sectionIndex: 0
+  cost: 60
   section: 1

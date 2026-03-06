@@ -1,7 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class UpgradeUIButton : MonoBehaviour
+public class UpgradeUIButton : MonoBehaviour,
+    IPointerEnterHandler,
+    IPointerExitHandler
 {
     public UpgradeGraphBuilder graphBuilder;
     public UpgradeUIManager uiManager;
@@ -11,8 +14,20 @@ public class UpgradeUIButton : MonoBehaviour
     private UpgradeGraphNode<UpgradeDataSO> node;
     private CreditService creditService;
 
+    private Image sourceImage;
+
+    private Material runtimeMat;
+
+    private bool isPurchased = false;
+    
+    [SerializeField] private Image[] connectedLines;
+
+
+
     private void Start()
     {
+        sourceImage = GetComponent<Image>();
+
         // 노드 찾기
         if (graphBuilder.DAG.TryGetNode(targetSO.upgradeID, out node) == false)
         {
@@ -29,44 +44,63 @@ public class UpgradeUIButton : MonoBehaviour
                 Debug.LogError("[UpgradeUIButton] CreditService 연결 실패");
             }
         }
+
+        // 머티리얼 인스턴스 생성
+        runtimeMat = Instantiate(sourceImage.material);
+        sourceImage.material = runtimeMat;
+
+        // 처음 상태 = 흑백
+        runtimeMat.SetFloat("_GrayAmount", 1f);
     }
 
     public void OnClickUpgrade()
     {
+        if (isPurchased) return;
+
         if (node == null)
             return;
 
-        // 1. 부모 조건 먼저 체크
         if (!node.CanActivate()) return;
 
-        // 2. 골드 체크
         if (creditService == null) return;
-       
+
         int cost = targetSO.cost;
 
         if (creditService.credits < cost) return;
 
-        // 3. 노드 활성화 시도
         bool success = node.Activate();
 
         if (success)
         {
-            // 골드 차감
+            isPurchased = true;
+
             creditService.AddCredit(-cost);
 
-            // 재집계 구조 적용
             if (UpgradeEffectManager.Instance != null)
             {
                 UpgradeEffectManager.Instance.RecalculateAllEffects();
             }
-            else
+
+            // =========================
+            // 연결된 선 색 변경
+            // =========================
+
+            foreach (var line in connectedLines)
             {
+                if (line == null) continue;
+
+                line.color = Color.yellow;
             }
 
-            //uiManager.PrintActivatedNodes();
+            // =========================
+            // 노드 컬러 전환
+            // =========================
 
-            // 버튼 비활성화
-            GetComponent<Button>().interactable = false;
+            runtimeMat.SetFloat("_GrayAmount", 0f);
+
+            // =========================
+            // 섹션 완료 체크
+            // =========================
 
             int sectionIndex = node.SectionIndex;
 
@@ -75,8 +109,32 @@ public class UpgradeUIButton : MonoBehaviour
                 uiManager.OpenNextSection();
             }
         }
-        else
-        {
-        }
+    }
+
+    // =========================
+    // Hover Enter
+    // =========================
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (UpgradeTooltipManager.Instance == null) return;
+
+        UpgradeTooltipManager.Instance.Show(
+            sourceImage.sprite,
+            targetSO.displayName,
+            targetSO.description,
+            targetSO.cost
+        );
+    }
+
+    // =========================
+    // Hover Exit
+    // =========================
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (UpgradeTooltipManager.Instance == null) return;
+
+        UpgradeTooltipManager.Instance.Hide();
     }
 }

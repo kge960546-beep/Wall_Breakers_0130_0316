@@ -104,13 +104,17 @@ public class MiningNode : MonoBehaviour
     // 이벤트 수신
     // =========================
 
-    private void HandlePlayerMineSpeedChanged(float totalBonus)
+    private void HandlePlayerMineSpeedChanged(int section, float totalBonus)
     {
+        if (section != sectionIndex) return;
+
         bonusPlayerMineSpeed = totalBonus;
     }
 
-    private void HandlePlayerMineAmountChanged(float totalBonus)
+    private void HandlePlayerMineAmountChanged(int section, float totalBonus)
     {
+        if (section != sectionIndex) return;
+
         bonusPlayerMineAmount = Mathf.FloorToInt(totalBonus);
     }
 

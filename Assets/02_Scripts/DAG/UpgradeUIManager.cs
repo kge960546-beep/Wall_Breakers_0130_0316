@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Linq;
 
 public class UpgradeUIManager : MonoBehaviour
@@ -8,6 +9,11 @@ public class UpgradeUIManager : MonoBehaviour
 
     [Header("Section Panels (순서대로 Section0~Section4)")]
     [SerializeField] private GameObject[] sectionPanels;
+
+    [Header("Transition")]
+    [SerializeField] private float transitionDuration = 0.35f;
+    [SerializeField] private float delayBeforeTransition = 0.35f;
+    [SerializeField] private float slideDistance = 1200f;
 
     private int currentSectionIndex = 0;
 
@@ -38,23 +44,6 @@ public class UpgradeUIManager : MonoBehaviour
     }
 
     // ===============================
-    // 디버그 로그
-    // ===============================
-    //public void PrintActivatedNodes()
-    //{
-    //    var activated = graphBuilder.DAG.GetActivatedNodes();
-    //
-    //    Debug.Log("===== 현재 활성 노드 목록 =====");
-    //
-    //    foreach (var node in activated)
-    //    {
-    //        Debug.Log(node.Data.displayName);
-    //    }
-    //
-    //    Debug.Log("총 활성 개수 : " + activated.Count);
-    //}
-
-    // ===============================
     // 섹션 완료 체크
     // ===============================
     public bool IsSectionComplete(int sectionIndex)
@@ -83,13 +72,51 @@ public class UpgradeUIManager : MonoBehaviour
 
         int nextIndex = currentSectionIndex + 1;
 
-        if (nextIndex >= sectionPanels.Length) return;
+        if (nextIndex >= sectionPanels.Length)
+            return;
 
-        // 현재 섹션 비활성화
-        sectionPanels[currentSectionIndex].SetActive(false);
+        StartCoroutine(TransitionSection(nextIndex));
+    }
 
-        // 다음 섹션 활성화
-        sectionPanels[nextIndex].SetActive(true);
+    // ===============================
+    // 패널 슬라이드 전환
+    // ===============================
+    private IEnumerator TransitionSection(int nextIndex)
+    {
+        yield return new WaitForSeconds(delayBeforeTransition);
+
+        GameObject currentPanel = sectionPanels[currentSectionIndex];
+        GameObject nextPanel = sectionPanels[nextIndex];
+
+        RectTransform currentRect = currentPanel.GetComponent<RectTransform>();
+        RectTransform nextRect = nextPanel.GetComponent<RectTransform>();
+
+        Vector2 originalPos = currentRect.anchoredPosition;
+
+        // =========================
+        // 1단계 : 현재 패널 왼쪽으로 이동
+        // =========================
+
+        Vector2 exitPos = originalPos + Vector2.left * slideDistance;
+
+        yield return StartCoroutine(
+            UITween.MoveUI(currentRect, originalPos, exitPos, transitionDuration)
+        );
+
+        currentPanel.SetActive(false);
+
+        // =========================
+        // 2단계 : 다음 패널 오른쪽에서 등장
+        // =========================
+
+        Vector2 startPos = originalPos + Vector2.right * slideDistance;
+
+        nextRect.anchoredPosition = startPos;
+        nextPanel.SetActive(true);
+
+        yield return StartCoroutine(
+            UITween.MoveUI(nextRect, startPos, originalPos, transitionDuration)
+        );
 
         currentSectionIndex = nextIndex;
     }

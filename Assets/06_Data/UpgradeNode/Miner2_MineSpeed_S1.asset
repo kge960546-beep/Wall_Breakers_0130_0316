@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Miner2_MineSpeed_S1
   m_EditorClassIdentifier: 
   upgradeID: MINER_2_MINE_SPEED_S1
-  displayName: "\uAD11\uBD80 2 \uCC44\uAD74\uC18D\uB3C4 \uC99D\uAC00"
-  description: "\uAD11\uBD80 1 \uCC44\uAD74\uC18D\uB3C4 +50%"
+  displayName: "\uBE60\uB978 \uC801\uC751"
+  description: "\uAD11\uBD80 2 \uCC44\uAD74\uC18D\uB3C4 \uC99D\uAC00"
   effects:
   - upgradeType: 8
     value: 0.5
     targetID: MINER_2
-  cost: 0
+    sectionIndex: 0
+  cost: 900
   section: 1

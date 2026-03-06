@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: CarrierB_MaxCarry_S5
   m_EditorClassIdentifier: 
   upgradeID: CARRIER_B_MAX_CARRY_S5
-  displayName: "\uC6B4\uBC18\uC778 B \uCD5C\uB300 \uC801\uC7AC\uB7C9 \uC99D\uAC00"
-  description: "\uC801\uC7AC\uB7C9 +5"
+  displayName: "\uC778\uAC04 \uAE08\uAD34 \uD2B8\uB808\uC77C\uB7EC"
+  description: "\uC6B4\uBC18\uC778\uC6D0B \uC801\uC7AC\uB7C9 \uC99D\uAC00"
   effects:
   - upgradeType: 11
     value: 5
     targetID: CarrierJ
-  cost: 0
+    sectionIndex: 0
+  cost: 175000
   section: 5

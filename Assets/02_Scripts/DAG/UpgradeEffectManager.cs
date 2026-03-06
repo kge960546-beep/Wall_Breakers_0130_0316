@@ -19,9 +19,7 @@ public class UpgradeEffectManager : MonoBehaviour
     // =========================
 
     private float totalPlayerMoveSpeed;
-    private float totalPlayerMineSpeed;
     private int totalPlayerMaxCarry;
-    private float totalPlayerMineAmount;
     private float totalPlayerRawSellPrice;
     private float totalProcessedSellPrice;
 
@@ -41,14 +39,20 @@ public class UpgradeEffectManager : MonoBehaviour
     private Dictionary<string, float> processorProcessTimeReduceById = new();
     private Dictionary<string, int> minerMineAmountById = new();
 
+    // 섹션별 플레이어 채굴 속도
+    private Dictionary<int, float> playerMineSpeedBySection = new();
+
+    // 섹션별 플레이어 채굴량
+    private Dictionary<int, float> playerMineAmountBySection = new();
+
     // =========================
     // 이벤트
     // =========================
 
     public event Action<float> OnPlayerMoveSpeedChanged;
-    public event Action<float> OnPlayerMineSpeedChanged;
     public event Action<int> OnPlayerMaxCarryChanged;
-    public event Action<float> OnPlayerMineAmountChanged;
+    public event Action<int, float> OnPlayerMineSpeedChanged;
+    public event Action<int, float> OnPlayerMineAmountChanged;
     public event Action<float> OnPlayerRawSellPriceChanged;
     public event Action<float> OnProcessedSellPriceChanged;
 
@@ -114,7 +118,12 @@ public class UpgradeEffectManager : MonoBehaviour
                 break;
 
             case UpgradeType.PlayerMineSpeed:
-                totalPlayerMineSpeed += effect.value;
+
+                if (!playerMineSpeedBySection.ContainsKey(effect.sectionIndex))
+                    playerMineSpeedBySection[effect.sectionIndex] = 0f;
+
+                playerMineSpeedBySection[effect.sectionIndex] += effect.value;
+
                 break;
 
             case UpgradeType.PlayerMaxCarry:
@@ -122,7 +131,11 @@ public class UpgradeEffectManager : MonoBehaviour
                 break;
 
             case UpgradeType.PlayerMineAmount:
-                totalPlayerMineAmount += effect.value;
+                if (!playerMineAmountBySection.ContainsKey(effect.sectionIndex))
+                    playerMineAmountBySection[effect.sectionIndex] = 0;
+
+                playerMineAmountBySection[effect.sectionIndex] += effect.value;
+
                 break;
 
             case UpgradeType.PlayerRawSellPrice:
@@ -230,14 +243,14 @@ public class UpgradeEffectManager : MonoBehaviour
     private void ResetAllTotals()
     {
         totalPlayerMoveSpeed = 0f;
-        totalPlayerMineSpeed = 0f;
         totalPlayerMaxCarry = 0;
-        totalPlayerMineAmount = 0f;
         totalPlayerRawSellPrice = 0f;
         totalProcessedSellPrice = 0f;
 
         totalMinerUnlockCount = 0;
 
+        playerMineSpeedBySection.Clear();
+        playerMineAmountBySection.Clear();
         minerMineSpeedById.Clear();
         carrierUnlockById.Clear();
         carrierMoveSpeedById.Clear();
@@ -253,9 +266,18 @@ public class UpgradeEffectManager : MonoBehaviour
     private void DispatchAllEvents()
     {
         OnPlayerMoveSpeedChanged?.Invoke(totalPlayerMoveSpeed);
-        OnPlayerMineSpeedChanged?.Invoke(totalPlayerMineSpeed);
+
+        foreach (var pair in playerMineSpeedBySection)
+        {
+            OnPlayerMineSpeedChanged?.Invoke(pair.Key, pair.Value);
+        }
+
+        foreach (var pair in playerMineAmountBySection)
+        {
+            OnPlayerMineAmountChanged?.Invoke(pair.Key, pair.Value);
+        }
+
         OnPlayerMaxCarryChanged?.Invoke(totalPlayerMaxCarry);
-        OnPlayerMineAmountChanged?.Invoke(totalPlayerMineAmount);
         OnPlayerRawSellPriceChanged?.Invoke(totalPlayerRawSellPrice);
         OnProcessedSellPriceChanged?.Invoke(totalProcessedSellPrice);
 

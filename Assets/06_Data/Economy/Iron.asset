@@ -15,7 +15,7 @@ MonoBehaviour:
   Id: 6
   itemName: "\uCCA0"
   itemType: 0
-  sellPrice: 5
+  sellPrice: 60
   sellDuration: 1
   mineralPrefab: {fileID: 919132149155446097, guid: d679619923c782b41a28af8fc70a3b8a,
     type: 3}
