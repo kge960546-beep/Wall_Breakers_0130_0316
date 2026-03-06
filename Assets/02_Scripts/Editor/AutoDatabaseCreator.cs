@@ -1,11 +1,12 @@
 #if UNITY_EDITOR
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-public static class AutoDatabaseCreator
+public static class AutoDataBaseCreator
 {
-    private const string DATABASE_FOLDER = "Assets/GameData/";
+    private const string DATABASE_FOLDER = "Assets/06_Data/Database/";
 
     public static ScriptableObject CreateDatabaseIfNeeded(string csvPath)
     {
@@ -15,22 +16,22 @@ public static class AutoDatabaseCreator
         string dbPath = DATABASE_FOLDER + dbName + ".asset";
 
         var db = AssetDatabase.LoadAssetAtPath<ScriptableObject>(dbPath);
-        if (db != null)
-            return db;
+        if (db != null) return db;
 
-        // 타입 찾기
-        var type = System.Type.GetType(dbName);
+        var type = System.AppDomain.CurrentDomain
+            .GetAssemblies()
+            .SelectMany(a => a.GetTypes())
+            .FirstOrDefault(t => t.Name == dbName);
 
         if (type == null)
         {
-            Debug.LogError($"Database 타입을 찾을 수 없습니다: {dbName}");
+            Debug.LogError($"Database 타입 없음: {dbName}");
             return null;
         }
 
-        ScriptableObject newDB = ScriptableObject.CreateInstance(type);
-
         Directory.CreateDirectory(DATABASE_FOLDER);
 
+        var newDB = ScriptableObject.CreateInstance(type);
         AssetDatabase.CreateAsset(newDB, dbPath);
         AssetDatabase.SaveAssets();
 

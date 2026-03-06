@@ -10,28 +10,14 @@ public class CSVImporter : AssetPostprocessor
         string[] movedFromAssetPaths)
     {
         var settings = CSVSyncSettings.Load();
+        if (settings == null) return;
 
         foreach (var path in importedAssets)
         {
             if (!path.EndsWith(".csv")) continue;
 
-            var entry = settings?.GetEntry(path);
-
-            if (entry == null)
-            {
-                // 자동 DB 생성 시도
-                var db = AutoDatabaseCreator.CreateDatabaseIfNeeded(path);
-                if (db == null) continue;
-
-                entry = new CSVSyncEntry
-                {
-                    csvPath = path,
-                    database = db
-                };
-
-                settings.entries.Add(entry);
-                EditorUtility.SetDirty(settings);
-            }
+            var entry = settings.GetEntry(path);
+            if (entry == null) continue;
 
             CSVSyncCore.Import(entry);
         }
