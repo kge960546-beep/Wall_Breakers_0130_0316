@@ -65,7 +65,7 @@ public class UpgradeUIManager : MonoBehaviour
     // ===============================
     // 다음 섹션 열기
     // ===============================
-    public void OpenNextSection()
+    public void OpenNextSection(bool showPanel = true)
     {
         if (!IsSectionComplete(currentSectionIndex))
             return;
@@ -75,7 +75,18 @@ public class UpgradeUIManager : MonoBehaviour
         if (nextIndex >= sectionPanels.Length)
             return;
 
-        StartCoroutine(TransitionSection(nextIndex));
+        if(showPanel)
+        {
+            StartCoroutine(TransitionSection(nextIndex));
+            SceneGameDataManager.instance.SaveGame();
+        }
+        else
+        {
+            sectionPanels[currentSectionIndex].SetActive(false);
+            currentSectionIndex = nextIndex;
+            sectionPanels[currentSectionIndex].SetActive(false);
+            SceneGameDataManager.instance.SaveGame();
+        }
     }
 
     // ===============================

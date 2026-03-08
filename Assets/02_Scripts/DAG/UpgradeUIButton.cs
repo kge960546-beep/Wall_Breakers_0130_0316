@@ -1,8 +1,6 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using Unity.VisualScripting;
-using System.Collections;
+using UnityEngine.UI;
 
 public class UpgradeUIButton : MonoBehaviour,
     IPointerEnterHandler,
@@ -21,7 +19,7 @@ public class UpgradeUIButton : MonoBehaviour,
     private Material runtimeMat;
 
     private bool isPurchased = false;
-    
+
     [SerializeField] private Image[] connectedLines;
 
 
@@ -53,6 +51,8 @@ public class UpgradeUIButton : MonoBehaviour,
 
         // 처음 상태 = 흑백
         runtimeMat.SetFloat("_GrayAmount", 1f);
+
+        UpgradeUIRenewal();
     }
 
     public void OnClickUpgrade()
@@ -77,6 +77,11 @@ public class UpgradeUIButton : MonoBehaviour,
             isPurchased = true;
 
             creditService.AddCredit(-cost);
+
+            if (SceneGameDataManager.instance != null)
+            {
+                SceneGameDataManager.instance.currentGold = (int)creditService.credits;
+            }
 
             if (UpgradeEffectManager.Instance != null)
             {
@@ -138,5 +143,67 @@ public class UpgradeUIButton : MonoBehaviour,
         if (UpgradeTooltipManager.Instance == null) return;
 
         UpgradeTooltipManager.Instance.Hide();
+    }
+
+    public void UpgradeUIRenewal()
+    {
+        if (sourceImage == null) sourceImage = GetComponent<Image>();
+        if (runtimeMat == null && sourceImage != null && sourceImage.material != null)
+        {
+            runtimeMat = Instantiate(sourceImage.material);
+            sourceImage.material = runtimeMat;
+        }
+        if (node == null && graphBuilder != null)
+        {
+            graphBuilder.DAG.TryGetNode(targetSO.upgradeID, out node);
+        }
+
+        if (node != null && node.IsActivated)
+        {
+            isPurchased = true;
+
+            if (runtimeMat != null)
+            {
+                runtimeMat.SetFloat("_GrayAmount", 0f);
+            }
+
+            foreach (var line in connectedLines)
+            {
+                if (line != null)
+                {
+                    line.color = Color.yellow;
+                }
+            }
+        }
+        else
+        {
+            isPurchased = false;
+            if (runtimeMat != null)
+            {
+                runtimeMat.SetFloat("_GrayAmount", 1f);
+            }
+        }
+
+        if (graphBuilder != null && graphBuilder.DAG.TryGetNode(targetSO.upgradeID, out var currentNode))
+        {
+            if (currentNode.IsActivated)
+            {
+                isPurchased = true;
+
+                if (runtimeMat != null)
+                    runtimeMat.SetFloat("_GrayAmount", 0f);
+
+                foreach (var line in connectedLines)
+                {
+                    if (line != null) line.color = Color.yellow;
+                }
+            }
+            else
+            {
+                isPurchased = false;
+                if (runtimeMat != null)
+                    runtimeMat.SetFloat("_GrayAmount", 1f);
+            }
+        }
     }
 }

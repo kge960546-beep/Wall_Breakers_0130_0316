@@ -7,6 +7,9 @@ using UnityEngine.UI;
 public class SceneGameDataManager : MonoBehaviour
 {
     public static SceneGameDataManager instance;
+
+    public bool isRefreshing = false;
+
     #region 저장 변수
     //GameData(디스크에 저장될 파일의 규격) SceneGameDataManager(RAM에 실시간으로 바뀌는 값)이라 분리했습니다.
     [Header("현재 가지고있는 골드, 생성된 골드 오브젝트")]
@@ -24,27 +27,8 @@ public class SceneGameDataManager : MonoBehaviour
     public bool[] unlockedSections;
     public int[] sectionFillAmount;
 
-    [Header("NPC업그래이드, 플레이어 업그래이드, 광산 업그래이드")]
-    public float playerMoveSpeed;
-    public float playerMineSpeed;
-    public int playerMaxCarry;
-    public float playerMineAmount;
-    public float playerRawSellPrice;
-    public float processedSellPrice;
-
-    public int processingMaxCapacity;
-    public float processorProcessTime;
-
-    public float carrierMoveSpeed;
-    public int carrierMaxCarry;
-    public bool carrierUnlock;
-
-    public float minerMineSpeed;
-    public int minerMineAmount;
-    public int minerUnlock;
-
-    public int miningAreaMaxStorage;
-    public float miningAreaRespawnTime;
+    [Header("업그래이드 리스트")]
+    public List<string> unlockedUpgradeNodeIds = new List<string>();
     #endregion
     public List<string> savedAchievements = new List<string>();    
 
@@ -89,10 +73,66 @@ public class SceneGameDataManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
+    [ContextMenu("Delete All Save Data")]
+    public void ClearAllSaveData()
+    {
+        SaveSystem.DeleteSaveData();
+        PlayerPrefs.DeleteAll();
+
+        this.currentGold = 0;
+        this.unCollectedGold = 0;
+        this.unCollectedMoney = 0;
+
+        if (sectionMineralCount != null)
+        {
+            for (int i = 0; i < sectionMineralCount.Length; i++) sectionMineralCount[i] = 0;
+        }
+
+        if (sectionProcessMineralCount != null)
+        {
+            for (int i = 0; i < sectionProcessMineralCount.Length; i++) sectionProcessMineralCount[i] = 0;
+        }
+
+        if (unlockedSections != null)
+        {
+            for(int i = 0; i < unlockedSections.Length; i++)
+            {
+                unlockedSections[i] = false;
+            }
+        }
+
+        if (sectionFillAmount != null)
+        {
+            for (int i = 0; i < sectionFillAmount.Length; i++) sectionFillAmount[i] = 0;
+        }
+
+        if(RegionUnlockService.Instance != null)
+        {
+            RegionUnlockService.Instance.LoadUnlockedRegions();
+        }
+
+        this.unlockedUpgradeNodeIds.Clear();
+        this.savedAchievements.Clear();
+
+        var creditService = GameManager.Instance?.GetService<CreditService>();
+        if (creditService != null)
+        {
+            creditService.SetCredit(0);
+        }
+
+        if (Application.isPlaying)
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        }       
+
+        Utils.DebugLog("데이터 초기화 후 씬 재시작함");
+    }
+
     public void SaveGame()
     {
-        SaveGoldObject();
+        if (isPendingLoad || isRefreshing) return;
 
+        SaveGoldObject();
         SaveUnlockSection();
 
         GameData data = new GameData();
@@ -105,28 +145,23 @@ public class SceneGameDataManager : MonoBehaviour
         data.unlockedSections = (bool[])this.unlockedSections.Clone(); //배열은 복제해서 저장하는게 좋음
         data.sectionFillAmount = (int[])this.sectionFillAmount.Clone();
 
-        data.achievementProgess = AchievementsManager.instance.GetUnlockedIds();
+        data.achievementProgess = AchievementsManager.instance.GetUnlockedIds();    
+        
+        if(UpgradeGraphBuilder.instance != null)
+        {
+            unlockedUpgradeNodeIds.Clear();
 
-        data.playerMoveSpeed = this.playerMoveSpeed;
-        data.playerMineSpeed = this.playerMineSpeed;
-        data.playerMaxCarry = this.playerMaxCarry;
-        data.playerMineAmount = this.playerMineAmount;
-        data.playerRawSellPrice = this.playerRawSellPrice;
-        data.processedSellPrice = this.processedSellPrice;
-
-        data.processingMaxCapacity = this.processingMaxCapacity;
-        data.processorProcessTime = this.processorProcessTime;
-
-        data.carrierMoveSpeed = this.carrierMoveSpeed;
-        data.carrierMaxCarry = this.carrierMaxCarry;
-        data.carrierUnlock = this.carrierUnlock;
-
-        data.minerMineSpeed = this.minerMineSpeed;
-        data.minerMineAmount = this.minerMineAmount;
-        data.minerUnlock = this.minerUnlock;
-
-        data.miningAreaMaxStorage = this.miningAreaMaxStorage;
-        data.miningAreaRespawnTime = this.miningAreaRespawnTime;
+            var activatedNodes = UpgradeGraphBuilder.instance.DAG.GetActivatedNodes();            
+            foreach(var node in activatedNodes)
+            {
+                var upgradeData = node.Data as UpgradeDataSO;
+                if(upgradeData != null)
+                {
+                    unlockedUpgradeNodeIds.Add(upgradeData.upgradeID);
+                }
+            }
+            data.unlockedUpgradeNodeIds = new List<string>(this.unlockedUpgradeNodeIds);
+        }
 
         SaveSystem.Save(data);       
         Debug.Log("<color=green>1. 파일 저장 완료</color>");
@@ -169,35 +204,13 @@ public class SceneGameDataManager : MonoBehaviour
 
         this.savedAchievements = data.achievementProgess;
 
-        this.playerMoveSpeed = data.playerMoveSpeed;
-        this.playerMineSpeed = data.playerMineSpeed;
-        this.playerMaxCarry = data.playerMaxCarry;
-        this.playerMineAmount = data.playerMineAmount;
-        this.playerRawSellPrice = data.playerRawSellPrice;
-        this.processedSellPrice = data.processedSellPrice;
-
-        this.processingMaxCapacity = data.processingMaxCapacity;
-        this.processorProcessTime = data.processorProcessTime;
-
-        this.carrierMoveSpeed = data.carrierMoveSpeed;
-        this.carrierMaxCarry = data.carrierMaxCarry;
-        this.carrierUnlock = data.carrierUnlock;
-
-        this.minerMineSpeed = data.minerMineSpeed;
-        this.minerMineAmount = data.minerMineAmount;
-        this.minerUnlock = data.minerUnlock;
-
-        this.miningAreaMaxStorage = data.miningAreaMaxStorage;
-        this.miningAreaRespawnTime = data.miningAreaRespawnTime;
-
-        this.savedAchievements = data.achievementProgess;
+        this.unlockedUpgradeNodeIds = new List<string>(data.unlockedUpgradeNodeIds);
     }
-
-
-
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+       
+
         SetupButtonUI();
 
         if (isPendingLoad)
@@ -207,6 +220,7 @@ public class SceneGameDataManager : MonoBehaviour
         }
     }
 
+   
     void SetupButtonUI()
     {
         GameObject saveBtn = GameObject.Find("SaveButton");         
@@ -228,43 +242,89 @@ public class SceneGameDataManager : MonoBehaviour
 
     IEnumerator SceneLoadSaveData()
     {      
+        isRefreshing = true;
+
         yield return new WaitForEndOfFrame();
-        #region 섹션해금
-        if (RegionUnlockService.Instance != null)
+        try
         {
-            RegionUnlockService.Instance.LoadUnlockedRegions();
+            #region 섹션해금
+            if (RegionUnlockService.Instance != null)
+            {
+                RegionUnlockService.Instance.LoadUnlockedRegions();
+            }
+
+            RegionUnlockZone[] allzones = FindObjectsByType<RegionUnlockZone>(FindObjectsSortMode.None);
+            foreach (var zone in allzones)
+            {
+                zone.UpdateGateState();
+            }
+            #endregion
+
+            #region 업적
+            if (AchievementsManager.instance != null && savedAchievements != null)
+            {
+                AchievementsManager.instance.InitializeAchievements(savedAchievements);
+            }
+            #endregion
+
+            #region 판매 크래딧
+            var creditService = GameManager.Instance.GetService<CreditService>();
+            if (creditService != null)
+            {
+                creditService?.SetCredit(currentGold);
+                Debug.Log($"<color=gold>[Load] CreditService 데이터 복구 완료: {currentGold}</color>");
+            }
+
+            RestorePendingCredits();
+            #endregion
+
+            if (UpgradeGraphBuilder.instance != null && unlockedUpgradeNodeIds != null)
+            {
+                var dag = UpgradeGraphBuilder.instance.DAG;
+                foreach (string id in unlockedUpgradeNodeIds)
+                {
+                    if (dag.TryGetNode(id, out var node))
+                    {
+                        node.Activate();
+                    }
+                }
+
+                UpgradeUIManager uiMgr = FindAnyObjectByType<UpgradeUIManager>();
+                if (uiMgr != null)
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        if (uiMgr.IsSectionComplete(i))
+                        {
+                            uiMgr.OpenNextSection(false);
+                        }
+                    }
+                }
+
+                if (UpgradeEffectManager.Instance != null)
+                {
+                    UpgradeEffectManager.Instance.RecalculateAllEffects();
+                }
+            }
+
+            UpgradeUILoad();
+            ResourceTableLoad();
+            ProcessTableLoad();
         }
-
-        RegionUnlockZone[] allzones = FindObjectsByType<RegionUnlockZone>(FindObjectsSortMode.None);
-        foreach (var zone in allzones)
+        catch ( System.Exception e)
         {
-            zone.UpdateGateState();
+            Debug.LogError($"[LoadError] 복구 중 에러 발생: {e.Message}");
         }
-        #endregion
-
-        #region 업적
-        if (AchievementsManager.instance != null && savedAchievements != null)
+        finally
         {
-            AchievementsManager.instance.InitializeAchievements(savedAchievements);
+            isRefreshing = false;
+            Utils.DebugLog("데이터 복구 프로세스 종료");
         }
-        #endregion
-
-        #region 판매 크래딧
-        var creditService = GameManager.Instance.GetService<CreditService>();
-        if (creditService != null)
-        {
-            creditService?.SetCredit(currentGold);
-            Debug.Log($"<color=gold>[Load] CreditService 데이터 복구 완료: {currentGold}</color>");
-        }       
-
-        RestorePendingCredits();
-        #endregion
-
-        ResourceTableLoad();
-        ProcessTableLoad();
-
+        
+        isRefreshing = false;
         Utils.DebugLog("씬 재시작후 불러오기 완료");
     }
+    
     public void SaveGoldObject()
     {
         int pendingTotal = 0;
@@ -317,5 +377,17 @@ public class SceneGameDataManager : MonoBehaviour
         }
 
         Utils.DebugLog("모든 테이블 오브젝트 복구 완료");
+    }
+
+    public void UpgradeUILoad()
+    {
+        UpgradeUIButton[] allUpgradeButton = Resources.FindObjectsOfTypeAll<UpgradeUIButton>();
+        foreach(var btn in allUpgradeButton)
+        {
+            if(btn.gameObject.scene.name != null)
+            {
+                btn.UpgradeUIRenewal();
+            }
+        }
     }
 }
