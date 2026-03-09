@@ -113,7 +113,7 @@ public class SellManager : MonoBehaviour
             MineralItem mineral = topItem.GetComponent<MineralItem>();
             ItemDataSO itemData = mineral.mineralData;
 
-            float sellDuration = itemData.sellDuration * shopData.GetSpeedMultiplier();
+            float sellDuration = itemData.sellDuration * shopData.GetSpeedMultiplier()*0.3f;
 
             // ---------------------------
             // 판매 보너스 계산 분기

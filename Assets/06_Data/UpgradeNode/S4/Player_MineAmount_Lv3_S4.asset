@@ -17,8 +17,8 @@ MonoBehaviour:
   description: "\uC139\uC1584 \uD50C\uB808\uC774\uC5B4 \uCC44\uAD74\uB7C9 +1"
   effects:
   - upgradeType: 5
-    value: 3
+    value: 1
     targetID: 
-    sectionIndex: 4
+    sectionIndex: 3
   cost: 139968
   section: 4
