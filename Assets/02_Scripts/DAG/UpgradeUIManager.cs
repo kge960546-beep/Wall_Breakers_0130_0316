@@ -34,7 +34,13 @@ public class UpgradeUIManager : MonoBehaviour
     {
         if (sectionPanels.Length == 0) return;
 
-        sectionPanels[currentSectionIndex].SetActive(true);
+        GameObject panel = sectionPanels[currentSectionIndex];
+        panel.SetActive(true);
+
+        RectTransform rect = panel.GetComponent<RectTransform>();
+
+        StopAllCoroutines();
+        StartCoroutine(OpenPanelAnimation(rect));
 
         adCanvasGroup.blocksRaycasts = false;
     }
@@ -136,5 +142,38 @@ public class UpgradeUIManager : MonoBehaviour
         );
 
         currentSectionIndex = nextIndex;
+    }
+
+    IEnumerator OpenPanelAnimation(RectTransform rect)
+    {
+        Vector2 end = rect.anchoredPosition;
+
+        Vector2 start;
+
+        int dir = Random.Range(0, 4);
+
+        switch (dir)
+        {
+            case 0: start = new Vector2(0, 900); break;
+            case 1: start = new Vector2(0, -900); break;
+            case 2: start = new Vector2(-1400, 0); break;
+            default: start = new Vector2(1400, 0); break;
+        }
+
+        Vector2 control = (start + end) * 0.5f + new Vector2(
+            Random.Range(-400f, 400f),
+            Random.Range(200f, 600f)
+        );
+
+        rect.anchoredPosition = start;
+        rect.localScale = Vector3.one * 0.1f;
+
+        yield return StartCoroutine(
+            UITween.MoveBezierUI(rect, start, control, end, 0.9f)
+        );
+
+        yield return StartCoroutine(
+            UITween.Scale(rect, Vector3.one * 0.1f, Vector3.one, 0.25f)
+        );
     }
 }
