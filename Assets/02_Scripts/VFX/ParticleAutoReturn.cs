@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(ParticleSystem))]
 public class ParticleAutoReturn : MonoBehaviour
 {
     [SerializeField] private GameObject prefab;
