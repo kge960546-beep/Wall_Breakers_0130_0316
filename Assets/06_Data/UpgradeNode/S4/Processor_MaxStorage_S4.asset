@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Processor_MaxStorage_S4
   m_EditorClassIdentifier: 
   upgradeID: PROCESSOR_MAX_STORAGE_S4
-  displayName: "\uAC00\uACF5\uAE30\uACC4 \uCD5C\uB300 \uC800\uC7A5\uACF5\uAC04 \uD655\uC7A5"
-  description: "\uC800\uC7A5\uACF5\uAC04 +10"
+  displayName: "\uB354 \uC313\uC544\uB458\uAE4C\uC694?"
+  description: "\uC139\uC1584 \uCC44\uAD74\uAD6C\uC5ED \uC800\uC7A5\uACF5\uAC04 +10"
   effects:
   - upgradeType: 14
     value: 10

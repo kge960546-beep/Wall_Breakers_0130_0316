@@ -19,9 +19,9 @@ public class GameData
     public bool[] unlockedSections = new bool[5];
     public int[] sectionFillAmount = new int[100];
 
-    [Header("NPC업그래이드, 플레이어 업그래이드")]
-    public int autoNPCLevel;
-    public int playerPowerLevel;
+    [Header("업그래이드")]
+    public List<string> unlockedUpgradeNodeIds;
+
 
     [Header("업적 저장 리스트")]
     public List<string> achievementProgess = new List<string>();

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Miner1_MineSpeed_S5
   m_EditorClassIdentifier: 
   upgradeID: MINER_1_MINE_SPEED_S5
-  displayName: "\uAD11\uBD80 1 \uCC44\uAD74\uC18D\uB3C4 \uC99D\uAC00"
-  description: "\uAD11\uBD80 1 \uCC44\uAD74\uC18D\uB3C4 +40%"
+  displayName: "\uD604\uC7A5 \uC801\uC751"
+  description: "\uAD11\uBD80 1 \uCC44\uAD74\uC18D\uB3C4 \uC99D\uAC00"
   effects:
   - upgradeType: 8
     value: 0.4

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: MiningArea_MaxStorage_S2
   m_EditorClassIdentifier: 
   upgradeID: MINING_AREA_MAX_STORAGE_S2
-  displayName: "\uCC44\uAD74\uAD6C\uC5ED \uCD5C\uB300 \uC800\uC7A5\uACF5\uAC04 \uD655\uC7A5"
-  description: "\uC800\uC7A5\uACF5\uAC04 +20"
+  displayName: "\uC544\uC9C1 \uC790\uB9AC \uB0A8\uC544\uC694"
+  description: "\uCC44\uAD74\uAD6C\uC5ED \uC800\uC7A5\uACF5\uAC04 + 20"
   effects:
   - upgradeType: 12
     value: 20

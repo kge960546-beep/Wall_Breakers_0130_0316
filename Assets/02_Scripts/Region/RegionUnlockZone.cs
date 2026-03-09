@@ -105,7 +105,7 @@ public class RegionUnlockZone : MonoBehaviour
         }
     }
 
-    private void UpdateGateState()
+    public void UpdateGateState()
     {
         if (unlockService == null)
         {

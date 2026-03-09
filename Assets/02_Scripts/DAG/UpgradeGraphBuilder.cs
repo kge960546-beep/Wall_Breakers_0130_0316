@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class UpgradeGraphBuilder : MonoBehaviour
 {
+    public static UpgradeGraphBuilder instance { get; private set; }
+
     public List<SectionUpgradeSet> sections;
 
     private UpgradeDAGManager<UpgradeDataSO> dag =
@@ -12,7 +14,9 @@ public class UpgradeGraphBuilder : MonoBehaviour
 
     private void Awake()
     {
-        for (int i = 0; i < sections.Count; i++)
+        instance = this;
+        
+        for (int i = 0; i < sections.Count; i++)        
         {
             BuildSection(sections[i], i); ;
         }

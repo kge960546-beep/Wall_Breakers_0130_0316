@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Processor_ProcessTimeReduce_S1
   m_EditorClassIdentifier: 
   upgradeID: PROCESSOR_PROCESS_TIME_REDUCE_S1
-  displayName: "\uAC00\uACF5\uC2DC\uAC04 \uAC10\uC18C"
-  description: "\uAC00\uACF5\uC2DC\uAC04 1\uCD08 \uAC10\uC18C"
+  displayName: "\uC724\uD65C\uC720 \uB3C4\uD3EC"
+  description: "\uC139\uC1581 \uAC00\uACF5\uAE30\uACC4 \uAC00\uACF5\uC2DC\uAC04 \uAC10\uC18C"
   effects:
   - upgradeType: 15
     value: 1

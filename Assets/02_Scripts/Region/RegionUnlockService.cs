@@ -4,14 +4,16 @@ using UnityEngine;
 
 public class RegionUnlockService
 {
+    public static RegionUnlockService Instance { get; private set; }
     private CreditService creditService;
 
     private HashSet<int> unlockedRegions = new();
 
     public event Action<int> OnRegionUnlocked; // regionId
-
+        
     public RegionUnlockService()
     {
+        Instance = this;
         unlockedRegions.Add(1);
         LoadUnlockedRegions();
         Debug.Log("[RegionUnlockService] Service created. Region 1 unlocked by default.");
@@ -108,16 +110,18 @@ public class RegionUnlockService
         return true;
     }
 
-    private void SaveUnlockedRegions()
+    public void SaveUnlockedRegions()
     {
         string data = string.Join(",", unlockedRegions);
-        PlayerPrefs.SetString("UnlcokedRegions", data);
+        PlayerPrefs.SetString("UnlockedRegions", data);
         PlayerPrefs.Save();
         Debug.Log($"[RegionUnlockService]");
     }
 
-    private void LoadUnlockedRegions()
+    public void LoadUnlockedRegions()
     {
+        unlockedRegions.Clear();
+
         string data = PlayerPrefs.GetString("UnlockedRegions", "1");
         string[] regionIds = data.Split(',');
 
@@ -130,6 +134,16 @@ public class RegionUnlockService
         }
 
         Debug.Log($"[RegionUnlockService] Loaded unlocked regions: {data}");
+    }   
+
+    public bool[] GetUnlockedStates(int totalUnlockSections)
+    {
+        bool[] states = new bool[totalUnlockSections];
+        for(int i = 0; i < totalUnlockSections; i++)
+        {
+            states[i] = unlockedRegions.Contains(i + 1);
+        }
+        return states;
     }
 
     /// <summary>

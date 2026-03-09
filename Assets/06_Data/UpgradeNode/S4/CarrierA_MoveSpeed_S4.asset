@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: CarrierA_MoveSpeed_S4
   m_EditorClassIdentifier: 
   upgradeID: CARRIER_A_MOVE_SPEED_S4
-  displayName: "\uC6B4\uBC18\uC778 A \uC774\uB3D9\uC18D\uB3C4 \uC99D\uAC00"
-  description: "\uC774\uB3D9\uC18D\uB3C4 +30%"
+  displayName: "\uCCA0 \uC2E0\uC18D \uBC30\uB2EC\uBD80"
+  description: "\uC6B4\uBC18\uC778\uC6D0A \uC774\uB3D9\uC18D\uB3C4 \uC99D\uAC00"
   effects:
   - upgradeType: 10
     value: 0.3

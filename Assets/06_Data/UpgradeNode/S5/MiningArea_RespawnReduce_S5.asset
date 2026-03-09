@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: MiningArea_RespawnReduce_S5
   m_EditorClassIdentifier: 
   upgradeID: MINING_AREA_RESPAWN_REDUCE_S5
-  displayName: "\uCC44\uAD74\uAD6C\uC5ED \uB9AC\uC2A4\uD3F0 \uC2DC\uAC04 \uAC10\uC18C"
-  description: "\uB9AC\uC2A4\uD3F0 \uC2DC\uAC04 -40%"
+  displayName: "\uC5B4? \uBC29\uAE08 \uCEA4\uB294\uB370?"
+  description: "\uCC44\uAD74\uAD6C\uC5ED \uB9AC\uC2A4\uD3F0 \uC2DC\uAC04 \uAC10\uC18C"
   effects:
   - upgradeType: 13
     value: 2

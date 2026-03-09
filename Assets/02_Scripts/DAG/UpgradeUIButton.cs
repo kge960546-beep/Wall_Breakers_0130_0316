@@ -1,6 +1,6 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class UpgradeUIButton : MonoBehaviour,
     IPointerEnterHandler,
@@ -15,6 +15,14 @@ public class UpgradeUIButton : MonoBehaviour,
     private CreditService creditService;
 
     private Image sourceImage;
+
+    private Material runtimeMat;
+
+    private bool isPurchased = false;
+
+    [SerializeField] private Image[] connectedLines;
+
+
 
     private void Start()
     {
@@ -36,14 +44,24 @@ public class UpgradeUIButton : MonoBehaviour,
                 Debug.LogError("[UpgradeUIButton] CreditService 연결 실패");
             }
         }
+
+        // 머티리얼 인스턴스 생성
+        runtimeMat = Instantiate(sourceImage.material);
+        sourceImage.material = runtimeMat;
+
+        // 처음 상태 = 흑백
+        runtimeMat.SetFloat("_GrayAmount", 1f);
+
+        UpgradeUIRenewal();
     }
 
     public void OnClickUpgrade()
     {
+        if (isPurchased) return;
+
         if (node == null)
             return;
 
-        // 부모 조건 체크
         if (!node.CanActivate()) return;
 
         if (creditService == null) return;
@@ -56,14 +74,40 @@ public class UpgradeUIButton : MonoBehaviour,
 
         if (success)
         {
+            isPurchased = true;
+
             creditService.AddCredit(-cost);
+
+            if (SceneGameDataManager.instance != null)
+            {
+                SceneGameDataManager.instance.currentGold = (int)creditService.credits;
+            }
 
             if (UpgradeEffectManager.Instance != null)
             {
                 UpgradeEffectManager.Instance.RecalculateAllEffects();
             }
 
-            GetComponent<Button>().interactable = false;
+            // =========================
+            // 연결된 선 색 변경
+            // =========================
+
+            foreach (var line in connectedLines)
+            {
+                if (line == null) continue;
+
+                line.color = Color.yellow;
+            }
+
+            // =========================
+            // 노드 컬러 전환
+            // =========================
+
+            runtimeMat.SetFloat("_GrayAmount", 0f);
+
+            // =========================
+            // 섹션 완료 체크
+            // =========================
 
             int sectionIndex = node.SectionIndex;
 
@@ -99,5 +143,67 @@ public class UpgradeUIButton : MonoBehaviour,
         if (UpgradeTooltipManager.Instance == null) return;
 
         UpgradeTooltipManager.Instance.Hide();
+    }
+
+    public void UpgradeUIRenewal()
+    {
+        if (sourceImage == null) sourceImage = GetComponent<Image>();
+        if (runtimeMat == null && sourceImage != null && sourceImage.material != null)
+        {
+            runtimeMat = Instantiate(sourceImage.material);
+            sourceImage.material = runtimeMat;
+        }
+        if (node == null && graphBuilder != null)
+        {
+            graphBuilder.DAG.TryGetNode(targetSO.upgradeID, out node);
+        }
+
+        if (node != null && node.IsActivated)
+        {
+            isPurchased = true;
+
+            if (runtimeMat != null)
+            {
+                runtimeMat.SetFloat("_GrayAmount", 0f);
+            }
+
+            foreach (var line in connectedLines)
+            {
+                if (line != null)
+                {
+                    line.color = Color.yellow;
+                }
+            }
+        }
+        else
+        {
+            isPurchased = false;
+            if (runtimeMat != null)
+            {
+                runtimeMat.SetFloat("_GrayAmount", 1f);
+            }
+        }
+
+        if (graphBuilder != null && graphBuilder.DAG.TryGetNode(targetSO.upgradeID, out var currentNode))
+        {
+            if (currentNode.IsActivated)
+            {
+                isPurchased = true;
+
+                if (runtimeMat != null)
+                    runtimeMat.SetFloat("_GrayAmount", 0f);
+
+                foreach (var line in connectedLines)
+                {
+                    if (line != null) line.color = Color.yellow;
+                }
+            }
+            else
+            {
+                isPurchased = false;
+                if (runtimeMat != null)
+                    runtimeMat.SetFloat("_GrayAmount", 1f);
+            }
+        }
     }
 }
