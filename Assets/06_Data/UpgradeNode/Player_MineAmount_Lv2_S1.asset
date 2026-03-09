@@ -19,6 +19,6 @@ MonoBehaviour:
   - upgradeType: 5
     value: 1
     targetID: 
-    sectionIndex: 1
+    sectionIndex: 0
   cost: 1296
   section: 1

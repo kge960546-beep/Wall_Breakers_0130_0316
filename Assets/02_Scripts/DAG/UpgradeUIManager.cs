@@ -15,6 +15,8 @@ public class UpgradeUIManager : MonoBehaviour
     [SerializeField] private float delayBeforeTransition = 0.35f;
     [SerializeField] private float slideDistance = 1200f;
 
+    [SerializeField] private CanvasGroup adCanvasGroup; // 광고 UI 입력 차단용
+
     private int currentSectionIndex = 0;
 
     private void Start()
@@ -33,6 +35,8 @@ public class UpgradeUIManager : MonoBehaviour
         if (sectionPanels.Length == 0) return;
 
         sectionPanels[currentSectionIndex].SetActive(true);
+
+        adCanvasGroup.blocksRaycasts = false;
     }
 
     // 패널 닫기
@@ -41,6 +45,8 @@ public class UpgradeUIManager : MonoBehaviour
         if (sectionPanels.Length == 0) return;
 
         sectionPanels[currentSectionIndex].SetActive(false);
+
+        adCanvasGroup.blocksRaycasts = true;
     }
 
     // ===============================
