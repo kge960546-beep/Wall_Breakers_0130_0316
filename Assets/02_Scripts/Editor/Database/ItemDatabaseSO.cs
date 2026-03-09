@@ -16,31 +16,48 @@ public class ItemDatabaseSO : ScriptableObject, ICSVDatabase
 
     public void AddRow(Dictionary<string, string> row)
     {
-        string itemName = row["itemName"];
-        string path = ITEM_FOLDER + itemName + ".asset";
+        string fileName = row["fileName"];
+        string path = ITEM_FOLDER + fileName + ".asset";
 
         ItemDataSO item = AssetDatabase.LoadAssetAtPath<ItemDataSO>(path);
 
-        // 이미 존재하면 로드
         if (item == null)
         {
             item = ScriptableObject.CreateInstance<ItemDataSO>();
             AssetDatabase.CreateAsset(item, path);
         }
 
-        // 값 업데이트
         item.Id = int.Parse(row["Id"]);
-        item.itemName = itemName;
+        item.itemName = row["itemName"];
 
         if (System.Enum.TryParse(row["itemType"], true, out ItemType type))
             item.itemType = type;
 
         item.sellPrice = int.Parse(row["sellPrice"]);
-        item.sellDuration = float.Parse(row["sellDuration"].Replace("f", ""));
-
+        item.sellDuration = float.Parse(row["sellDuration"]);
         item.inputAmountPerProcess = int.Parse(row["inputAmountPerProcess"]);
 
         item.backPackRotationOffset = ParseVector3(row["backPackRotationOffset"]);
+
+        // 프리팹 임포트
+        if (row.TryGetValue("prefabPath", out string prefabPath))
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            if (prefab != null)
+                item.mineralPrefab = prefab;
+            else
+                Debug.LogWarning($"Prefab not found: {prefabPath}");
+        }
+
+        // 아이콘 임포트
+        if (row.TryGetValue("iconPath", out string iconPath))
+        {
+            var icon = AssetDatabase.LoadAssetAtPath<Sprite>(iconPath);
+            if (icon != null)
+                item.icon = icon;
+            else
+                Debug.LogWarning($"Icon not found: {iconPath}");
+        }
 
         EditorUtility.SetDirty(item);
 
@@ -58,30 +75,36 @@ public class ItemDatabaseSO : ScriptableObject, ICSVDatabase
 
             rows.Add(new Dictionary<string, string>
             {
+                { "fileName", item.name },
                 { "Id", item.Id.ToString() },
                 { "itemName", item.itemName },
                 { "itemType", item.itemType.ToString() },
                 { "sellPrice", item.sellPrice.ToString() },
                 { "sellDuration", item.sellDuration.ToString() },
                 { "inputAmountPerProcess", item.inputAmountPerProcess.ToString() },
-                { "backPackRotationOffset", $"{item.backPackRotationOffset.x}|{item.backPackRotationOffset.y}|{item.backPackRotationOffset.z}" }
+                { "backPackRotationOffset", $"{item.backPackRotationOffset.x}|{item.backPackRotationOffset.y}|{item.backPackRotationOffset.z}" },
+                { "prefabPath", AssetDatabase.GetAssetPath(item.mineralPrefab) },
+                { "iconPath", AssetDatabase.GetAssetPath(item.icon) }
             });
         }
 
         return rows;
     }
 
-    // 벡터 동기화
+    /// <summary>
+    /// 벡터 동기화
+    /// </summary>
     Vector3 ParseVector3(string value)
     {
-        if (string.IsNullOrEmpty(value))
+        var split = value.Split('|');
+
+        if (split.Length != 3)
             return Vector3.zero;
 
-        var v = value.Split('|');
-
         return new Vector3(
-            float.Parse(v[0]),
-            float.Parse(v[1]),
-            float.Parse(v[2]));
+            float.Parse(split[0]),
+            float.Parse(split[1]),
+            float.Parse(split[2]));
     }
 }
+

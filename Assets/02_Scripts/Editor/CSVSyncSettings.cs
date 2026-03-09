@@ -16,35 +16,23 @@ public class CSVSyncSettings : ScriptableObject
 #if UNITY_EDITOR
     public static CSVSyncSettings Load()
     {
-        string rootFolder = "Assets/02_Scripts";
-        string folder = rootFolder + "/Editor";
+        string folder = "Assets/02_Scripts/Editor";
         string path = folder + "/CSVSyncSettings.asset";
-
-        // 1. 폴더 생성
-        if (!AssetDatabase.IsValidFolder(rootFolder))
-        {
-            AssetDatabase.CreateFolder("Assets", "02_Scripts");
-            AssetDatabase.Refresh();
-        }
 
         if (!AssetDatabase.IsValidFolder(folder))
         {
-            AssetDatabase.CreateFolder(rootFolder, "Editor");
-            AssetDatabase.Refresh();
+            AssetDatabase.CreateFolder("Assets", "EditorDefaultResources");
         }
 
-        // 2. 다시 로드
         var settings = AssetDatabase.LoadAssetAtPath<CSVSyncSettings>(path);
 
         if (settings == null)
         {
-            settings = ScriptableObject.CreateInstance<CSVSyncSettings>();
-
+            settings = CreateInstance<CSVSyncSettings>();
             AssetDatabase.CreateAsset(settings, path);
             AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
 
-            Debug.Log("CSVSyncSettings 자동 생성 완료");
+            Debug.Log("CSVSyncSettings 생성");
         }
 
         return settings;

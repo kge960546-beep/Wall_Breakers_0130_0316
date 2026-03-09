@@ -1,9 +1,0 @@
-id,itemName,itemType,sellPrice,sellDuration,inputAmountPreProcess
-1,iron Ore,material,3,10f,0
-2,bronze Ore,material,4,10f,0
-3,silver Ore,material,5,10f,0
-4,gold Ore,material,6,10f,0
-5,iron Ingot,proccessed,6,12f,3
-6,bronze Ingot,proccessed,8,12f,6
-7,silver Ingot,proccessed,10,12f,9
-8,gold Ingot,proccessed,12,12f,12
