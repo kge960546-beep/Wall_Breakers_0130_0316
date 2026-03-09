@@ -15,18 +15,27 @@ public class UpgradeUIManager : MonoBehaviour
     [SerializeField] private float delayBeforeTransition = 0.35f;
     [SerializeField] private float slideDistance = 1200f;
 
+    [SerializeField] private GameObject regionLockedText;
+
     [SerializeField] private CanvasGroup adCanvasGroup; // 광고 UI 입력 차단용
 
     private int currentSectionIndex = 0;
+    private RegionUnlockService regionUnlockService;
+    Coroutine openRoutine;
 
     private void Start()
     {
+        regionUnlockService = GameManager.Instance.GetService<RegionUnlockService>();
+
         for (int i = 0; i < sectionPanels.Length; i++)
         {
             sectionPanels[i].SetActive(false);
         }
 
         currentSectionIndex = 0;
+
+        if (regionLockedText != null)
+            regionLockedText.SetActive(false);
     }
 
     // 패널 열기
@@ -34,13 +43,18 @@ public class UpgradeUIManager : MonoBehaviour
     {
         if (sectionPanels.Length == 0) return;
 
+        if (regionLockedText != null)
+            regionLockedText.SetActive(false);
+
         GameObject panel = sectionPanels[currentSectionIndex];
         panel.SetActive(true);
 
         RectTransform rect = panel.GetComponent<RectTransform>();
 
-        StopAllCoroutines();
-        StartCoroutine(OpenPanelAnimation(rect));
+        if (openRoutine != null)
+            StopCoroutine(openRoutine);
+
+        openRoutine = StartCoroutine(OpenPanelFlow(rect));
 
         adCanvasGroup.blocksRaycasts = false;
     }
@@ -50,7 +64,13 @@ public class UpgradeUIManager : MonoBehaviour
     {
         if (sectionPanels.Length == 0) return;
 
+        if (openRoutine != null)
+            StopCoroutine(openRoutine);
+
         sectionPanels[currentSectionIndex].SetActive(false);
+
+        if (regionLockedText != null)
+            regionLockedText.SetActive(false);
 
         adCanvasGroup.blocksRaycasts = true;
     }
@@ -87,7 +107,18 @@ public class UpgradeUIManager : MonoBehaviour
         if (nextIndex >= sectionPanels.Length)
             return;
 
-        if(showPanel)
+        if (!regionUnlockService.IsRegionUnlocked(nextIndex + 1))
+        {
+            if (regionLockedText != null)
+                regionLockedText.SetActive(true);
+
+            return;
+        }
+
+        if (regionLockedText != null)
+            regionLockedText.SetActive(false);
+
+        if (showPanel)
         {
             StartCoroutine(TransitionSection(nextIndex));
             SceneGameDataManager.instance.SaveGame();
@@ -175,5 +206,40 @@ public class UpgradeUIManager : MonoBehaviour
         yield return StartCoroutine(
             UITween.Scale(rect, Vector3.one * 0.1f, Vector3.one, 0.25f)
         );
+
+        yield return null;
+    }
+
+    IEnumerator CheckSectionStateAfterOpen()
+    {
+        if (!IsSectionComplete(currentSectionIndex))
+            yield break;
+
+        int nextIndex = currentSectionIndex + 1;
+
+        if (nextIndex >= sectionPanels.Length)
+            yield break;
+
+        // 지역 미해금 → 텍스트 등장
+        if (!regionUnlockService.IsRegionUnlocked(nextIndex + 1))
+        {
+            if (regionLockedText != null)
+                regionLockedText.SetActive(true);
+
+            yield break;
+        }
+
+        // 지역 해금됨 → 잠깐 대기 후 전환
+        yield return new WaitForSeconds(0.4f);
+
+        yield return StartCoroutine(TransitionSection(nextIndex));
+    }
+
+    IEnumerator OpenPanelFlow(RectTransform rect)
+    {
+        yield return StartCoroutine(OpenPanelAnimation(rect));
+
+        // 등장 연출 끝난 뒤 상태 검사
+        yield return StartCoroutine(CheckSectionStateAfterOpen());
     }
 }
