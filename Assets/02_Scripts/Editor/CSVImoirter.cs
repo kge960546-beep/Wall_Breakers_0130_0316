@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using System.IO;
 using UnityEditor;
 
 public class CSVImporter : AssetPostprocessor
@@ -10,14 +11,32 @@ public class CSVImporter : AssetPostprocessor
         string[] movedFromAssetPaths)
     {
         var settings = CSVSyncSettings.Load();
-        if (settings == null) return;
 
         foreach (var path in importedAssets)
         {
             if (!path.EndsWith(".csv")) continue;
 
-            var entry = settings.GetEntry(path);
-            if (entry == null) continue;
+            // 엑셀 임시파일 무시
+            if (Path.GetFileName(path).StartsWith("~$"))
+                continue;
+
+            var entry = settings?.GetEntry(path);
+
+            if (entry == null)
+            {
+                // 자동 DB 생성 시도
+                var db = AutoDatabaseCreator.CreateDatabaseIfNeeded(path);
+                if (db == null) continue;
+
+                entry = new CSVSyncEntry
+                {
+                    csvPath = path,
+                    database = db
+                };
+
+                settings.entries.Add(entry);
+                EditorUtility.SetDirty(settings);
+            }
 
             CSVSyncCore.Import(entry);
         }

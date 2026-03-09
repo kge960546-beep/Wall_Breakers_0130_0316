@@ -17,8 +17,8 @@ MonoBehaviour:
   itemType: 0
   sellPrice: 0
   sellDuration: 1
-  mineralPrefab: {fileID: 0}
-  icon: {fileID: 0}
   inputAmountPerProcess: 0
   processedResult: {fileID: 0}
   backPackRotationOffset: {x: 0, y: 0, z: 0}
+  mineralPrefab: {fileID: 0}
+  icon: {fileID: 0}

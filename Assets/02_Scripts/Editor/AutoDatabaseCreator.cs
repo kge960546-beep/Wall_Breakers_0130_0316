@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-public static class AutoDataBaseCreator
+public static class AutoDatabaseCreator
 {
     private const string DATABASE_FOLDER = "Assets/06_Data/Database/";
 

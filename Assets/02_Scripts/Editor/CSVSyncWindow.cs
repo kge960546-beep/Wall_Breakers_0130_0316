@@ -27,21 +27,25 @@ public class CSVSyncWindow : EditorWindow
 
         foreach (var entry in settings.entries)
         {
-            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.BeginVertical("box");
 
-            GUILayout.Label(entry.csvPath);
+            EditorGUILayout.LabelField("CSV", entry.csvPath);
+            entry.database = (ScriptableObject)EditorGUILayout.ObjectField(
+                "Database", entry.database, typeof(ScriptableObject), false);
 
             if (GUILayout.Button("Import"))
-            {
                 CSVSyncCore.Import(entry);
-            }
 
             if (GUILayout.Button("Export"))
-            {
                 CSVSyncCore.Export(entry);
-            }
 
-            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.EndVertical();
+        }
+
+        if (GUILayout.Button("Save Settings"))
+        {
+            EditorUtility.SetDirty(settings);
+            AssetDatabase.SaveAssets();
         }
     }
 }
