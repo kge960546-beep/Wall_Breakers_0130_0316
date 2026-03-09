@@ -68,11 +68,13 @@ public static class UITween
     }
 
     // ================================
-    // Bezier Move (곡선 이동)
+    // UI Bezier Move (UI 패널용)
     // ================================
-    public static IEnumerator MoveBezier(Transform target, Vector3 p0, Vector3 p1, Vector3 p2, float duration)
+    public static IEnumerator MoveBezierUI(RectTransform target, Vector2 start, Vector2 control, Vector2 end, float duration)
     {
         float time = 0f;
+
+        target.anchoredPosition = start;
 
         while (time < duration)
         {
@@ -80,17 +82,17 @@ public static class UITween
 
             float t = time / duration;
 
-            Vector3 pos =
-                Mathf.Pow(1 - t, 2) * p0 +
-                2 * (1 - t) * t * p1 +
-                Mathf.Pow(t, 2) * p2;
+            Vector2 pos =
+                Mathf.Pow(1 - t, 2) * start +
+                2 * (1 - t) * t * control +
+                Mathf.Pow(t, 2) * end;
 
-            target.position = pos;
+            target.anchoredPosition = pos;
 
             yield return null;
         }
 
-        target.position = p2;
+        target.anchoredPosition = end;
     }
 
     // ================================

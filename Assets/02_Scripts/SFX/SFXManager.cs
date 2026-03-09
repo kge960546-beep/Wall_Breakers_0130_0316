@@ -26,6 +26,9 @@ public class SFXManager : MonoBehaviour
     // BGM 코루틴 저장용
     Coroutine bgmRoutine;
 
+    // 효과음 중단용 변수
+    bool isSFXBlocked = false;
+
     private void Awake()
     {
         if(instance == null)
@@ -68,10 +71,17 @@ public class SFXManager : MonoBehaviour
     // 볼륨변수 추가
     public void PlayOnSFX(string soundName, Vector3 soundPos)
     {
+        if (isSFXBlocked) return;
+
         if (sfxClipDic.TryGetValue(soundName, out var clip))
         {
             AudioSource.PlayClipAtPoint(clip, soundPos, sfxVolume);
         }
+    }
+
+    public void BlockSFX(bool block)
+    {
+        isSFXBlocked = block;
     }
 
     public void PlayOnBGM(string soundName)
