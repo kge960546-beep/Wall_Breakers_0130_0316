@@ -30,4 +30,17 @@ public class SaveSystem : MonoBehaviour
 
         return data;
     }
+
+    public static void DeleteSaveData()
+    {
+        if(File.Exists(SavePath))
+        {
+            File.Delete(SavePath);
+            Utils.DebugLog($"<color=red>[SaveSystem] 세이브 파일 삭제 완료: {SavePath}</color>");
+        }
+        else
+        {
+            Utils.DebugLog("[SaveSystem] 삭제할 저장 파일이 없습니다");
+        }
+    }
 }

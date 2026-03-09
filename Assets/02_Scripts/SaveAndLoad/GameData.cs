@@ -19,27 +19,9 @@ public class GameData
     public bool[] unlockedSections = new bool[5];
     public int[] sectionFillAmount = new int[100];
 
-    [Header("NPC업그래이드, 플레이어 업그래이드, 광산 업그래이드")]
-    public float playerMoveSpeed;
-    public float playerMineSpeed;
-    public int playerMaxCarry;
-    public float playerMineAmount;
-    public float playerRawSellPrice;   
-    public float processedSellPrice;
+    [Header("업그래이드")]
+    public List<string> unlockedUpgradeNodeIds;
 
-    public int processingMaxCapacity;
-    public float processorProcessTime;
-
-    public float carrierMoveSpeed;
-    public int carrierMaxCarry;
-    public bool carrierUnlock;
-
-    public float minerMineSpeed;
-    public int minerMineAmount;
-    public int minerUnlock;
-
-    public int miningAreaMaxStorage;
-    public float miningAreaRespawnTime;
 
     [Header("업적 저장 리스트")]
     public List<string> achievementProgess = new List<string>();

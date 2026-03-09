@@ -6,6 +6,6 @@ public class GameStart : MonoBehaviour
 {
     void Start()
     {
-        LoadingSceneController.Instance.LoadScene("TestMapAStar");
+        LoadingSceneController.Instance.LoadScene("MergeSceneMain");
     }   
 }
