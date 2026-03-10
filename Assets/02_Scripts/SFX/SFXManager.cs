@@ -101,7 +101,7 @@ public class SFXManager : MonoBehaviour
 
         float fadeTime = 0.1f;
         float startVol = source.volume;
-        while(source.volume > 0)
+        while(source != null && source.volume > 0)
         {
             source.volume -= startVol * (Time.deltaTime / fadeTime);
             yield return null;
