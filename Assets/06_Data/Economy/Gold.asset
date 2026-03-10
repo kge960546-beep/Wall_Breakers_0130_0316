@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Gold
   m_EditorClassIdentifier: 
   Id: 8
-  itemName: "\uAE08"
+  itemName: "\uFFFD\uFFFD"
   itemType: 0
   sellPrice: 250
-  sellDuration: 0.2
-  mineralPrefab: {fileID: 919132149155446097, guid: bd75572054aef2c40bbc272c74d66b2c,
-    type: 3}
-  icon: {fileID: 21300000, guid: cd71f4a1c75cfc14380071967f71eca5, type: 3}
+  sellDuration: 1
   inputAmountPerProcess: 3
   processedResult: {fileID: 11400000, guid: c987a268457b32f4ba30a610936fc330, type: 2}
   backPackRotationOffset: {x: 0, y: 0, z: 0}
+  mineralPrefab: {fileID: 919132149155446097, guid: bd75572054aef2c40bbc272c74d66b2c,
+    type: 3}
+  icon: {fileID: 21300000, guid: cd71f4a1c75cfc14380071967f71eca5, type: 3}

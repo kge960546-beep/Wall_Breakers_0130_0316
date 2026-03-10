@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradeID: PLAYER_MINE_SPEED_LV1_S2
   displayName: "\uC0C1\uCCB4 \uB2E8\uB2E8 Lv.1"
-  description: "\uC139\uC1581 \uD50C\uB808\uC774\uC5B4 \uCC44\uAD74\uC18D\uB3C4 Lv.1"
+  description: "\uC139\uC1582 \uD50C\uB808\uC774\uC5B4 \uCC44\uAD74\uC18D\uB3C4 Lv.1"
   effects:
   - upgradeType: 3
     value: 0.15
     targetID: 
-    sectionIndex: 2
+    sectionIndex: 1
   cost: 480
   section: 2

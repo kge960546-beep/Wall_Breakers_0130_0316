@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Iron
   m_EditorClassIdentifier: 
   Id: 6
-  itemName: "\uCCA0"
+  itemName: "\xF6"
   itemType: 0
   sellPrice: 60
-  sellDuration: 0.2
-  mineralPrefab: {fileID: 919132149155446097, guid: d679619923c782b41a28af8fc70a3b8a,
-    type: 3}
-  icon: {fileID: 21300000, guid: 6d50ed9bf0d305d48a6fed39b004df5e, type: 3}
+  sellDuration: 1
   inputAmountPerProcess: 3
   processedResult: {fileID: 11400000, guid: 6c3f948bd66e8d44792fb88acff70554, type: 2}
   backPackRotationOffset: {x: 0, y: 0, z: 0}
+  mineralPrefab: {fileID: 919132149155446097, guid: d679619923c782b41a28af8fc70a3b8a,
+    type: 3}
+  icon: {fileID: 21300000, guid: 6d50ed9bf0d305d48a6fed39b004df5e, type: 3}

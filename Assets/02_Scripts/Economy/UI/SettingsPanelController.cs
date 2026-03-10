@@ -1,9 +1,11 @@
+using System.Collections;
 using UnityEngine;
-using UnityEngine.UI; // 추가
+using UnityEngine.UI;
 
 public class SettingsPanelController : MonoBehaviour
 {
     [SerializeField] private GameObject settingsPanel;
+    [SerializeField] private RectTransform panelRect;
 
     [Header("Volume Sliders")]
     [SerializeField] private Slider bgmSlider;
@@ -11,14 +13,12 @@ public class SettingsPanelController : MonoBehaviour
 
     private void Start()
     {
-        // 시작할 때 현재 SFXManager의 볼륨 값을 슬라이더에 반영
         if (SFXManager.instance != null)
         {
             bgmSlider.value = SFXManager.instance.bgmVolume;
             sfxSlider.value = SFXManager.instance.sfxVolume;
         }
 
-        // 슬라이더 값이 변할 때마다 매니저 함수 호출 연결
         bgmSlider.onValueChanged.AddListener(val => SFXManager.instance.SetBGMVolume(val));
         sfxSlider.onValueChanged.AddListener(val => SFXManager.instance.SetSFXVolume(val));
     }
@@ -27,36 +27,57 @@ public class SettingsPanelController : MonoBehaviour
     {
         settingsPanel.SetActive(true);
 
-        if (SFXManager.instance != null)
+        StopAllCoroutines();
+        StartCoroutine(OpenAnimation());
+    }
+
+    IEnumerator OpenAnimation()
+    {
+        Vector2 end = panelRect.anchoredPosition;
+
+        Vector2 start;
+
+        int dir = Random.Range(0, 4);
+
+        switch (dir)
         {
-            SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting 2", Camera.main.transform.position);
+            case 0: start = new Vector2(0, 900); break;
+            case 1: start = new Vector2(0, -900); break;
+            case 2: start = new Vector2(-1400, 0); break;
+            default: start = new Vector2(1400, 0); break;
         }
+
+        Vector2 control = (start + end) * 0.5f + new Vector2(
+            Random.Range(-400f, 400f),
+            Random.Range(200f, 600f)
+        );
+
+        // 시작 위치 이동
+        panelRect.anchoredPosition = start;
+
+        // 1/10 크기 시작
+        panelRect.localScale = Vector3.one * 0.1f;
+
+        // 작은 상태로 Bezier 이동
+        yield return StartCoroutine(
+            UITween.MoveBezierUI(panelRect, start, control, end, 0.9f)
+        );
+
+        // 도착 후 스케일 복구
+        yield return StartCoroutine(
+            UITween.Scale(panelRect, Vector3.one * 0.1f, Vector3.one, 0.25f)
+        );
     }
 
     public void Close()
     {
         settingsPanel.SetActive(false);
-
-        if (SFXManager.instance != null)
-        {
-            SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting 2", Camera.main.transform.position);
-        }
     }
 
-    /// <summary>
-    /// 게임 종료 버튼에 연결할 메서드
-    /// </summary>
     public void QuitGame()
     {
-        if (SFXManager.instance != null)
-        {
-            SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting 2", Camera.main.transform.position);
-        }
-
-        // 1. 실제 빌드된 게임 종료
         Application.Quit();
 
-        // 2. 유니티 에디터의 Play 모드 종료 (개발 중 확인용)
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
