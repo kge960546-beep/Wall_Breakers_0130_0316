@@ -49,6 +49,10 @@ public class GuideManager : MonoBehaviour
     /// </summary>
     public void AddProgress(GuideActionType type, int amount = 1)
     {
+        // 가이드가 이미 끝난 경우
+        if (currentIndex >= guideSteps.Count)
+            return;
+
         foreach (var step in guideSteps)
         {
             if (step.actionType != type)
@@ -61,10 +65,13 @@ public class GuideManager : MonoBehaviour
             progressMap[step] = current;
         }
 
+        // 안전하게 CurrentStep 접근
+        GuideStepSO stepSO = guideSteps[currentIndex];
+
         // 현재 스텝이면 UI 업데이트
-        if (CurrentStep.actionType == type)
+        if (stepSO.actionType == type)
         {
-            guidePanel.UpdateProgress(progressMap[CurrentStep]);
+            guidePanel.UpdateProgress(progressMap[stepSO]);
         }
     }
 
