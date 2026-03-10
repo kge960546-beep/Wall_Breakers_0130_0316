@@ -173,10 +173,9 @@ public class SceneGameDataManager : MonoBehaviour
 
         if (data != null)
         {
-
             ApplyDataVariable(data);
             isPendingLoad = true;
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);            
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);           
         }
     }
 
@@ -208,9 +207,7 @@ public class SceneGameDataManager : MonoBehaviour
     }
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-       
-
+    {      
         SetupButtonUI();
 
         if (isPendingLoad)
@@ -277,7 +274,7 @@ public class SceneGameDataManager : MonoBehaviour
 
             RestorePendingCredits();
             #endregion
-
+            #region 업그래이드
             if (UpgradeGraphBuilder.instance != null && unlockedUpgradeNodeIds != null)
             {
                 var dag = UpgradeGraphBuilder.instance.DAG;
@@ -308,6 +305,7 @@ public class SceneGameDataManager : MonoBehaviour
             }
 
             UpgradeUILoad();
+            #endregion
             ResourceTableLoad();
             ProcessTableLoad();
         }
@@ -319,10 +317,10 @@ public class SceneGameDataManager : MonoBehaviour
         {
             isRefreshing = false;
             Utils.DebugLog("데이터 복구 프로세스 종료");
-        }
+        }        
         
-        isRefreshing = false;
         Utils.DebugLog("씬 재시작후 불러오기 완료");
+        SaveGame();
     }
     
     public void SaveGoldObject()

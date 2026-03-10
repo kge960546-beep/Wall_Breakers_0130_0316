@@ -12,6 +12,14 @@ public class AdRewardButton : MonoBehaviour
 
         AdsManager.Instance.RequestRewardAd(rewardData);
 
+        if(SceneGameDataManager.instance != null)
+        {
+            int rewardAmount = Mathf.RoundToInt(rewardData.value);
+            SceneGameDataManager.instance.currentGold += rewardAmount;
+
+            SceneGameDataManager.instance.SaveGame();
+        }
+
         if (SFXManager.instance != null)
         {
             SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting", Camera.main.transform.position);
