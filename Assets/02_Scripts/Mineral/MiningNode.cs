@@ -274,6 +274,8 @@ public class MiningNode : MonoBehaviour
 
         if (currentMineCount == maxMineCount)
         {
+            SFXManager.instance.PlayOnSFX("Break2", transform.position);
+
             // 1. 점유 상태 해제
             currentMiner = null;
 
@@ -289,8 +291,7 @@ public class MiningNode : MonoBehaviour
             if(effectController != null)
             {
                 effectController.PlayDestroy(mineralPoint.position);
-            }
-            SFXManager.instance.PlayOnSFX("Break2", transform.position);
+            }            
 
             foreach (GameObject mineral in mineMineral)
                 mineral.SetActive(false);
