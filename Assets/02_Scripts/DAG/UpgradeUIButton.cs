@@ -88,22 +88,34 @@ public class UpgradeUIButton : MonoBehaviour,
                 UpgradeEffectManager.Instance.RecalculateAllEffects();
             }
 
+            // =========================
+            // 노드 컬러 전환
+            // =========================
+
+            runtimeMat.SetFloat("_GrayAmount", 0f);
+
+            foreach (var line in connectedLines)
+            {
+                if (line == null) continue;
+                line.color = Color.yellow;
+            }
+
+            // =========================
+            // 가이드 처리
+            // =========================
+
             GuideManager.Instance?.AddProgress(GuideActionType.UpgradeAny);
 
             foreach (var effect in targetSO.effects)
             {
-                if (effect.upgradeType == UpgradeType.CarrierUnlock & effect.targetID == "CarrierA")
+                if (effect.upgradeType == UpgradeType.CarrierUnlock && effect.targetID == "CarrierA")
                 {
                     GuideManager.Instance?.AddProgress(GuideActionType.UnlockCarrierA);
                 }
-            }
 
-            foreach (var effect in targetSO.effects)
-            {
                 if (effect.upgradeType == UpgradeType.PlayerMineSpeed)
                 {
                     GuideManager.Instance?.AddProgress(GuideActionType.UpgradePlayerMineSpeed);
-                    break;
                 }
             }
 
@@ -115,31 +127,12 @@ public class UpgradeUIButton : MonoBehaviour,
             if (targetSO.upgradeID == "PLAYER_DIRECT_SELL_PRICE_UP_S1")
             {
                 GuideManager.Instance?.AddProgress(GuideActionType.UpgradePlayerTreeComplete);
-            if(SFXManager.instance != null)
+            }
+
+            if (SFXManager.instance != null)
             {
                 SFXManager.instance.PlayOnSFX("Upgrade1", Camera.main.transform.position);
             }
-
-            // =========================
-            // 연결된 선 색 변경
-            // =========================
-
-            foreach (var line in connectedLines)
-            {
-                if (line == null) continue;
-
-                line.color = Color.yellow;
-            }
-
-            // =========================
-            // 노드 컬러 전환
-            // =========================
-
-            runtimeMat.SetFloat("_GrayAmount", 0f);
-
-            // =========================
-            // 섹션 완료 체크
-            // =========================
 
             int sectionIndex = node.SectionIndex;
 
@@ -149,7 +142,6 @@ public class UpgradeUIButton : MonoBehaviour,
             }
         }
     }
-
     // =========================
     // Hover Enter
     // =========================
