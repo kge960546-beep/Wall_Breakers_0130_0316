@@ -38,6 +38,11 @@ public class AchievementUI : MonoBehaviour
         Utils.DebugLog("UI수신성공" + data.title);
         StopAllCoroutines();
 
+        if(SFXManager.instance != null)
+        {
+            SFXManager.instance.PlayOnSFX("541980__rob_marion__gasp_chimes_success_3", Camera.main.transform.position);
+        }
+
         titleText.text = data.title;
         descriptionText.text = data.description;
 
