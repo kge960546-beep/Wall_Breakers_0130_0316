@@ -153,6 +153,18 @@ public class SellManager : MonoBehaviour
                 creditSpawner.SpawnCredit(earnedCredits);
                 OnItemSold?.Invoke(itemData, earnedCredits);
 
+                // =========================
+                // 가이드 단계 추가
+                // =========================
+                if (itemData.itemType == ItemType.RawMaterial)
+                {
+                    GuideManager.Instance?.AddProgress(GuideActionType.SellSoil);
+                }
+                else if (itemData.itemType == ItemType.processed)
+                {
+                    GuideManager.Instance?.AddProgress(GuideActionType.SellBrick);
+                }
+
                 if (itemData.mineralPrefab != null)
                     PoolManager.instance.ReturnIt(itemData.mineralPrefab, soldItem);
                 else

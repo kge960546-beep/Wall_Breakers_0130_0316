@@ -248,6 +248,8 @@ public class ProcessResource : MonoBehaviour
                 Quaternion.identity
             );
 
+            GuideManager.Instance?.AddProgress(GuideActionType.CraftBrick);
+
             SFXManager.instance.PlayOnSFX("149270__organicmanpl__ding-1", processingPoint.position);
 
             if (SceneGameDataManager.instance != null)

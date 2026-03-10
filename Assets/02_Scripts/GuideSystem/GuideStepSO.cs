@@ -5,9 +5,19 @@ public class GuideStepSO : ScriptableObject
 {
     [Header("UI")]
     public Sprite icon;
+
+    [Header("Guide Title")]
+    public string guideTitle;   // 가이드 명
+
     [TextArea]
-    public string guideText;
+    public string guideDescription;  // 가이드 설명
+
+    [Header("Guide Action")]
+    public GuideActionType actionType;
 
     [Header("Progress")]
-    public int targetCount = 1;   // 1이면 건설/완료형, n이면 누적형
+    public int targetCount = 1;
+
+    [Header("Reward")]
+    public int rewardGold = 0;
 }

@@ -12,7 +12,9 @@ public class GuideManager : MonoBehaviour
     [SerializeField] private GuidePanel guidePanel;
 
     private int currentIndex;
-    private int currentCount;
+
+    // 각 GuideStep의 진행도를 저장
+    private Dictionary<GuideStepSO, int> progressMap = new();
 
     private GuideStepSO CurrentStep => guideSteps[currentIndex];
 
@@ -30,44 +32,81 @@ public class GuideManager : MonoBehaviour
     void StartGuide()
     {
         currentIndex = 0;
-        currentCount = 0;
-        guidePanel.Show(CurrentStep, currentCount);
+
+        // 모든 가이드 진행도 초기화
+        foreach (var step in guideSteps)
+        {
+            if (!progressMap.ContainsKey(step))
+                progressMap.Add(step, 0);
+        }
+
+        guidePanel.Show(CurrentStep, progressMap[CurrentStep]);
     }
 
     /// <summary>
-    /// 외부 시스템에서 호출 (채굴, 수확, 건설 등)
+    /// 외부 시스템에서 호출
+    /// 예 : 채굴 / 제작 / 판매 / 강화
     /// </summary>
-    public void AddProgress(int amount = 1)
+    public void AddProgress(GuideActionType type, int amount = 1)
     {
-        currentCount += amount;
-        currentCount = Mathf.Min(currentCount, CurrentStep.targetCount);
-
-        guidePanel.UpdateProgress(currentCount);
-
-        if (currentCount >= CurrentStep.targetCount)
+        foreach (var step in guideSteps)
         {
-            CompleteGuide();
+            if (step.actionType != type)
+                continue;
+
+            int current = progressMap[step];
+            current += amount;
+            current = Mathf.Min(current, step.targetCount);
+
+            progressMap[step] = current;
+        }
+
+        // 현재 스텝이면 UI 업데이트
+        if (CurrentStep.actionType == type)
+        {
+            guidePanel.UpdateProgress(progressMap[CurrentStep]);
         }
     }
 
-    void CompleteGuide()
+    /// <summary>
+    /// 보상 수령 후 호출
+    /// </summary>
+    public void CompleteCurrentStep()
     {
-        guidePanel.PlayCompleteAnimation(() =>
+        GuideStepSO step = CurrentStep;
+
+        if (progressMap[step] < step.targetCount)
+            return;
+
+        // 보상 지급
+        GiveReward(step);
+
+        currentIndex++;
+
+        if (currentIndex >= guideSteps.Count)
         {
-            currentIndex++;
+            guidePanel.Hide();
+            return;
+        }
 
-            if (currentIndex >= guideSteps.Count)
-            {
-                guidePanel.Hide();
-                return;
-            }
+        GuideStepSO nextStep = CurrentStep;
 
-            currentCount = 0;
-            guidePanel.Show(CurrentStep, currentCount);
-        });
+        guidePanel.Show(nextStep, progressMap[nextStep]);
     }
 
-    // 현재 스텝 몇단계인지 파악하는 메서드
+    void GiveReward(GuideStepSO step)
+    {
+        if (step.rewardGold <= 0) return;
+
+        var creditService = GameManager.Instance.GetService<CreditService>();
+
+        if (creditService != null)
+        {
+            creditService.AddCredit(step.rewardGold);
+        }
+    }
+
+    // 현재 스텝 체크
     public bool IsCurrentStep(GuideStepSO step)
     {
         if (currentIndex < 0 || currentIndex >= guideSteps.Count)
@@ -76,4 +115,15 @@ public class GuideManager : MonoBehaviour
         return guideSteps[currentIndex] == step;
     }
 
+    // 현재 진행도 반환
+    public int GetCurrentProgress()
+    {
+        return progressMap[CurrentStep];
+    }
+
+    // 현재 목표 달성 여부
+    public bool IsCurrentStepComplete()
+    {
+        return progressMap[CurrentStep] >= CurrentStep.targetCount;
+    }
 }

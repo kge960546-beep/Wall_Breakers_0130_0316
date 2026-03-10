@@ -1,16 +1,24 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
 
 public class GuidePanel : MonoBehaviour
 {
     [Header("UI")]
     [SerializeField] private RectTransform root;
     [SerializeField] private Image iconImage;
-    [SerializeField] private TMP_Text guideText;
+
+    [SerializeField] private TMP_Text guideTitleText;        // 가이드 명
+    [SerializeField] private TMP_Text guideDescriptionText;  // 가이드 설명
+
     [SerializeField] private Image fillImage;
     [SerializeField] private TMP_Text countText;
+
+    [Header("Reward UI")]
+    [SerializeField] private TMP_Text rewardText;
+
+    [Header("Button")]
+    [SerializeField] private Button panelButton;
 
     private GuideStepSO currentStep;
 
@@ -22,15 +30,13 @@ public class GuidePanel : MonoBehaviour
         currentStep = step;
 
         iconImage.sprite = step.icon;
-        guideText.text = step.guideText;
+
+        guideTitleText.text = step.guideTitle;
+        guideDescriptionText.text = step.guideDescription;
+
+        rewardText.text = $"{step.rewardGold} G";
 
         root.gameObject.SetActive(true);
-
-        // DOTween 사용 시
-        // root.localScale = Vector3.zero;
-        // root.DOScale(1f, 0.25f).SetEase(Ease.OutBack);
-
-        // DOTween 미사용 기본 처리
         root.localScale = Vector3.one;
 
         UpdateProgress(currentCount);
@@ -44,23 +50,32 @@ public class GuidePanel : MonoBehaviour
         if (currentStep == null) return;
 
         float ratio = (float)currentCount / currentStep.targetCount;
+
         fillImage.fillAmount = ratio;
         countText.text = $"{currentCount}/{currentStep.targetCount}";
+
+        UpdateButtonState(currentCount);
     }
 
     /// <summary>
-    /// 가이드 완료 연출
+    /// 버튼 상태 갱신
     /// </summary>
-    public void PlayCompleteAnimation(Action onComplete)
+    void UpdateButtonState(int currentCount)
     {
-        // DOTween 사용 시
-        // root.DOScale(0f, 0.25f)
-        //     .SetEase(Ease.InBack)
-        //     .OnComplete(() => onComplete?.Invoke());
+        bool ready = currentCount >= currentStep.targetCount;
 
-        // DOTween 미사용 기본 처리
-        root.gameObject.SetActive(false);
-        onComplete?.Invoke();
+        panelButton.interactable = ready;
+    }
+
+    /// <summary>
+    /// 패널 버튼 클릭 (보상 수령)
+    /// </summary>
+    public void OnClickPanel()
+    {
+        if (!GuideManager.Instance.IsCurrentStepComplete())
+            return;
+
+        GuideManager.Instance.CompleteCurrentStep();
     }
 
     /// <summary>

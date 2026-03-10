@@ -106,6 +106,14 @@ public class RegionUnlockService
 
         OnRegionUnlocked?.Invoke(regionId);
 
+        // =========================
+        // Guide Progress
+        // =========================
+        if (regionId == 2)
+        {
+            GuideManager.Instance?.AddProgress(GuideActionType.UnlockSection2);
+        }
+
         Debug.Log($"[RegionUnlockService] Region {regionId} unlocked");
         return true;
     }
