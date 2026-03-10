@@ -66,12 +66,42 @@ public class SFXManager : MonoBehaviour
     }
 
     // 볼륨변수 추가
-    public void PlayOnSFX(string soundName, Vector3 soundPos)
+    public void PlayOnSFX(string soundName, Vector3 soundPos, float duration = -1.0f)
     {
         if (sfxClipDic.TryGetValue(soundName, out var clip))
         {
-            AudioSource.PlayClipAtPoint(clip, soundPos, sfxVolume);
+            GameObject tr = new GameObject("PlaySFX" + soundName);
+            tr.transform.position = soundPos;
+            AudioSource source = tr.AddComponent<AudioSource>();
+            source.clip = clip;
+            source.volume = sfxVolume;
+
+            source.spatialBlend = 1.0f;
+            source.minDistance = 5.0f;
+            source.maxDistance = 50f;
+            source.rolloffMode = AudioRolloffMode.Linear;
+
+            source.Play();
+
+            float playTime = (duration > 0) ? duration : clip.length;
+
+            StartCoroutine(DestroySFX(tr, source, playTime));
         }
+    }
+
+    IEnumerator DestroySFX(GameObject tr, AudioSource source, float time)
+    {
+        yield return new WaitForSeconds(time);
+
+        float fadeTime = 0.1f;
+        float startVol = source.volume;
+        while(source.volume > 0)
+        {
+            source.volume -= startVol * (Time.deltaTime / fadeTime);
+            yield return null;
+        }
+
+        Destroy(tr);
     }
 
     public void PlayOnBGM(string soundName)
