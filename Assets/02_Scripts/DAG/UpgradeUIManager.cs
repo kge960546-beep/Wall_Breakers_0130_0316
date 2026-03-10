@@ -33,6 +33,11 @@ public class UpgradeUIManager : MonoBehaviour
         if (sectionPanels.Length == 0) return;
 
         sectionPanels[currentSectionIndex].SetActive(true);
+
+        if(SFXManager.instance != null)
+        {
+            SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting 2", Camera.main.transform.position);
+        }
     }
 
     // ÆÐ³Î ´Ý±â
@@ -41,6 +46,11 @@ public class UpgradeUIManager : MonoBehaviour
         if (sectionPanels.Length == 0) return;
 
         sectionPanels[currentSectionIndex].SetActive(false);
+
+        if (SFXManager.instance != null)
+        {
+            SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting 2", Camera.main.transform.position);
+        }
     }
 
     // ===============================

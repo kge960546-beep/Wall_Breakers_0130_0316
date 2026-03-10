@@ -93,6 +93,8 @@ public class SFXManager : MonoBehaviour
     {
         yield return new WaitForSeconds(time);
 
+        if (source == null || tr == null) yield break;
+
         float fadeTime = 0.1f;
         float startVol = source.volume;
         while(source.volume > 0)

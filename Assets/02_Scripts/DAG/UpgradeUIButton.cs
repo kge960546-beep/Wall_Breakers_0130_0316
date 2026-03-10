@@ -88,6 +88,11 @@ public class UpgradeUIButton : MonoBehaviour,
                 UpgradeEffectManager.Instance.RecalculateAllEffects();
             }
 
+            if(SFXManager.instance != null)
+            {
+                SFXManager.instance.PlayOnSFX("Upgrade1", Camera.main.transform.position);
+            }
+
             // =========================
             // 연결된 선 색 변경
             // =========================
@@ -132,6 +137,11 @@ public class UpgradeUIButton : MonoBehaviour,
             targetSO.description,
             targetSO.cost
         );
+
+        if (SFXManager.instance != null)
+        {
+            SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting", Camera.main.transform.position);
+        }
     }
 
     // =========================
@@ -142,7 +152,14 @@ public class UpgradeUIButton : MonoBehaviour,
     {
         if (UpgradeTooltipManager.Instance == null) return;
 
+        if (SFXManager.instance != null)
+        {
+            SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting", Camera.main.transform.position);
+        }
+
         UpgradeTooltipManager.Instance.Hide();
+
+
     }
 
     public void UpgradeUIRenewal()

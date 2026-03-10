@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: "\uD759"
   itemType: 0
   sellPrice: 1
-  sellDuration: 1
+  sellDuration: 0.2
   mineralPrefab: {fileID: 919132149155446097, guid: a1f39be0ef48218419ee05b574c5eb6d,
     type: 3}
   icon: {fileID: 21300000, guid: b266c32b29ae7434e9c1055d32e26c0f, type: 3}

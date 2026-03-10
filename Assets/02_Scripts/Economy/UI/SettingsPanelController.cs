@@ -26,11 +26,21 @@ public class SettingsPanelController : MonoBehaviour
     public void Open()
     {
         settingsPanel.SetActive(true);
+
+        if (SFXManager.instance != null)
+        {
+            SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting 2", Camera.main.transform.position);
+        }
     }
 
     public void Close()
     {
         settingsPanel.SetActive(false);
+
+        if (SFXManager.instance != null)
+        {
+            SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting 2", Camera.main.transform.position);
+        }
     }
 
     /// <summary>
@@ -38,6 +48,11 @@ public class SettingsPanelController : MonoBehaviour
     /// </summary>
     public void QuitGame()
     {
+        if (SFXManager.instance != null)
+        {
+            SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting 2", Camera.main.transform.position);
+        }
+
         // 1. 실제 빌드된 게임 종료
         Application.Quit();
 

@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: "\uBCBD\uB3CC"
   itemType: 1
   sellPrice: 5
-  sellDuration: 1
+  sellDuration: 0.2
   mineralPrefab: {fileID: 2831869848581557307, guid: b983ee4ad77ea674d84c01d57a1ec806,
     type: 3}
   icon: {fileID: 21300000, guid: 249d67d4a70bff44cb0ddae05f07c96b, type: 3}

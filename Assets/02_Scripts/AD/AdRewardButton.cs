@@ -11,5 +11,10 @@ public class AdRewardButton : MonoBehaviour
             return;
 
         AdsManager.Instance.RequestRewardAd(rewardData);
+
+        if (SFXManager.instance != null)
+        {
+            SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting", Camera.main.transform.position);
+        }
     }
 }

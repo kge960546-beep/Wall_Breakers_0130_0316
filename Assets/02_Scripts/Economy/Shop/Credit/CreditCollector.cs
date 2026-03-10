@@ -134,9 +134,10 @@ public class CreditCollector : MonoBehaviour
 
                 creditSpawner.RemoveCredit(creditToCollect);
 
-                Debug.Log($"Collected {amount} credits. Remaing: {credits.Count - 1}");
+                Utils.DebugLog($"Collected {amount} credits. Remaing: {credits.Count - 1}");
             }
 
+            SFXManager.instance.PlayOnSFX("Blop Sound", transform.position);
             //다음 수집까지 대기
             yield return new WaitForSeconds(collectInterval);
         }
