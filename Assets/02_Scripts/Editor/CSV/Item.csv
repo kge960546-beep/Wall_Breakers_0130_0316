@@ -1,0 +1,18 @@
+fileName,Id,itemName,itemType,sellPrice,sellDuration,inputAmountPerProcess,backPackRotationOffset,prefabPath,iconPath
+Brick,1,º®µ¹,processed,5,1,0,0|0|0,Assets/04_Prefabs/KwenTest/Brick.prefab,Assets/05_Assets/2D Casual UI/Sprite/ItemIconImg/Èëº®µ¹1.png
+bronze Ingot,0,,RawMaterial,0,1,0,0|0|0,,
+bronze Ore,0,,RawMaterial,0,1,0,0|0|0,,
+Copper,4,±¸¸®,RawMaterial,15,1.2,3,0|0|0,Assets/04_Prefabs/KwenTest/Copper.prefab,Assets/05_Assets/2D Casual UI/Sprite/ItemIconImg/±¸¸®1.png
+Copper Ingot,5,±¸¸® ÁÖ±«,processed,75,2.5,0,0|90|0,Assets/04_Prefabs/KwenTest/Copper_Ingot.prefab,Assets/05_Assets/2D Casual UI/Sprite/ItemIconImg/±¸¸®±«1.png
+Earth,0,Èë,RawMaterial,1,1,3,0|0|0,Assets/04_Prefabs/KwenTest/Earth.prefab,Assets/05_Assets/2D Casual UI/Sprite/ItemIconImg/Èë1.png
+Gold,8,±Ý,RawMaterial,250,1,3,0|0|0,Assets/04_Prefabs/KwenTest/Gold.prefab,Assets/05_Assets/2D Casual UI/Sprite/ItemIconImg/±Ý.png
+gold Ingot,0,,RawMaterial,0,1,0,0|0|0,,
+gold Ore,0,,RawMaterial,0,1,0,0|0|0,,
+GoldIngot,9,±Ý ÁÖ±«,processed,1250,1,0,0|90|0,Assets/04_Prefabs/KwenTest/Gold_Ingot.prefab,Assets/05_Assets/2D Casual UI/Sprite/ItemIconImg/±Ý±«1.png
+Iron,6,Ã¶,RawMaterial,60,1,3,0|0|0,Assets/04_Prefabs/KwenTest/Iron.prefab,Assets/05_Assets/2D Casual UI/Sprite/ItemIconImg/Ã¶1.png
+Iron Ingot,7,Ã¶ ÁÖ±«,processed,300,2,0,0|90|0,Assets/04_Prefabs/KwenTest/Iron_Ingot.prefab,Assets/05_Assets/2D Casual UI/Sprite/ItemIconImg/Ã¶±«1.png
+iron Ore,0,,RawMaterial,0,1,0,0|0|0,,
+Rock,2,µ¹,RawMaterial,4,1.5,3,0|0|0,Assets/04_Prefabs/KwenTest/Rock.prefab,Assets/05_Assets/2D Casual UI/Sprite/ItemIconImg/¹ÙÀ§1.png
+RockBrick,3,´ë¸®¼® º®µ¹,processed,20,3,0,0|90|0,Assets/04_Prefabs/KwenTest/Stone_Brick.prefab,Assets/05_Assets/2D Casual UI/Sprite/ItemIconImg/¹ÙÀ§º®µ¹1.png
+silver Ingot,0,,RawMaterial,0,1,0,0|0|0,,
+silver Ore,0,,RawMaterial,0,1,0,0|0|0,,

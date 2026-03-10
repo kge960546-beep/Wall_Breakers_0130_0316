@@ -197,9 +197,9 @@ public class ProcessResource : MonoBehaviour
         }
 
         // 4. 가공 시간 확정
-        SFXManager.instance.PlayOnSFX("232869__lagezon__cardboard_factory_machine-004", transform.position);
-
         float finalProcessTime = Mathf.Max(0.1f, baseProcessTime - bonusProcessTimeReduction);
+
+        SFXManager.instance.PlayOnSFX("232869__lagezon__cardboard_factory_machine-004", transform.position, finalProcessTime);
 
         // 5. 원재료 소모 (실제 가공 1회분인 resourceQuantity만큼만 소모)
         int resourceQuantity = inputPerProcess;

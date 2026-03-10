@@ -28,28 +28,28 @@ public class UpgradeUIButton : MonoBehaviour,
     {
         sourceImage = GetComponent<Image>();
 
-        // ³ëµå Ã£±â
+        // ë…¸ë“œ ì°¾ê¸°
         if (graphBuilder.DAG.TryGetNode(targetSO.upgradeID, out node) == false)
         {
-            Debug.LogError("³ëµå Ã£±â ½ÇÆĞ: " + targetSO.upgradeID);
+            Debug.LogError("ë…¸ë“œ ì°¾ê¸° ì‹¤íŒ¨: " + targetSO.upgradeID);
         }
 
-        // CreditService ¿¬°á
+        // CreditService ì—°ê²°
         if (GameManager.Instance != null)
         {
             creditService = GameManager.Instance.GetService<CreditService>();
 
             if (creditService == null)
             {
-                Debug.LogError("[UpgradeUIButton] CreditService ¿¬°á ½ÇÆĞ");
+                Debug.LogError("[UpgradeUIButton] CreditService ì—°ê²° ì‹¤íŒ¨");
             }
         }
 
-        // ¸ÓÆ¼¸®¾ó ÀÎ½ºÅÏ½º »ı¼º
+        // ë¨¸í‹°ë¦¬ì–¼ ì¸ìŠ¤í„´ìŠ¤ ìƒì„±
         runtimeMat = Instantiate(sourceImage.material);
         sourceImage.material = runtimeMat;
 
-        // Ã³À½ »óÅÂ = Èæ¹é
+        // ì²˜ìŒ ìƒíƒœ = í‘ë°±
         runtimeMat.SetFloat("_GrayAmount", 1f);
 
         UpgradeUIRenewal();
@@ -115,10 +115,13 @@ public class UpgradeUIButton : MonoBehaviour,
             if (targetSO.upgradeID == "PLAYER_DIRECT_SELL_PRICE_UP_S1")
             {
                 GuideManager.Instance?.AddProgress(GuideActionType.UpgradePlayerTreeComplete);
+            if(SFXManager.instance != null)
+            {
+                SFXManager.instance.PlayOnSFX("Upgrade1", Camera.main.transform.position);
             }
 
             // =========================
-            // ¿¬°áµÈ ¼± »ö º¯°æ
+            // ì—°ê²°ëœ ì„  ìƒ‰ ë³€ê²½
             // =========================
 
             foreach (var line in connectedLines)
@@ -129,13 +132,13 @@ public class UpgradeUIButton : MonoBehaviour,
             }
 
             // =========================
-            // ³ëµå ÄÃ·¯ ÀüÈ¯
+            // ë…¸ë“œ ì»¬ëŸ¬ ì „í™˜
             // =========================
 
             runtimeMat.SetFloat("_GrayAmount", 0f);
 
             // =========================
-            // ¼½¼Ç ¿Ï·á Ã¼Å©
+            // ì„¹ì…˜ ì™„ë£Œ ì²´í¬
             // =========================
 
             int sectionIndex = node.SectionIndex;
@@ -161,6 +164,11 @@ public class UpgradeUIButton : MonoBehaviour,
             targetSO.description,
             targetSO.cost
         );
+
+        if (SFXManager.instance != null)
+        {
+            SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting", Camera.main.transform.position);
+        }
     }
 
     // =========================
@@ -171,7 +179,14 @@ public class UpgradeUIButton : MonoBehaviour,
     {
         if (UpgradeTooltipManager.Instance == null) return;
 
+        if (SFXManager.instance != null)
+        {
+            SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting", Camera.main.transform.position);
+        }
+
         UpgradeTooltipManager.Instance.Hide();
+
+
     }
 
     public void UpgradeUIRenewal()
