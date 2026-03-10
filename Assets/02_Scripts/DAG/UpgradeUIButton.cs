@@ -88,6 +88,35 @@ public class UpgradeUIButton : MonoBehaviour,
                 UpgradeEffectManager.Instance.RecalculateAllEffects();
             }
 
+            GuideManager.Instance?.AddProgress(GuideActionType.UpgradeAny);
+
+            foreach (var effect in targetSO.effects)
+            {
+                if (effect.upgradeType == UpgradeType.CarrierUnlock & effect.targetID == "CarrierA")
+                {
+                    GuideManager.Instance?.AddProgress(GuideActionType.UnlockCarrierA);
+                }
+            }
+
+            foreach (var effect in targetSO.effects)
+            {
+                if (effect.upgradeType == UpgradeType.PlayerMineSpeed)
+                {
+                    GuideManager.Instance?.AddProgress(GuideActionType.UpgradePlayerMineSpeed);
+                    break;
+                }
+            }
+
+            if (targetSO.upgradeID == "SECTION1_FINAL_AUTO_S1")
+            {
+                GuideManager.Instance?.AddProgress(GuideActionType.UpgradeAutomationTreeComplete);
+            }
+
+            if (targetSO.upgradeID == "PLAYER_DIRECT_SELL_PRICE_UP_S1")
+            {
+                GuideManager.Instance?.AddProgress(GuideActionType.UpgradePlayerTreeComplete);
+            }
+
             // =========================
             // 연결된 선 색 변경
             // =========================

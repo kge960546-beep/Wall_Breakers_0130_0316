@@ -17,9 +17,10 @@ public class CreditObject : MonoBehaviour
         if (IsCollected) return;
         IsCollected = true;
 
-        if (SceneGameDataManager.instance != null)
-        {
-            SceneGameDataManager.instance.currentGold += creditAmount;
-        }
+        //if (SceneGameDataManager.instance != null)
+        //{
+        //    SceneGameDataManager.instance.currentGold += creditAmount;
+        //}
+        // 중복 지급형태가 될 수 있는거 같아 임시 주석 처리 3-10 Won Add
     }
 }

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4cd00d81e45d3d74b9799dc3b270f394, type: 3}
-  m_Name: GuideStep_1
+  m_Name: GuideStep_9
   m_EditorClassIdentifier: 
   icon: {fileID: 21300000, guid: 382a6770f5301364c8944df622481e2f, type: 3}
-  guideTitle: "\uC77C\uB2E8 \uC0BD\uBD80\uD130 \uB4E4\uC5B4\uBCF4\uC790!"
-  guideDescription: "\uD759 10\uAC1C \uCE90\uAE30"
-  actionType: 1
-  targetCount: 10
-  rewardGold: 10
+  guideTitle: "\uB098 \uC5C6\uC774\uB3C4 \uC798\uD560 \uC218 \uC788\uC9C0?"
+  guideDescription: "\uC139\uC1581 \uC790\uB3D9\uD654\uD2B8\uB9AC \uBAA8\uB450 \uD65C\uC131\uD654"
+  actionType: 8
+  targetCount: 1
+  rewardGold: 10000

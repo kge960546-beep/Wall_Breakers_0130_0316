@@ -302,7 +302,7 @@ public class MiningNode : MonoBehaviour
             mineGuideStep != null &&
             GuideManager.Instance.IsCurrentStep(mineGuideStep))
         {
-            GuideManager.Instance.AddProgress(1);
+            GuideManager.Instance?.AddProgress(GuideActionType.MineSoil);
         }
     }
 
