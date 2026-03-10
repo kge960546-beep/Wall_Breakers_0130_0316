@@ -23,6 +23,8 @@ public class SFXManager : MonoBehaviour
     [Range(0f, 1f)] public float bgmVolume = 0.5f;
     [Range(0f, 1f)] public float sfxVolume = 0.5f;
 
+    bool isSFXBlocked = false;
+
     // BGM 코루틴 저장용
     Coroutine bgmRoutine;
 
@@ -68,6 +70,8 @@ public class SFXManager : MonoBehaviour
     // 볼륨변수 추가
     public void PlayOnSFX(string soundName, Vector3 soundPos, float duration = -1.0f)
     {
+        if (isSFXBlocked) return;
+
         if (sfxClipDic.TryGetValue(soundName, out var clip))
         {
             GameObject tr = new GameObject("PlaySFX" + soundName);
@@ -106,6 +110,10 @@ public class SFXManager : MonoBehaviour
         Destroy(tr);
     }
 
+    public void BlockSFX(bool isblock)
+    {
+        isSFXBlocked = isblock;
+    }
     public void PlayOnBGM(string soundName)
     {
         if (sfxClipDic.TryGetValue(soundName, out var clip))

@@ -25,6 +25,11 @@ public class SettingsPanelController : MonoBehaviour
 
     public void Open()
     {
+        if (SFXManager.instance != null)
+        {
+            SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting 2", Camera.main.transform.position);
+        }
+
         settingsPanel.SetActive(true);
 
         StopAllCoroutines();
@@ -71,6 +76,11 @@ public class SettingsPanelController : MonoBehaviour
 
     public void Close()
     {
+        if (SFXManager.instance != null)
+        {
+            SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting 2", Camera.main.transform.position);
+        }
+
         settingsPanel.SetActive(false);
     }
 

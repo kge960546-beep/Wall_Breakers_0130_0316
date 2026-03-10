@@ -46,6 +46,11 @@ public class UpgradeUIManager : MonoBehaviour
         if (regionLockedText != null)
             regionLockedText.SetActive(false);
 
+        if (SFXManager.instance != null)
+        {
+            SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting 2", Camera.main.transform.position);
+        }
+
         GameObject panel = sectionPanels[currentSectionIndex];
         panel.SetActive(true);
 
@@ -66,6 +71,11 @@ public class UpgradeUIManager : MonoBehaviour
 
         if (openRoutine != null)
             StopCoroutine(openRoutine);
+
+        if(SFXManager.instance != null)
+        {
+            SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting 2", Camera.main.transform.position);
+        }
 
         sectionPanels[currentSectionIndex].SetActive(false);
 
