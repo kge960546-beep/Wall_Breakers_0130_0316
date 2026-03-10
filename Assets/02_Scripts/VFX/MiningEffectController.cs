@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class MiningEffectController : MonoBehaviour
@@ -67,5 +68,13 @@ public class MiningEffectController : MonoBehaviour
             pos,
             Quaternion.identity
             );
+
+        StartCoroutine(ReturnPool());           
+    }
+    IEnumerator ReturnPool()
+    {
+        yield return null;
+
+        PoolManager.instance.ReturnIt(destoryEffectPrefab, gameObject);
     }
 }
