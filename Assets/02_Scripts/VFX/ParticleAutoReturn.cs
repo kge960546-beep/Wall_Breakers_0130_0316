@@ -6,22 +6,46 @@ public class ParticleAutoReturn : MonoBehaviour
 {
     [SerializeField] private GameObject prefab;
 
-    private ParticleSystem ps;
+    private float returnTime;
 
-    private void Awake()
-    {
-        ps = GetComponent<ParticleSystem>();
-    }
     private void OnEnable()
     {
-        if (ps != null)
-            StartCoroutine(ReturnRoution());
+        CancelInvoke();
+
+        ParticleSystem[] particles = GetComponentsInChildren<ParticleSystem>();
+
+        float maxTime = 0f;
+
+        foreach (var p in particles)
+        {
+            var main = p.main;
+            float time = main.duration + main.startLifetime.constantMax;
+
+            if (time > maxTime)
+                maxTime = time;
+        }
+
+        returnTime = maxTime;
+
+        if (prefab == null)
+        {
+            Debug.LogError($"Prefab missing on {name}");
+            return;
+        }
+
+        Invoke(nameof(ReturnToPool), returnTime);
     }
 
-    private IEnumerator ReturnRoution()
+    private void OnDisable()
     {
-        yield return new WaitForSeconds(ps.main.duration + ps.main.startLifetime.constant);
+        CancelInvoke();
+    }
 
-        PoolManager.instance.ReturnIt(prefab, gameObject);
+    void ReturnToPool()
+    {
+        if (PoolManager.instance != null)
+        {
+            PoolManager.instance.ReturnIt(prefab, gameObject);
+        }
     }
 }

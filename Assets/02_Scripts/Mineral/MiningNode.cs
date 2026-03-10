@@ -240,8 +240,10 @@ public class MiningNode : MonoBehaviour
 
     private void Mine(int totalAmount)
     {
+        Debug.Log("Mine called at time: " + Time.time);
+
         // 채굴 타격 이펙트 추가
-        if(effectController != null)
+        if (effectController != null)
         {
             effectController.PlayHit(mineralPoint.position);
         }
