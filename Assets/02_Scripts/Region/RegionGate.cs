@@ -42,11 +42,11 @@ public class RegionGate : MonoBehaviour
     }
     public void SetGateState(bool open)
     {
-        Debug.Log($"[RegionGate] SetGateState called: {open} (current state: {isOpen})");
+        //Debug.Log($"[RegionGate] SetGateState called: {open} (current state: {isOpen})");
 
         if (isOpen == open)
         {
-            Debug.Log("[RegionGate] Gate already in requested state, ignoring");
+            //Debug.Log("[RegionGate] Gate already in requested state, ignoring");
             return;
         }
 
@@ -54,7 +54,7 @@ public class RegionGate : MonoBehaviour
 
         if (useAnimation && open)
         {
-            Debug.Log("[RegionGate] Opening gate with animation");
+            //Debug.Log("[RegionGate] Opening gate with animation");
             StartCoroutine(OpenGateAnimation());
         }
         else
@@ -68,11 +68,11 @@ public class RegionGate : MonoBehaviour
         //    lockIcon.SetActive(!open);
         //}
 
-        Debug.Log($"[RegionGate] Gate {(open ? "opende" : "closed")}");
+        //Debug.Log($"[RegionGate] Gate {(open ? "opende" : "closed")}");
     }
     private void SetGateObjectsActive(bool active)
     {
-        Debug.Log($"[RegionGate] SetGateObjectsActive: {active}");
+        //Debug.Log($"[RegionGate] SetGateObjectsActive: {active}");
 
         if (gateObjects == null)
         {

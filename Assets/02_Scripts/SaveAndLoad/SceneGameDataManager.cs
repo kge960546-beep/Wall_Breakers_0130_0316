@@ -123,7 +123,12 @@ public class SceneGameDataManager : MonoBehaviour
         if (Application.isPlaying)
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
-        }       
+        }
+
+        if(AchievementsManager.instance != null)
+        {
+            AchievementsManager.instance.ResetAllSO();
+        }
 
         Utils.DebugLog("데이터 초기화 후 씬 재시작함");
     }

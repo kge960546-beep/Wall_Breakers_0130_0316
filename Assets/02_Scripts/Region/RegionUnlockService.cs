@@ -123,7 +123,7 @@ public class RegionUnlockService
         string data = string.Join(",", unlockedRegions);
         PlayerPrefs.SetString("UnlockedRegions", data);
         PlayerPrefs.Save();
-        Debug.Log($"[RegionUnlockService]");
+        //Debug.Log($"[RegionUnlockService]");
     }
 
     public void LoadUnlockedRegions()

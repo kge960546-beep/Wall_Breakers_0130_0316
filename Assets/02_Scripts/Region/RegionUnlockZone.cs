@@ -15,7 +15,7 @@ public class RegionUnlockZone : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log($"[RegionUnlockZone] Start - Region {regionData?.regionId}");
+        //Debug.Log($"[RegionUnlockZone] Start - Region {regionData?.regionId}");
         ValidateSetup();
         InitializeService();
         UpdateGateState();
@@ -29,7 +29,7 @@ public class RegionUnlockZone : MonoBehaviour
         }
         else
         {
-            Debug.Log($"[RegionUnlockZone] RegionData assigned: {regionData.regionName} (ID: {regionData.regionId})");
+            //Debug.Log($"[RegionUnlockZone] RegionData assigned: {regionData.regionName} (ID: {regionData.regionId})");
         }
 
         if (unlockUI == null)
@@ -38,7 +38,7 @@ public class RegionUnlockZone : MonoBehaviour
         }
         else
         {
-            Debug.Log($"[RegionUnlockZone] UnlockUI assigned: {unlockUI.gameObject.name}");
+            //Debug.Log($"[RegionUnlockZone] UnlockUI assigned: {unlockUI.gameObject.name}");
         }
 
         if (regionGate == null)
@@ -67,7 +67,7 @@ public class RegionUnlockZone : MonoBehaviour
         if (unlockService != null)
         {
             unlockService.OnRegionUnlocked += OnRegionUnlocked;
-            Debug.Log($"[RegionUnlockZone] ✓ Service initialized for Region {regionData.regionId}");
+            //Debug.Log($"[RegionUnlockZone] ✓ Service initialized for Region {regionData.regionId}");
 
             // 초기 게이트 상태 설정
             UpdateGateState();
@@ -89,11 +89,11 @@ public class RegionUnlockZone : MonoBehaviour
 
     private void OnRegionUnlocked(int regionId)
     {
-        Debug.Log($"[RegionUnlockZone] Region {regionId} unlocked event received");
+        //Debug.Log($"[RegionUnlockZone] Region {regionId} unlocked event received");
 
         if (regionId == regionData.regionId)
         {
-            Debug.Log($"[RegionUnlockZone] This region ({regionData.regionId}) was unlocked!");
+            //Debug.Log($"[RegionUnlockZone] This region ({regionData.regionId}) was unlocked!");
             
             // 게이트 상태 즉시 업데이트
             UpdateGateState();
@@ -124,7 +124,7 @@ public class RegionUnlockZone : MonoBehaviour
         }
 
         bool isUnlocked = unlockService.IsRegionUnlocked(regionData.regionId);
-        Debug.Log($"[RegionUnlockZone] Region {regionData.regionId} unlock status: {isUnlocked}");
+        //Debug.Log($"[RegionUnlockZone] Region {regionData.regionId} unlock status: {isUnlocked}");
 
         // 게이트 상태 변경 (unlocked면 open = true)
         regionGate.SetGateState(isUnlocked);
@@ -132,7 +132,7 @@ public class RegionUnlockZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"[RegionUnlockZone] OnTriggerEnter: {other.gameObject.name}, Tag: {other.tag}");
+        //Debug.Log($"[RegionUnlockZone] OnTriggerEnter: {other.gameObject.name}, Tag: {other.tag}");
 
         if (other.CompareTag("Player"))
         {

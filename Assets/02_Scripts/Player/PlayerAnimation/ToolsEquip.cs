@@ -81,7 +81,7 @@ public class ToolsEquip : MonoBehaviour
     // trail ¿Ã∫•∆Æ
     public void TrailOn()
     {
-        Debug.Log("Trail On »£√‚µ ");
+        //Debug.Log("Trail On »£√‚µ ");
 
         if (trailController == null)
         {
@@ -93,7 +93,7 @@ public class ToolsEquip : MonoBehaviour
     }
     public void TrailOff()
     {
-        Debug.Log("Trail Off »£√‚µ ");
+        //Debug.Log("Trail Off »£√‚µ ");
 
         trailController.TrailOff();
     }

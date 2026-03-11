@@ -101,6 +101,10 @@ public class GuidePanel : MonoBehaviour
             return;
         }
 
+        if(SFXManager.instance != null)
+        {
+            SFXManager.instance.PlayOnSFX("2GideReward", Camera.main.transform.position);
+        }
         StartCoroutine(RewardSequence());
     }
 
@@ -143,6 +147,7 @@ public class GuidePanel : MonoBehaviour
 
             RectTransform rect = icon.GetComponent<RectTransform>();
             rect.anchoredPosition = start;
+
 
             coins.Add(rect);
         }

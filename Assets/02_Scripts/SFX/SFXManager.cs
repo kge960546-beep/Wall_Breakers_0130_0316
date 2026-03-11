@@ -12,6 +12,7 @@ public class SFXManager : MonoBehaviour
     private Dictionary<string, AudioClip> sfxClipDic;
     AudioSource bgmPlayer;
     AudioSource sfxPlayer;
+    [SerializeField] GameObject sfxPrefab;
 
     [SerializeField] AudioClip[] audioClips;
 
@@ -52,10 +53,9 @@ public class SFXManager : MonoBehaviour
         bgmPlayer.playOnAwake = false;
 
         bgmPlayer.spatialBlend = 0.0f;
-        sfxPlayer.spatialBlend = 1.0f;
+        sfxPlayer.spatialBlend = 1.0f;        
 
         sfxClipDic = new Dictionary<string, AudioClip>();
-
         if(audioClips != null)
         {
             foreach(var clip in audioClips)
@@ -74,9 +74,9 @@ public class SFXManager : MonoBehaviour
 
         if (sfxClipDic.TryGetValue(soundName, out var clip))
         {
-            GameObject tr = new GameObject("PlaySFX" + soundName);
+            GameObject tr = PoolManager.instance.Get(sfxPrefab, soundPos, Quaternion.identity);
             tr.transform.position = soundPos;
-            AudioSource source = tr.AddComponent<AudioSource>();
+            AudioSource source = tr.GetComponent<AudioSource>();
             source.clip = clip;
             source.volume = sfxVolume;
 
@@ -89,11 +89,11 @@ public class SFXManager : MonoBehaviour
 
             float playTime = (duration > 0) ? duration : clip.length;
 
-            StartCoroutine(DestroySFX(tr, source, playTime));
+            StartCoroutine(ReturnSFX(tr, source, playTime));
         }
     }
 
-    IEnumerator DestroySFX(GameObject tr, AudioSource source, float time)
+    IEnumerator ReturnSFX(GameObject tr, AudioSource source, float time)
     {
         yield return new WaitForSeconds(time);
 
@@ -107,7 +107,7 @@ public class SFXManager : MonoBehaviour
             yield return null;
         }
 
-        Destroy(tr);
+        PoolManager.instance.ReturnIt(sfxPrefab, tr);
     }
 
     public void BlockSFX(bool isblock)

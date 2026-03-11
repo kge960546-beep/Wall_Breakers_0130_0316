@@ -240,7 +240,7 @@ public class MiningNode : MonoBehaviour
 
     private void Mine(int totalAmount)
     {
-        Debug.Log("Mine called at time: " + Time.time);
+        //Debug.Log("Mine called at time: " + Time.time);
 
         // 채굴 타격 이펙트 추가
         if (effectController != null)
@@ -270,6 +270,9 @@ public class MiningNode : MonoBehaviour
 
                 string sectionAchievementID = $"Section_{sectionIndex}_Mine";
                 int currentSectionTotal = SceneGameDataManager.instance.sectionMineralCount[sectionIndex];
+
+                Debug.Log($"[1.노드] ID: {sectionAchievementID}, 현재 캔 개수: {currentSectionTotal}");
+
                 AchievementsManager.instance.ProgressAchievement(sectionAchievementID, currentSectionTotal);
             }
         }

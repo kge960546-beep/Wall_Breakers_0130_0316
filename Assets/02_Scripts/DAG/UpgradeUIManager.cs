@@ -41,6 +41,10 @@ public class UpgradeUIManager : MonoBehaviour
     // 패널 열기
     public void OpenUpgradePanel()
     {
+        foreach(var pan in sectionPanels)
+        {
+            if (pan.activeSelf == true) return;
+        }
         if (sectionPanels.Length == 0) return;
 
         if (regionLockedText != null)

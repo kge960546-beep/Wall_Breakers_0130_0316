@@ -7,7 +7,7 @@ public class AchievementsManager : MonoBehaviour
     public static AchievementsManager instance;
     public List<AchievementSO> achievements;
 
-    private HashSet<string> unlockIDs = new HashSet<string>();
+    [SerializeField] private HashSet<string> unlockIDs = new HashSet<string>();
 
     private System.Action<AchievementSO> onAchievementUnlocked;
 
@@ -90,5 +90,20 @@ public class AchievementsManager : MonoBehaviour
         Utils.DebugLog($"업적달성: {a.title}");
         
         onAchievementUnlocked?.Invoke(a);
-    }   
+    }
+
+    public void ResetAllSO()
+    {
+        unlockIDs.Clear ();
+        foreach (var a in achievements)
+        {
+            if(a != null)
+            {
+                a.isUnlocked = false;
+#if UNITY_EDITOR
+                UnityEditor.EditorUtility.SetDirty(a);
+#endif
+            }
+        }
+    }
 }
