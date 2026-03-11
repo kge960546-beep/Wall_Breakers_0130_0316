@@ -90,6 +90,8 @@ public class MeshBake : MonoBehaviour
         meshCollider.sharedMesh = null;
         meshCollider.sharedMesh = combinedMesh;
 
+        gameObject.isStatic = true;
+
         GridManager grid = FindAnyObjectByType<GridManager> ();
         if (grid != null) 
         {

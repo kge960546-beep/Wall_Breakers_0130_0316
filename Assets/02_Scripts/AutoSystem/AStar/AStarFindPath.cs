@@ -5,18 +5,9 @@ public class AStarFindPath : MonoBehaviour
 {
     [Header("세팅")]
     [SerializeField] GridManager gridManager; //그리드 매니저 참조
-    public LayerMask obstacleLayer; //장애물 레이어
-    public GameObject floorSample; //바닥 오브젝트 샘플
+    public LayerMask obstacleLayer; //장애물 레이어   
     public float cellSize; //셀 크기
-    public float checkSize = 0.35f; //충돌 체크 크기
-
-    private void Awake()
-    {
-        if (floorSample != null)
-        {
-            cellSize = floorSample.GetComponent<Renderer>().bounds.size.x;
-        }
-    }
+    public float checkSize = 0.35f; //충돌 체크 크기    
 
     /// <summary>
     /// 월드 좌표를 그리드 좌표로 변환하는 함수
@@ -157,15 +148,6 @@ public class AStarFindPath : MonoBehaviour
     /// </summary>
     /// <param name="pos"></param>
     /// <returns></returns>
-    //bool IsValid(Vector2Int pos)
-    //{
-    //    Vector3 worldPos = new Vector3(pos.x * cellSize, 1f, pos.y * cellSize);
-    //
-    //    bool isObstacle = Physics.CheckBox(worldPos, Vector3.one * (cellSize * checkSize), Quaternion.identity, obstacleLayer);
-    //
-    //    return !isObstacle;
-    //}
-
     bool IsValid(Vector2Int pos)
     {
         if (pos.x < 0 || pos.x >= gridManager.width || pos.y < 0 || pos.y >= gridManager.height)
