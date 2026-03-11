@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: 9
   itemName: "\uAE08\uAD34"
-  itemType: 1
+  itemType: 0
   sellPrice: 1250
   sellDuration: 1
   inputAmountPerProcess: 0
