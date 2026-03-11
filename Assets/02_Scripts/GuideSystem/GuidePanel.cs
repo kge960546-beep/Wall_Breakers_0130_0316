@@ -39,6 +39,8 @@ public class GuidePanel : MonoBehaviour
 
     private GuideStepSO currentStep;
 
+
+
     /// <summary>
     /// 가이드 표시
     /// </summary>
@@ -188,13 +190,15 @@ public class GuidePanel : MonoBehaviour
             UITween.Fade(canvasGroup, 1f, 0f, fadeDuration)
         );
 
-        // 다음 가이드 스텝으로 전환
+        // 다음 가이드 스텝으로 전환 
         GuideManager.Instance.CompleteCurrentStep();
 
-        // FadeIn
-        yield return StartCoroutine(
-            UITween.Fade(canvasGroup, 0f, 1f, fadeDuration)
-        );
+        if (GuideManager.Instance.IsGuideFinished() == false)
+        {
+            yield return StartCoroutine(
+                UITween.Fade(canvasGroup, 0f, 1f, fadeDuration)
+            );
+        }
     }
 
     IEnumerator MoveCoinSequence(RectTransform coin, Vector2 start, Vector2 control, Vector2 end)
