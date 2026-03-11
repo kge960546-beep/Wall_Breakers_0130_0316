@@ -7,15 +7,18 @@ public class MiningEffectController : MonoBehaviour
     [SerializeField] private GameObject hitEffectPrefab;
     [SerializeField] private GameObject destoryEffectPrefab;
 
+    private static float globalVfxTimer;
+    private const float globalCooldown = 0.1f;
+
     private void Awake()
     {
         if(PoolManager.instance != null)
         {
             if (hitEffectPrefab != null)
-                PoolManager.instance.CreatePool(hitEffectPrefab, 10);
+                PoolManager.instance.CreatePool(hitEffectPrefab, 3);
 
             if (destoryEffectPrefab != null)
-                PoolManager.instance.CreatePool(destoryEffectPrefab, 5);
+                PoolManager.instance.CreatePool(destoryEffectPrefab, 2);
         }
     }
 
@@ -24,17 +27,16 @@ public class MiningEffectController : MonoBehaviour
     /// </summary>
     public void PlayHit(Vector3 pos)
     {
+        if (Time.time < globalVfxTimer)
+            return;
+
+        globalVfxTimer = Time.time + globalCooldown;
+
         if (!gameObject.activeInHierarchy)
             return;
 
         if (hitEffectPrefab == null)
-            Debug.LogError("Hit Effect Prefab is not assigned");
-
-        if(PoolManager.instance == null)
-        {
-            Debug.LogError("PoolManager instance not found");
             return;
-        }
 
         PoolManager.instance.Get(
             hitEffectPrefab,

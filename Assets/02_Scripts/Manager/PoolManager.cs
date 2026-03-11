@@ -56,6 +56,12 @@ public class PoolManager : MonoBehaviour
             obj = Instantiate(poolPrefab);
         }
 
+        PoolObject poolObj = obj.GetComponent<PoolObject>();
+        if (poolObj == null)
+            poolObj = obj.AddComponent<PoolObject>();
+
+        poolObj.prefab = poolPrefab;
+
         obj.transform.SetPositionAndRotation(position, rotation);
         obj.transform.SetParent(null);
         obj.SetActive(true);
@@ -65,9 +71,19 @@ public class PoolManager : MonoBehaviour
 
     public void ReturnIt(GameObject poolPrefab, GameObject obj)
     {
+        // 자동으로 prefab 교정
         if (!poolDictionary.ContainsKey(poolPrefab))
         {
-            return;
+            PoolObject poolObj = obj.GetComponent<PoolObject>();
+
+            if (poolObj != null)
+                poolPrefab = poolObj.prefab;
+        }
+
+        if (!poolDictionary.ContainsKey(poolPrefab))
+        {
+            Debug.LogWarning("Pool key missing. Creating new pool for: " + poolPrefab.name);
+            poolDictionary.Add(poolPrefab, new Queue<GameObject>());
         }
 
         obj.SetActive(false);
