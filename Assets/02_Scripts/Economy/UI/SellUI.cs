@@ -85,7 +85,7 @@ public class SellUI : MonoBehaviour
     {
         if (item == null)
         {
-            itemNameText.text = "No items to sell";
+            itemNameText.text = "판매할 아이템 부족!";
             priceText.text = "";
             itemIcon.enabled = false;
             progressBar.fillAmount = 0f;
@@ -119,7 +119,7 @@ public class SellUI : MonoBehaviour
         if (creditService != null && totalCreditsText != null)
         {
             string formattedCredits = NotateNumber.ChangeNumber(creditService.credits);
-            totalCreditsText.text = $"Total: {formattedCredits}";
+            totalCreditsText.text = $"총 골드: {formattedCredits}";
         }
     }
 }
