@@ -159,7 +159,7 @@ public class GuidePanel : MonoBehaviour
 
         yield return new WaitForSeconds(scatterDuration);
 
-        // Bezier 동시에
+        // Bezier
         for (int i = 0; i < coins.Count; i++)
         {
             Vector2 scatter = scatterTargets[i];
@@ -167,8 +167,10 @@ public class GuidePanel : MonoBehaviour
             Vector2 control = (scatter + end) * 0.5f + Vector2.up * 200f;
 
             StartCoroutine(
-                UITween.MoveBezierUI(coins[i], scatter, control, end, moveDuration)
+                MoveCoinSequence(coins[i], scatter, control, end)
             );
+
+            yield return new WaitForSeconds(0.08f); // 핵심 (코인 출발 간격)
         }
 
         yield return new WaitForSeconds(moveDuration);
@@ -177,5 +179,12 @@ public class GuidePanel : MonoBehaviour
             Destroy(coin.gameObject);
 
         GuideManager.Instance.CompleteCurrentStep();
+    }
+
+    IEnumerator MoveCoinSequence(RectTransform coin, Vector2 start, Vector2 control, Vector2 end)
+    {
+        yield return StartCoroutine(
+            UITween.MoveBezierUI(coin, start, control, end, moveDuration)
+        );
     }
 }

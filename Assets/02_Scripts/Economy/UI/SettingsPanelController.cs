@@ -7,9 +7,13 @@ public class SettingsPanelController : MonoBehaviour
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private RectTransform panelRect;
 
+
     [Header("Volume Sliders")]
     [SerializeField] private Slider bgmSlider;
     [SerializeField] private Slider sfxSlider;
+
+    [Header("Credits Panel")]
+    [SerializeField] private GameObject creditsPanel;
 
     private void Start()
     {
@@ -81,7 +85,8 @@ public class SettingsPanelController : MonoBehaviour
             SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting 2", Camera.main.transform.position);
         }
 
-        settingsPanel.SetActive(false);
+        StopAllCoroutines();
+        StartCoroutine(ClosePanelRoutine(settingsPanel));
     }
 
     public void QuitGame()
@@ -91,5 +96,47 @@ public class SettingsPanelController : MonoBehaviour
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
+    }
+
+    public void OpenCredits()
+    {
+        if (SFXManager.instance != null)
+        {
+            SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting 2", Camera.main.transform.position);
+        }
+
+        creditsPanel.SetActive(true);
+
+        RectTransform rect = creditsPanel.GetComponent<RectTransform>();
+
+        StopAllCoroutines();
+
+        rect.localScale = Vector3.one * 0.01f;
+
+        StartCoroutine(
+            UITween.Scale(rect, Vector3.one * 0.01f, Vector3.one, 0.25f)
+        );
+    }
+
+    public void CloseCredits()
+    {
+        if (SFXManager.instance != null)
+        {
+            SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting 2", Camera.main.transform.position);
+        }
+
+        StopAllCoroutines();
+        StartCoroutine(ClosePanelRoutine(creditsPanel));
+    }
+
+    IEnumerator ClosePanelRoutine(GameObject panel)
+    {
+        RectTransform rect = panel.GetComponent<RectTransform>();
+
+        yield return StartCoroutine(
+            UITween.Scale(rect, Vector3.one, Vector3.one * 0.01f, 0.2f)
+        );
+
+        panel.SetActive(false);
     }
 }
