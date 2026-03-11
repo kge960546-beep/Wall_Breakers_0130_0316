@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Copper
   m_EditorClassIdentifier: 
   Id: 4
-  itemName: "\uFFFD\uFFFD\uFFFD\uFFFD"
+  itemName: "\uAD6C\uB9AC"
   itemType: 0
   sellPrice: 15
   sellDuration: 1.2
@@ -22,4 +22,4 @@ MonoBehaviour:
   backPackRotationOffset: {x: 0, y: 0, z: 0}
   mineralPrefab: {fileID: 919132149155446097, guid: 578bd324e104f6341a3d43d757c5f916,
     type: 3}
-  icon: {fileID: 21300000, guid: eb41d57ca197e444cb8f974ba824fcb3, type: 3}
+  icon: {fileID: 21300000, guid: 427e7e85833fc9a49a2ca33062b0236d, type: 3}

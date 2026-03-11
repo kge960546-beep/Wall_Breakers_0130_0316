@@ -70,18 +70,22 @@ public static class UITween
     // ================================
     // UI Bezier Move (UI 패널용)
     // ================================
+    // start = 시작점, control = 제어점, end = 끝점, t = 0~1 사이의 시간값
     public static IEnumerator MoveBezierUI(RectTransform target, Vector2 start, Vector2 control, Vector2 end, float duration)
     {
         float time = 0f;
 
+        // UI 위치를 시작점으로 초기화
         target.anchoredPosition = start;
 
+        // 코루틴 루프시작
         while (time < duration)
         {
             time += Time.deltaTime;
 
             float t = time / duration;
 
+            // Mathf.Pow = 거듭제곱 연산 함수, 2차 베지어 곡선 공식 (시작점 영향 + 제어점 영향 + 끝점 영향)
             Vector2 pos =
                 Mathf.Pow(1 - t, 2) * start +
                 2 * (1 - t) * t * control +
