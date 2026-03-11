@@ -1,5 +1,3 @@
-using UnityEngine;
-
 // 완전 제어 불가 상태
 // 퀘스트 연출, 컷씬, 해금 연출 등 플레이어 조작을 막아야 할 때 사용
 public class LockedState : IPlayerState

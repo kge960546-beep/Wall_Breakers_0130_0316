@@ -1,10 +1,9 @@
 using System;
-using UnityEngine;
 
 public class CreditService
 {
     private long _credits;
-    public long credits 
+    public long credits
     {
         get => _credits;
         private set
@@ -24,7 +23,7 @@ public class CreditService
 
     public void AddCredit(int credit)
     {
-       // Debug.Log($"[CreditService] AddCredit called: +{credit}");
+        // Debug.Log($"[CreditService] AddCredit called: +{credit}");
 
         long oldValue = _credits;
         _credits += credit;

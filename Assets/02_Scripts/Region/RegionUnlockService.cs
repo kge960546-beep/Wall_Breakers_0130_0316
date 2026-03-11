@@ -10,7 +10,7 @@ public class RegionUnlockService
     private HashSet<int> unlockedRegions = new();
 
     public event Action<int> OnRegionUnlocked; // regionId
-        
+
     public RegionUnlockService()
     {
         Instance = this;
@@ -28,9 +28,9 @@ public class RegionUnlockService
     public int GetNextLockedRegionId()
     {
         // 순차적으로 다음 잠긴 지역 찾기
-        for(int i = 1; i<=5; i++)
+        for (int i = 1; i <= 5; i++)
         {
-            if(!unlockedRegions.Contains(i))
+            if (!unlockedRegions.Contains(i))
             {
                 return i;
             }
@@ -40,13 +40,13 @@ public class RegionUnlockService
 
     public bool CanUnlockRegion(int regionId, RegionData regionData)
     {
-        if(IsRegionUnlocked(regionId))
+        if (IsRegionUnlocked(regionId))
         {
             Utils.DebugLog($"[RegionUnlockService] Region {regionId} already unlocked");
             return false;
         }
 
-        if(regionId > 1 && !IsRegionUnlocked(regionId - 1))
+        if (regionId > 1 && !IsRegionUnlocked(regionId - 1))
         {
             Utils.DebugLog($"[RegionUnlockService] Previous region {regionId - 1} must be Unlocked first");
             return false;
@@ -60,7 +60,7 @@ public class RegionUnlockService
             return false;
         }
 
-        foreach(var itemReq in regionData.unlockRequirement.requiredItems)
+        foreach (var itemReq in regionData.unlockRequirement.requiredItems)
         {
             var inventoryItem = PlayerInventory.Instance.Items.Find(i => i.itemData == itemReq.itemData);
             int currentAmount = inventoryItem?.quantity ?? 0;
@@ -77,24 +77,24 @@ public class RegionUnlockService
 
     public bool TryUnlockRegion(int regionId, RegionData regionData)
     {
-        if(!CanUnlockRegion(regionId, regionData))
+        if (!CanUnlockRegion(regionId, regionData))
         {
             return false;
         }
 
         long creditsToDeduct = regionData.unlockRequirement.requiredCredits;
 
-        if(creditsToDeduct >0)
+        if (creditsToDeduct > 0)
         {
             creditService.AddCredit((int)-creditsToDeduct);
             Utils.DebugLog($"[RegionUnlockService] Deducted {creditsToDeduct} credits");
         }
 
         // 아이템 차감
-        foreach(var itemReq in regionData.unlockRequirement.requiredItems)
+        foreach (var itemReq in regionData.unlockRequirement.requiredItems)
         {
             bool removed = PlayerInventory.Instance.RemoveItem(itemReq.itemData, itemReq.requiredAmount);
-            if(removed)
+            if (removed)
             {
                 Utils.DebugLog($"[RegionUnlockService] Deducted {itemReq.requiredAmount}x {itemReq.itemData.itemName}");
             }
@@ -133,21 +133,21 @@ public class RegionUnlockService
         string data = PlayerPrefs.GetString("UnlockedRegions", "1");
         string[] regionIds = data.Split(',');
 
-        foreach(string id in regionIds)
+        foreach (string id in regionIds)
         {
-            if(int.TryParse(id, out int regionId))
+            if (int.TryParse(id, out int regionId))
             {
                 unlockedRegions.Add(regionId);
             }
         }
 
         Utils.DebugLog($"[RegionUnlockService] Loaded unlocked regions: {data}");
-    }   
+    }
 
     public bool[] GetUnlockedStates(int totalUnlockSections)
     {
         bool[] states = new bool[totalUnlockSections];
-        for(int i = 0; i < totalUnlockSections; i++)
+        for (int i = 0; i < totalUnlockSections; i++)
         {
             states[i] = unlockedRegions.Contains(i + 1);
         }

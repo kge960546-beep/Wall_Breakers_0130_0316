@@ -40,11 +40,11 @@ public class SettingsPanelController : MonoBehaviour
 
         StopAllCoroutines();
         StartCoroutine(OpenAnimation());
-        
+
     }
 
     IEnumerator OpenAnimation()
-    {       
+    {
 
         Vector2 end = panelRect.anchoredPosition;
 

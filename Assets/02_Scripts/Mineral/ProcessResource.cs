@@ -87,9 +87,9 @@ public class ProcessResource : MonoBehaviour
             if (firstMineralItemStock == null)
             {
                 firstMineralItemStock = gameObject.GetComponent<MineralItem>();
-            }            
+            }
 
-            if(firstMineralItemStock != null)
+            if (firstMineralItemStock != null)
             {
                 if (stockingTable.Count >= firstMineralItemStock.mineralData.inputAmountPerProcess)
                 {
@@ -97,7 +97,7 @@ public class ProcessResource : MonoBehaviour
 
                     firstMineralItemStock = null;
                 }
-            }           
+            }
         }
     }
 
@@ -125,13 +125,13 @@ public class ProcessResource : MonoBehaviour
 
     public void RebuildProcessedStack(int amount)
     {
-        foreach(var item in processingTable)
+        foreach (var item in processingTable)
         {
             if (item != null) PoolManager.instance.ReturnIt(processableMinerals[0].processedResult.mineralPrefab, item.gameObject);
         }
         processingTable.Clear();
 
-        for(int i = 0; i < amount; i++)
+        for (int i = 0; i < amount; i++)
         {
             GameObject prefab = processableMinerals[0].processedResult.mineralPrefab;
             GameObject processedItem = PoolManager.instance.Get(prefab, processingPoint.position, Quaternion.identity);
@@ -350,7 +350,7 @@ public class ProcessResource : MonoBehaviour
         AddStock(item);
         return true;
     }
-    
+
     // 픽업 처리    
     bool TryPickUp(StackBackPack backPack)
     {

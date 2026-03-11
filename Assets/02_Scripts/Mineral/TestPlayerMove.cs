@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TestPlayerMove : MonoBehaviour
@@ -10,14 +8,14 @@ public class TestPlayerMove : MonoBehaviour
     public GameObject player;
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();        
+        rb = GetComponent<Rigidbody>();
     }
     void Start()
     {
-        
+
     }
 
-   
+
     void Update()
     {
         float h = Input.GetAxis("Horizontal");

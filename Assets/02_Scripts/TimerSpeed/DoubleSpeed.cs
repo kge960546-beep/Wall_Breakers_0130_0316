@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 public enum Speed
@@ -19,7 +17,7 @@ public class DoubleSpeed : MonoBehaviour
     }
 
     public void OnClickDoubleSpeed()
-    {       
+    {
         switch (speed)
         {
             case (Speed.Original):
@@ -36,7 +34,7 @@ public class DoubleSpeed : MonoBehaviour
                 speedText.text = "1X";
                 speed = Speed.Original;
                 Time.timeScale = 1.0f;
-                break;                
+                break;
         }
 
     }

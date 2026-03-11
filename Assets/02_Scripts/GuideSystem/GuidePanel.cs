@@ -1,8 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 
 public class GuidePanel : MonoBehaviour
@@ -101,7 +101,7 @@ public class GuidePanel : MonoBehaviour
             return;
         }
 
-        if(SFXManager.instance != null)
+        if (SFXManager.instance != null)
         {
             SFXManager.instance.PlayOnSFX("2GideReward", Camera.main.transform.position);
         }

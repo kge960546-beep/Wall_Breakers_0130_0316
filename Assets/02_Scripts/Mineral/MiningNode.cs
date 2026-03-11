@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -64,7 +63,7 @@ public class MiningNode : MonoBehaviour
 
     private int baseMineAmount = 1;
     private int bonusPlayerMineAmount;   // 플레이어 전용
-                                         
+
     private int bonusMinerMineAmount;    // 광부 전용
 
     private void Awake()
@@ -293,10 +292,10 @@ public class MiningNode : MonoBehaviour
                 miningUI.CloseUI();
             }
             // 광물 파괴 이펙트 추가
-            if(effectController != null)
+            if (effectController != null)
             {
                 effectController.PlayDestroy(mineralPoint.position);
-            }            
+            }
 
             foreach (GameObject mineral in mineMineral)
                 mineral.SetActive(false);

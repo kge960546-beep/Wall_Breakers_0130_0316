@@ -1,10 +1,8 @@
-using UnityEngine;
-
 public class NotateNumber
 {
     public static string ChangeNumber(long originNumber)
     {
-        string[] symbol = new string[7] { "K", "M", "B", "T", "Qa", "Qi", "Sx"};
+        string[] symbol = new string[7] { "K", "M", "B", "T", "Qa", "Qi", "Sx" };
 
         string result = originNumber.ToString();
 
@@ -16,7 +14,7 @@ public class NotateNumber
 
         for (int i = 0; i < symbol.Length; ++i)
         {
-            if( 4 + 3 * i <= result.Length && result.Length < 4 + 3*(i + 1))
+            if (4 + 3 * i <= result.Length && result.Length < 4 + 3 * (i + 1))
             {
                 //3으로 나눠 나온 나머지 값(n)은 0, 1, 2
                 int n = result.Length % 3;

@@ -5,7 +5,7 @@ public class DDOLManager : MonoBehaviour
     public static DDOLManager instance;
     private void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
         }

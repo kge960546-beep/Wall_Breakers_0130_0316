@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 public class SFXManager : MonoBehaviour
@@ -32,7 +31,7 @@ public class SFXManager : MonoBehaviour
 
     private void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
@@ -42,7 +41,7 @@ public class SFXManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }   
+    }
 
     void Init()
     {
@@ -54,12 +53,12 @@ public class SFXManager : MonoBehaviour
         bgmPlayer.playOnAwake = false;
 
         bgmPlayer.spatialBlend = 0.0f;
-        sfxPlayer.spatialBlend = 1.0f;        
+        sfxPlayer.spatialBlend = 1.0f;
 
         sfxClipDic = new Dictionary<string, AudioClip>();
-        if(audioClips != null)
+        if (audioClips != null)
         {
-            foreach(var clip in audioClips)
+            foreach (var clip in audioClips)
             {
                 sfxClipDic[clip.name] = clip;
             }
@@ -104,7 +103,7 @@ public class SFXManager : MonoBehaviour
 
         float fadeTime = 0.1f;
         float startVol = source.volume;
-        while(source != null && source.volume > 0)
+        while (source != null && source.volume > 0)
         {
             source.volume -= startVol * (Time.deltaTime / fadeTime);
             yield return null;
@@ -121,7 +120,7 @@ public class SFXManager : MonoBehaviour
     {
         if (sfxClipDic.TryGetValue(soundName, out var clip))
         {
-            if(bgmPlayer.clip == clip && bgmPlayer.isPlaying) return;
+            if (bgmPlayer.clip == clip && bgmPlayer.isPlaying) return;
 
             bgmPlayer.clip = clip;
             bgmPlayer.Play();
@@ -151,7 +150,7 @@ public class SFXManager : MonoBehaviour
         {
             string currentBGM = bgmPlayList[currentBGMIndex];
 
-            if(sfxClipDic.TryGetValue(currentBGM, out var clip))
+            if (sfxClipDic.TryGetValue(currentBGM, out var clip))
             {
                 bgmPlayer.clip = clip;
                 bgmPlayer.Play();

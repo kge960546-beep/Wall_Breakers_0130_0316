@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour
@@ -77,7 +75,7 @@ public class PlayerInventory : MonoBehaviour
     // 아이템 제거
     public bool RemoveItem(ItemDataSO itemData, int quantity)
     {
-        if(!inventory.Items.ContainsKey(itemData))
+        if (!inventory.Items.ContainsKey(itemData))
         {
             return false;
         }
@@ -108,7 +106,7 @@ public class PlayerInventory : MonoBehaviour
         //}
         //
         //return false;
-    }    
+    }
 
     // 크레딧 추가 - CreditService 사용
     public void AddCredits(int amount)
@@ -136,10 +134,10 @@ public class PlayerInventory : MonoBehaviour
     {
         foreach (var item in inventory.Items)
         {
-            if(item.Value > 0)
+            if (item.Value > 0)
             {
                 return item.Key;
-            }            
+            }
         }
 
         return null;

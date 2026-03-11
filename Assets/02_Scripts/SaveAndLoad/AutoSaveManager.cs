@@ -18,9 +18,9 @@ public class AutoSaveManager : MonoBehaviour
         {
             yield return new WaitForSecondsRealtime(saveDelay);
 
-            if(SceneGameDataManager.instance != null)
+            if (SceneGameDataManager.instance != null)
             {
-                if(SceneGameDataManager.instance.isRefreshing)
+                if (SceneGameDataManager.instance.isRefreshing)
                 {
                     Utils.DebugLog("복구중이라 자동저장 못함");
                     continue;

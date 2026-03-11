@@ -1,8 +1,8 @@
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class BackpackCapacityBarUI : MonoBehaviour
 {
@@ -11,8 +11,8 @@ public class BackpackCapacityBarUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI capacityText;
 
     [Header("Item List UI Settings")]
-    [SerializeField] private Transform listParent;    
-    [SerializeField] private GameObject itemRowPrefab; 
+    [SerializeField] private Transform listParent;
+    [SerializeField] private GameObject itemRowPrefab;
 
     [Header("Bar Colors")]
     [SerializeField] private Color green = Color.green;
@@ -78,14 +78,15 @@ public class BackpackCapacityBarUI : MonoBehaviour
             .ToList(); // 일단 리스트로 변환
 
         // 타입별로 정렬 (원석 0순위, 가공품 1순위)
-        sortedList.Sort((a, b) => {
+        sortedList.Sort((a, b) =>
+        {
             int typeA = (int)a.Key.itemType;
             int typeB = (int)b.Key.itemType;
 
             if (typeA != typeB)
-                return typeA.CompareTo(typeB); 
+                return typeA.CompareTo(typeB);
 
-            return a.Key.itemName.CompareTo(b.Key.itemName); 
+            return a.Key.itemName.CompareTo(b.Key.itemName);
         });
 
         foreach (var pair in sortedList)

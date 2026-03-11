@@ -10,10 +10,10 @@ public class PoolManager : MonoBehaviour
 
     private void Awake()
     {
-        if (instance == null) 
-        { 
-            instance = this; 
-            DontDestroyOnLoad(gameObject); 
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
         }
 
         else Destroy(gameObject);
@@ -23,7 +23,7 @@ public class PoolManager : MonoBehaviour
     {
         if (prefab == null) return;
 
-        if(!poolDictionary.ContainsKey(prefab))
+        if (!poolDictionary.ContainsKey(prefab))
         {
             poolDictionary.Add(prefab, new Queue<GameObject>());
         }

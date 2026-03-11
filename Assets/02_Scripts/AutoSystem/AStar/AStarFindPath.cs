@@ -16,7 +16,7 @@ public class AStarFindPath : MonoBehaviour
     /// <param name="worldPos"></param>
     /// <returns></returns>
     public Vector2Int WorldToGrid(Vector3 worldPos) => gridManager.WorldToGrid(worldPos);
-    
+
 
     /// <summary>
     /// 그리드 좌표를 월드 좌표로 변환하는 함수    
@@ -24,7 +24,7 @@ public class AStarFindPath : MonoBehaviour
     /// <param name="gridPos"></param>
     /// <returns></returns>
     public Vector3 GridToWorld(Vector2Int gridPos) => gridManager.GridToWorld(gridPos);
-    
+
 
     /// <summary>
     /// A* 알고리즘을 사용하여 시작점에서 목표점까지의 최적 경로를 찾는 함수

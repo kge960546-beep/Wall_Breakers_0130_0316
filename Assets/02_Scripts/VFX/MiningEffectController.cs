@@ -12,7 +12,7 @@ public class MiningEffectController : MonoBehaviour
 
     private void Awake()
     {
-        if(PoolManager.instance != null)
+        if (PoolManager.instance != null)
         {
             if (hitEffectPrefab != null)
                 PoolManager.instance.CreatePool(hitEffectPrefab, 3);
@@ -50,16 +50,16 @@ public class MiningEffectController : MonoBehaviour
     /// </summary>
     public void PlayDestroy(Vector3 pos)
     {
-        if(!gameObject.activeInHierarchy)
+        if (!gameObject.activeInHierarchy)
             return;
 
-        if(destoryEffectPrefab == null)
+        if (destoryEffectPrefab == null)
         {
             Utils.DebugLogWarning("Destroy Effect Prefab is not assigned");
             return;
         }
 
-        if(PoolManager.instance == null)
+        if (PoolManager.instance == null)
         {
             Utils.DebugLogError("PoolManager instance not found");
             return;
@@ -71,7 +71,7 @@ public class MiningEffectController : MonoBehaviour
             Quaternion.identity
             );
 
-        StartCoroutine(ReturnPool());           
+        StartCoroutine(ReturnPool());
     }
     IEnumerator ReturnPool()
     {

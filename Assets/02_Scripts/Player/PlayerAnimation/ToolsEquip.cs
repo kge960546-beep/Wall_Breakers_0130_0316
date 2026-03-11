@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class ToolsEquip : MonoBehaviour
@@ -38,7 +35,7 @@ public class ToolsEquip : MonoBehaviour
 
     public void EquipPickaxe()
     {
-        if(currentPickaxe != null)
+        if (currentPickaxe != null)
         {
             currentPickaxe.SetActive(true);
             return;
@@ -70,7 +67,7 @@ public class ToolsEquip : MonoBehaviour
     {
         if (currentPickaxe == null) return;
 
-        if(trailController != null)
+        if (trailController != null)
         {
             trailController.TrailOff();
         }

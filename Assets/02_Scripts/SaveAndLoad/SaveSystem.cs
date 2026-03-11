@@ -17,7 +17,7 @@ public class SaveSystem : MonoBehaviour
     public static GameData Load()
     {
         if (!File.Exists(SavePath))
-        {            
+        {
             Utils.DebugLog("파일 없음");
             return null;
         }
@@ -33,7 +33,7 @@ public class SaveSystem : MonoBehaviour
 
     public static void DeleteSaveData()
     {
-        if(File.Exists(SavePath))
+        if (File.Exists(SavePath))
         {
             File.Delete(SavePath);
             Utils.DebugLog($"<color=red>[SaveSystem] 세이브 파일 삭제 완료: {SavePath}</color>");

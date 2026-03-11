@@ -41,7 +41,7 @@ public class AutoNavMeshCarrier : MonoBehaviour
     }
 
     private void FixedUpdate()
-    {        
+    {
         HandleAuto();
         UpdateAnim();
     }
@@ -107,28 +107,28 @@ public class AutoNavMeshCarrier : MonoBehaviour
     //네비매쉬 이동으로 변경
     public void GoTargetPoint(Vector3 targetPos)
     {
-        if(agent.destination != targetPos)
+        if (agent.destination != targetPos)
         {
             agent.SetDestination(targetPos);
         }
 
-        if(!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
             state = navMeshCurrentState.Idle;
         }
-       //float distanceToTarget = Vector3.Distance(transform.position, targetPos);
-       //
-       //if (distanceToTarget <= stopDistance)
-       //{
-       //    SetMoveDirection(Vector3.zero);
-       //    state = currentState.Idle;
-       //
-       //}
-       //else
-       //{
-       //    Vector3 direction = (targetPos - transform.position).normalized; //이동 방향 계산
-       //    direction.y = 0f; // Y축 이동 무시
-       //    SetMoveDirection(direction);
-       //}
+        //float distanceToTarget = Vector3.Distance(transform.position, targetPos);
+        //
+        //if (distanceToTarget <= stopDistance)
+        //{
+        //    SetMoveDirection(Vector3.zero);
+        //    state = currentState.Idle;
+        //
+        //}
+        //else
+        //{
+        //    Vector3 direction = (targetPos - transform.position).normalized; //이동 방향 계산
+        //    direction.y = 0f; // Y축 이동 무시
+        //    SetMoveDirection(direction);
+        //}
     }
 }

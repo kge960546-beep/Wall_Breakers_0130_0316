@@ -1,5 +1,3 @@
-using UnityEngine;
-
-public class ItemDataMock : ItemDataSO 
+public class ItemDataMock : ItemDataSO
 {
 }

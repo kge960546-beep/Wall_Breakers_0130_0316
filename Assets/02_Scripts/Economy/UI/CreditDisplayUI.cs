@@ -1,4 +1,3 @@
-using System.Net.NetworkInformation;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -28,7 +27,7 @@ public class CreditDisplayUI : MonoBehaviour
     }
     private void ValidateSetup()
     {
-        if(creditText == null)
+        if (creditText == null)
         {
             Utils.DebugLogError("[CreditDisplayUI] CreditText is Not assigned!");
         }
@@ -77,7 +76,7 @@ public class CreditDisplayUI : MonoBehaviour
     {
         targetValue = newCredits;
 
-        if(!useAnimation)
+        if (!useAnimation)
         {
             currentDiplayValue = targetValue;
             UpdateDisplay();
@@ -86,7 +85,7 @@ public class CreditDisplayUI : MonoBehaviour
     private void Update()
     {
         // 애니메이션 사용 시 부드럽게 증가
-        if(useAnimation && currentDiplayValue != targetValue)
+        if (useAnimation && currentDiplayValue != targetValue)
         {
             // 차이에 비례한 속도로 증가
             long difference = targetValue - currentDiplayValue;
@@ -104,9 +103,9 @@ public class CreditDisplayUI : MonoBehaviour
             {
                 currentDiplayValue -= increment;
 
-                if(currentDiplayValue < targetValue)
-                { 
-                    currentDiplayValue = targetValue; 
+                if (currentDiplayValue < targetValue)
+                {
+                    currentDiplayValue = targetValue;
                 }
             }
 
@@ -116,7 +115,7 @@ public class CreditDisplayUI : MonoBehaviour
     }
     private void UpdateDisplay()
     {
-        if(creditText != null)
+        if (creditText != null)
         {
             string formattedNumber = NotateNumber.ChangeNumber(currentDiplayValue);
             creditText.text = formattedNumber;

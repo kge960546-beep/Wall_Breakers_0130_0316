@@ -94,10 +94,10 @@ public class RegionUnlockZone : MonoBehaviour
         if (regionId == regionData.regionId)
         {
             //Debug.Log($"[RegionUnlockZone] This region ({regionData.regionId}) was unlocked!");
-            
+
             // 게이트 상태 즉시 업데이트
             UpdateGateState();
-            if(SFXManager.instance != null)
+            if (SFXManager.instance != null)
             {
                 SFXManager.instance.PlayOnSFX("270404__littlerobotsoundfactory__jingle_achievement_00", Camera.main.transform.position);
             }

@@ -65,7 +65,7 @@ public class CreditCollector : MonoBehaviour
             Utils.DebugLogWarning("[CreditCollector] Already collecting!");
             return;
         }
-        
+
 
         if (creditSpawner == null || collectUI == null)
         {
@@ -107,11 +107,11 @@ public class CreditCollector : MonoBehaviour
     }
     private IEnumerator CollectCycle()
     {
-        while(isCollecting)
+        while (isCollecting)
         {
             List<CreditObject> credits = creditSpawner.SpawnedCredits;
 
-            if(credits.Count == 0)
+            if (credits.Count == 0)
             {
                 collectUI?.UpdateDisplay(0, 0);
                 yield return wait;
@@ -128,7 +128,7 @@ public class CreditCollector : MonoBehaviour
 
                 creditToCollect.Collect();
 
-                if(creditService != null)
+                if (creditService != null)
                 {
                     creditService.AddCredit(amount);
                 }

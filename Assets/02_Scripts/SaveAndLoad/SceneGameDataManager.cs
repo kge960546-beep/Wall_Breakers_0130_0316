@@ -30,7 +30,7 @@ public class SceneGameDataManager : MonoBehaviour
     [Header("업그래이드 리스트")]
     public List<string> unlockedUpgradeNodeIds = new List<string>();
     #endregion
-    public List<string> savedAchievements = new List<string>();    
+    public List<string> savedAchievements = new List<string>();
 
     private bool isPendingLoad = false;
 
@@ -41,12 +41,12 @@ public class SceneGameDataManager : MonoBehaviour
             instance = this;
             DontDestroyOnLoad(gameObject);
 
-            if(unlockedSections == null || unlockedSections.Length == 0)
+            if (unlockedSections == null || unlockedSections.Length == 0)
             {
                 unlockedSections = new bool[5];
             }
 
-            if(sectionFillAmount == null || sectionFillAmount.Length == 0)
+            if (sectionFillAmount == null || sectionFillAmount.Length == 0)
             {
                 sectionFillAmount = new int[100];
             }
@@ -95,7 +95,7 @@ public class SceneGameDataManager : MonoBehaviour
 
         if (unlockedSections != null)
         {
-            for(int i = 0; i < unlockedSections.Length; i++)
+            for (int i = 0; i < unlockedSections.Length; i++)
             {
                 unlockedSections[i] = false;
             }
@@ -106,7 +106,7 @@ public class SceneGameDataManager : MonoBehaviour
             for (int i = 0; i < sectionFillAmount.Length; i++) sectionFillAmount[i] = 0;
         }
 
-        if(RegionUnlockService.Instance != null)
+        if (RegionUnlockService.Instance != null)
         {
             RegionUnlockService.Instance.LoadUnlockedRegions();
         }
@@ -125,7 +125,7 @@ public class SceneGameDataManager : MonoBehaviour
             UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
         }
 
-        if(AchievementsManager.instance != null)
+        if (AchievementsManager.instance != null)
         {
             AchievementsManager.instance.ResetAllSO();
         }
@@ -150,17 +150,17 @@ public class SceneGameDataManager : MonoBehaviour
         data.unlockedSections = (bool[])this.unlockedSections.Clone(); //배열은 복제해서 저장하는게 좋음
         data.sectionFillAmount = (int[])this.sectionFillAmount.Clone();
 
-        data.achievementProgess = AchievementsManager.instance.GetUnlockedIds();    
-        
-        if(UpgradeGraphBuilder.instance != null)
+        data.achievementProgess = AchievementsManager.instance.GetUnlockedIds();
+
+        if (UpgradeGraphBuilder.instance != null)
         {
             unlockedUpgradeNodeIds.Clear();
 
-            var activatedNodes = UpgradeGraphBuilder.instance.DAG.GetActivatedNodes();            
-            foreach(var node in activatedNodes)
+            var activatedNodes = UpgradeGraphBuilder.instance.DAG.GetActivatedNodes();
+            foreach (var node in activatedNodes)
             {
                 var upgradeData = node.Data as UpgradeDataSO;
-                if(upgradeData != null)
+                if (upgradeData != null)
                 {
                     unlockedUpgradeNodeIds.Add(upgradeData.upgradeID);
                 }
@@ -180,7 +180,7 @@ public class SceneGameDataManager : MonoBehaviour
         {
             ApplyDataVariable(data);
             isPendingLoad = true;
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);           
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 
@@ -188,7 +188,7 @@ public class SceneGameDataManager : MonoBehaviour
     {
         GameData data = SaveSystem.Load();
 
-        if(data != null)
+        if (data != null)
         {
             ApplyDataVariable(data);
             StartCoroutine(SceneLoadSaveData());
@@ -204,7 +204,7 @@ public class SceneGameDataManager : MonoBehaviour
 
         this.unlockedSections = (bool[])data.unlockedSections.Clone();
         this.unCollectedMoney = data.unCollectedMoney;
-        this.sectionFillAmount = (int[])data.sectionFillAmount.Clone();        
+        this.sectionFillAmount = (int[])data.sectionFillAmount.Clone();
 
         this.savedAchievements = data.achievementProgess;
 
@@ -212,7 +212,7 @@ public class SceneGameDataManager : MonoBehaviour
     }
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {      
+    {
         SetupButtonUI();
 
         if (isPendingLoad)
@@ -222,10 +222,10 @@ public class SceneGameDataManager : MonoBehaviour
         }
     }
 
-   
+
     void SetupButtonUI()
     {
-        GameObject saveBtn = GameObject.Find("SaveButton");         
+        GameObject saveBtn = GameObject.Find("SaveButton");
         if (saveBtn != null)
         {
             Button saveButton = saveBtn.GetComponent<Button>();
@@ -233,7 +233,7 @@ public class SceneGameDataManager : MonoBehaviour
             saveButton.onClick.AddListener(() => SceneGameDataManager.instance.SaveGame());
         }
 
-        GameObject loadBtn = GameObject.Find("LoadButton");        
+        GameObject loadBtn = GameObject.Find("LoadButton");
         if (loadBtn != null)
         {
             Button loadButton = loadBtn.GetComponent<Button>();
@@ -243,7 +243,7 @@ public class SceneGameDataManager : MonoBehaviour
     }
 
     IEnumerator SceneLoadSaveData()
-    {      
+    {
         isRefreshing = true;
 
         yield return new WaitForEndOfFrame();
@@ -314,7 +314,7 @@ public class SceneGameDataManager : MonoBehaviour
             ResourceTableLoad();
             ProcessTableLoad();
         }
-        catch ( System.Exception e)
+        catch (System.Exception e)
         {
             Utils.DebugLogError($"[LoadError] 복구 중 에러 발생: {e.Message}");
         }
@@ -322,12 +322,12 @@ public class SceneGameDataManager : MonoBehaviour
         {
             isRefreshing = false;
             Utils.DebugLog("데이터 복구 프로세스 종료");
-        }        
-        
+        }
+
         Utils.DebugLog("씬 재시작후 불러오기 완료");
         SaveGame();
     }
-    
+
     public void SaveGoldObject()
     {
         int pendingTotal = 0;
@@ -343,7 +343,7 @@ public class SceneGameDataManager : MonoBehaviour
             this.unlockedSections = RegionUnlockService.Instance.GetUnlockedStates(5);
             RegionUnlockService.Instance.SaveUnlockedRegions();
         }
-    }   
+    }
 
     public void RestorePendingCredits()
     {
@@ -385,9 +385,9 @@ public class SceneGameDataManager : MonoBehaviour
     public void UpgradeUILoad()
     {
         UpgradeUIButton[] allUpgradeButton = Resources.FindObjectsOfTypeAll<UpgradeUIButton>();
-        foreach(var btn in allUpgradeButton)
+        foreach (var btn in allUpgradeButton)
         {
-            if(btn.gameObject.scene.name != null)
+            if (btn.gameObject.scene.name != null)
             {
                 btn.UpgradeUIRenewal();
             }

@@ -9,7 +9,7 @@ public class ResourcesManager : MonoBehaviour
     [SerializeField] GameObject ironPrefab;
     [SerializeField] GameObject goldPrefab;
     [SerializeField] GameObject moneyPrefab;
-    [SerializeField] GameObject soundPrefab;    
+    [SerializeField] GameObject soundPrefab;
 
     private void Start()
     {

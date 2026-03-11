@@ -49,7 +49,7 @@ public class AutoAStarCarrier : MonoBehaviour
         {
             autoBackPack = GetComponent<AutoBackPack>();
         }
-        
+
     }
     private void OnEnable()
     {
@@ -247,5 +247,5 @@ public class AutoAStarCarrier : MonoBehaviour
             Gizmos.color = Color.blue;
             Gizmos.DrawWireCube(processingMachine.position, Vector3.one * 0.5f);
         }
-    }   
+    }
 }

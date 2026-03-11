@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
 //MeshFilter, MesgRenderer 속성을 스크립트를 넣으면 적용되게 하기위한 코드
-[RequireComponent (typeof(MeshFilter), typeof(MeshRenderer))]
+[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class MeshBake : MonoBehaviour
 {
     //======
@@ -19,12 +17,12 @@ public class MeshBake : MonoBehaviour
 
         //MEshFilter 컴포넌트는 원래 가지고있는건지 직접 넣어야하는건지?
         // ㄴ RequireComponent를 사용하여 스크립트를 넣으면 넣어지게 구성
-        MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter> ();
+        MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
 
         //머티리얼은 1개만 적용할 수 있어서 첫번째 자식의 머티리얼을 부모의 머티리얼로 복사하기
-        foreach (var filter in meshFilters) 
+        foreach (var filter in meshFilters)
         {
-            if(filter.gameObject != gameObject)
+            if (filter.gameObject != gameObject)
             {
                 GetComponent<MeshRenderer>().sharedMaterial = filter.GetComponent<MeshRenderer>().sharedMaterial;
                 break;
@@ -37,10 +35,10 @@ public class MeshBake : MonoBehaviour
         CombineInstance[] instances = new CombineInstance[meshFilters.Length];
 
         Matrix4x4 myTransform = transform.worldToLocalMatrix;
-        
+
 
         //각 MeshFilter를 CombineInstance로 변환하고 자식 비활성화(원본이라 생각함)
-        for(int i = 0; i < meshFilters.Length; i++)
+        for (int i = 0; i < meshFilters.Length; i++)
         {
             if (meshFilters[i] == GetComponent<MeshFilter>()) continue;
 
@@ -57,19 +55,19 @@ public class MeshBake : MonoBehaviour
                 //모든 메시를 같은 좌표계로 합쳐야해서 행렬함수가 필요하다
                 //메시 자체를 이동시키는게 아닌 버텍스에 행렬을 곱해서 합쳐진 메시 안에서 같은 위치에 있도록 굽는 방식
                 transform = myTransform * meshFilter.transform.localToWorldMatrix,
-            }; 
-            
-            meshFilter.gameObject.SetActive (false);
+            };
+
+            meshFilter.gameObject.SetActive(false);
         }
 
         //합쳐질 새 메시 생성
-        Mesh combinedMesh = new Mesh ();
+        Mesh combinedMesh = new Mesh();
 
         //Mesh는 약 65,000개의 정점까지만 가질 수 있어서 한계를 늘리는 설정
         combinedMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
 
         //매시 합치기
-        combinedMesh.CombineMeshes (instances);
+        combinedMesh.CombineMeshes(instances);
 
         //부모 MeshFilter에 결과물 넣기
         gameObject.GetComponent<MeshFilter>().sharedMesh = combinedMesh;
@@ -80,7 +78,7 @@ public class MeshBake : MonoBehaviour
         ==를 사용해서 추가한다음 새로고침 하는 방식으로 구현함
          */
         //콜라이더 없으면 추가하기
-        MeshCollider meshCollider = GetComponent<MeshCollider> ();
+        MeshCollider meshCollider = GetComponent<MeshCollider>();
         if (meshCollider == null)
         {
             meshCollider = gameObject.AddComponent<MeshCollider>();
@@ -92,11 +90,11 @@ public class MeshBake : MonoBehaviour
 
         gameObject.isStatic = true;
 
-        GridManager grid = FindAnyObjectByType<GridManager> ();
-        if (grid != null) 
+        GridManager grid = FindAnyObjectByType<GridManager>();
+        if (grid != null)
         {
             grid.GridData();
         }
-        gameObject.SetActive (true);
+        gameObject.SetActive(true);
     }
 }

@@ -1,5 +1,3 @@
-using UnityEngine;
-
 // 내려놓는 중 상태
 public class DroppingState : IPlayerState
 {

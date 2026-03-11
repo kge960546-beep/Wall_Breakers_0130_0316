@@ -1,5 +1,3 @@
-using UnityEngine;
-
 // 채굴 중 상태
 public class MiningState : IPlayerState
 {
