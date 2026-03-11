@@ -17,9 +17,10 @@ public class AchievementUI : MonoBehaviour
     [SerializeField] Transform endPoint;
     [SerializeField] float slideSpeed;
     [SerializeField] float stayTime;
-    
+
     private Queue<AchievementSO> achievementSOs = new Queue<AchievementSO>();
     private bool isShowing = false;
+    private WaitForSeconds wait = new WaitForSeconds(0.2f);
 
     private void OnEnable()
     {
@@ -38,20 +39,20 @@ public class AchievementUI : MonoBehaviour
     public void ShowPanel(AchievementSO data)
     {
         Utils.DebugLog("UI수신성공" + data.title);
-        
+
         achievementSOs.Enqueue(data);
 
-        if(!isShowing)
+        if (!isShowing)
         {
             StartCoroutine(ProcessQueue());
         }
-       
-    }   
+
+    }
 
     //이벤트 구독 실행순서 오류로 싱글톤보다 먼저 실행되게 하지않기
     IEnumerator WaitSubscribe()
     {
-        while(AchievementsManager.instance == null)
+        while (AchievementsManager.instance == null)
         {
             yield return null;
         }
@@ -78,7 +79,7 @@ public class AchievementUI : MonoBehaviour
 
             yield return StartCoroutine(PanelAmin());
 
-            yield return new WaitForSeconds(0.2f);            
+            yield return wait;
         }
 
         isShowing = false;
@@ -86,7 +87,7 @@ public class AchievementUI : MonoBehaviour
 
     //UI가 어떤식으로 움직이는지 정한 함수
     IEnumerator PanelAmin()
-    {       
+    {
         //achievementUIpanel.SetActive(true);
 
         float elapsed = 0.0f;
@@ -108,14 +109,14 @@ public class AchievementUI : MonoBehaviour
         yield return new WaitForSeconds(wait);
 
         elapsed = 0.0f;
-        while(elapsed < duration)
+        while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
             panelRect.anchoredPosition = Vector3.Lerp(endPos, startPos, elapsed / duration);
             yield return null;
         }
 
-        
+
 
         //achievementUIpanel.SetActive(false);
     }
