@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Brick
   m_EditorClassIdentifier: 
   Id: 1
-  itemName: "\uFFFD\uFFFD\uFFFD\uFFFD"
+  itemName: "\uD759\uBCBD\uB3CC"
   itemType: 1
   sellPrice: 5
   sellDuration: 1
@@ -22,4 +22,4 @@ MonoBehaviour:
   backPackRotationOffset: {x: 0, y: 0, z: 0}
   mineralPrefab: {fileID: 2831869848581557307, guid: b983ee4ad77ea674d84c01d57a1ec806,
     type: 3}
-  icon: {fileID: 21300000, guid: 249d67d4a70bff44cb0ddae05f07c96b, type: 3}
+  icon: {fileID: 21300000, guid: 9422e209d6bc24f4cb5739888c8ea7d0, type: 3}

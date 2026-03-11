@@ -70,12 +70,12 @@ public class CreditCollectUI : MonoBehaviour
     {
         if(collectingAmount > 0)
         {
-            collectingText.text = $"Collecting: +{collectingAmount}";
-            remainingText.text = $"Remaining: {remainingCount}";
+            collectingText.text = $"{collectingAmount} È¹µæ";
+            remainingText.text = $"³²Àº °ñµåÈ¹µæ :{remainingCount}";
         }
         else
         {
-            collectingText.text = "No credits to collect";
+            collectingText.text = "¼öÁýÇÒ °ñµå°¡ ¾ø½À´Ï´Ù.";
             remainingText.text = "";
         }
     }
@@ -84,7 +84,7 @@ public class CreditCollectUI : MonoBehaviour
         if(creditService != null && totalCreditsText != null)
         {
             string formattedCredits = NotateNumber.ChangeNumber(creditService.credits);
-            totalCreditsText.text = $"Total: {formattedCredits}";
+            totalCreditsText.text = $"ÃÑ °ñµå: {formattedCredits}";
         }
     }
 }

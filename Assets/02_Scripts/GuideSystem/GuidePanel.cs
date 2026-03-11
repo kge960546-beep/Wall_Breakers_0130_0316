@@ -1,6 +1,9 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
+
 
 public class GuidePanel : MonoBehaviour
 {
@@ -19,6 +22,17 @@ public class GuidePanel : MonoBehaviour
 
     [Header("Button")]
     [SerializeField] private Button panelButton;
+
+    [SerializeField] GameObject goldIconPrefab;
+    [SerializeField] RectTransform goldTarget;
+    [SerializeField] RectTransform rewardGoldIcon;
+
+    [SerializeField] int spawnCount = 8;
+
+    [SerializeField] float scatterRadius = 120f;
+    [SerializeField] float scatterDuration = 0.25f;
+
+    [SerializeField] float moveDuration = 0.6f;
 
     private GuideStepSO currentStep;
 
@@ -72,10 +86,15 @@ public class GuidePanel : MonoBehaviour
     /// </summary>
     public void OnClickPanel()
     {
-        if (!GuideManager.Instance.IsCurrentStepComplete())
-            return;
+        Debug.Log("GuidePanel Button Clicked");
 
-        GuideManager.Instance.CompleteCurrentStep();
+        if (!GuideManager.Instance.IsCurrentStepComplete())
+        {
+            Debug.Log("Guide step not complete");
+            return;
+        }
+
+        StartCoroutine(RewardSequence());
     }
 
     /// <summary>
@@ -84,5 +103,79 @@ public class GuidePanel : MonoBehaviour
     public void Hide()
     {
         root.gameObject.SetActive(false);
+    }
+
+    IEnumerator RewardSequence()
+    {
+        panelButton.interactable = false;
+
+        List<RectTransform> coins = new List<RectTransform>();
+
+        Vector2 start;
+
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            root,
+            RectTransformUtility.WorldToScreenPoint(null, rewardGoldIcon.position),
+            null,
+            out start
+        );
+
+        Vector2 end;
+
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            root,
+            RectTransformUtility.WorldToScreenPoint(null, goldTarget.position),
+            null,
+            out end
+        );
+
+        // 코인 생성
+        for (int i = 0; i < spawnCount; i++)
+        {
+            GameObject icon = Instantiate(goldIconPrefab, root);
+
+            RectTransform rect = icon.GetComponent<RectTransform>();
+            rect.anchoredPosition = start;
+
+            coins.Add(rect);
+        }
+
+        // Scatter 동시에
+        List<Vector2> scatterTargets = new List<Vector2>();
+
+        foreach (var coin in coins)
+        {
+            Vector2 scatter = start + new Vector2(
+                Random.Range(-scatterRadius, scatterRadius),
+                Random.Range(-scatterRadius, -scatterRadius * 0.3f)
+            );
+
+            scatterTargets.Add(scatter);
+
+            StartCoroutine(
+                UITween.MoveUI(coin, start, scatter, scatterDuration)
+            );
+        }
+
+        yield return new WaitForSeconds(scatterDuration);
+
+        // Bezier 동시에
+        for (int i = 0; i < coins.Count; i++)
+        {
+            Vector2 scatter = scatterTargets[i];
+
+            Vector2 control = (scatter + end) * 0.5f + Vector2.up * 200f;
+
+            StartCoroutine(
+                UITween.MoveBezierUI(coins[i], scatter, control, end, moveDuration)
+            );
+        }
+
+        yield return new WaitForSeconds(moveDuration);
+
+        foreach (var coin in coins)
+            Destroy(coin.gameObject);
+
+        GuideManager.Instance.CompleteCurrentStep();
     }
 }
