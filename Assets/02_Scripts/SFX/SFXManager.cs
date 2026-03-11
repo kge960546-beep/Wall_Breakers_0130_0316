@@ -25,6 +25,7 @@ public class SFXManager : MonoBehaviour
     [Range(0f, 1f)] public float sfxVolume = 0.5f;
 
     bool isSFXBlocked = false;
+    bool is3D = true;
 
     // BGM 코루틴 저장용
     Coroutine bgmRoutine;
@@ -77,9 +78,11 @@ public class SFXManager : MonoBehaviour
             GameObject tr = PoolManager.instance.Get(sfxPrefab, soundPos, Quaternion.identity);
             tr.transform.position = soundPos;
             AudioSource source = tr.GetComponent<AudioSource>();
+
             source.clip = clip;
             source.volume = sfxVolume;
 
+            source.dopplerLevel = 0.0f;
             source.spatialBlend = 1.0f;
             source.minDistance = 5.0f;
             source.maxDistance = 50f;

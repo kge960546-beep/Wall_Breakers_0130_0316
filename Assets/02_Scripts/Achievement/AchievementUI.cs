@@ -18,6 +18,8 @@ public class AchievementUI : MonoBehaviour
     [SerializeField] float slideSpeed;
     [SerializeField] float stayTime;
     
+    private Queue<AchievementSO> achievementSOs = new Queue<AchievementSO>();
+    private bool isShowing = false;
 
     private void OnEnable()
     {
@@ -36,17 +38,14 @@ public class AchievementUI : MonoBehaviour
     public void ShowPanel(AchievementSO data)
     {
         Utils.DebugLog("UI수신성공" + data.title);
-        StopAllCoroutines();
+        
+        achievementSOs.Enqueue(data);
 
-        if(SFXManager.instance != null)
+        if(!isShowing)
         {
-            SFXManager.instance.PlayOnSFX("541980__rob_marion__gasp_chimes_success_3", Camera.main.transform.position);
+            StartCoroutine(ProcessQueue());
         }
-
-        titleText.text = data.title;
-        descriptionText.text = data.description;
-
-        StartCoroutine(PanelAmin());
+       
     }   
 
     //이벤트 구독 실행순서 오류로 싱글톤보다 먼저 실행되게 하지않기
@@ -59,6 +58,30 @@ public class AchievementUI : MonoBehaviour
 
         AchievementsManager.instance.SubscribeonAchievementUnlocked(ShowPanel);
         Utils.DebugLog("업적매니저 구동 성공");
+    }
+
+    IEnumerator ProcessQueue()
+    {
+        isShowing = true;
+
+        while (achievementSOs.Count > 0)
+        {
+            AchievementSO currentData = achievementSOs.Dequeue();
+
+            titleText.text = currentData.title;
+            descriptionText.text = currentData.description;
+
+            if (SFXManager.instance != null)
+            {
+                SFXManager.instance.PlayOnSFX("541980__rob_marion__gasp_chimes_success_3", Camera.main.transform.position);
+            }
+
+            yield return StartCoroutine(PanelAmin());
+
+            yield return new WaitForSeconds(0.2f);            
+        }
+
+        isShowing = false;
     }
 
     //UI가 어떤식으로 움직이는지 정한 함수
