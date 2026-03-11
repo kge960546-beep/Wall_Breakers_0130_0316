@@ -34,6 +34,9 @@ public class GuidePanel : MonoBehaviour
 
     [SerializeField] float moveDuration = 0.6f;
 
+    [SerializeField] private CanvasGroup canvasGroup;
+    [SerializeField] private float fadeDuration = 0.25f;
+
     private GuideStepSO currentStep;
 
     /// <summary>
@@ -41,6 +44,8 @@ public class GuidePanel : MonoBehaviour
     /// </summary>
     public void Show(GuideStepSO step, int currentCount)
     {
+        canvasGroup.alpha = 1f;
+
         currentStep = step;
 
         iconImage.sprite = step.icon;
@@ -178,7 +183,18 @@ public class GuidePanel : MonoBehaviour
         foreach (var coin in coins)
             Destroy(coin.gameObject);
 
+        // 패널 FadeOut
+        yield return StartCoroutine(
+            UITween.Fade(canvasGroup, 1f, 0f, fadeDuration)
+        );
+
+        // 다음 가이드 스텝으로 전환
         GuideManager.Instance.CompleteCurrentStep();
+
+        // FadeIn
+        yield return StartCoroutine(
+            UITween.Fade(canvasGroup, 0f, 1f, fadeDuration)
+        );
     }
 
     IEnumerator MoveCoinSequence(RectTransform coin, Vector2 start, Vector2 control, Vector2 end)
