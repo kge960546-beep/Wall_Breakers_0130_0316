@@ -115,7 +115,7 @@ public class CreditCollector : MonoBehaviour
             {
                 collectUI?.UpdateDisplay(0, 0);
                 yield return wait;
-                continue;
+                break;
             }
 
             CreditObject creditToCollect = credits[0];
@@ -138,9 +138,16 @@ public class CreditCollector : MonoBehaviour
                 Utils.DebugLog($"Collected {amount} credits. Remaing: {credits.Count - 1}");
             }
 
-            SFXManager.instance.PlayOnSFX("Blop Sound", transform.position);
+            SFXManager.instance.PlayOnSFX("Blop Sound", transform.position);            
+
             //다음 수집까지 대기
             yield return new WaitForSeconds(collectInterval);
+        }
+
+        if (SceneGameDataManager.instance != null)
+        {
+            SceneGameDataManager.instance.SaveGame();
+            Utils.DebugLog("골드획득 다하고 저장완료");
         }
     }
 
