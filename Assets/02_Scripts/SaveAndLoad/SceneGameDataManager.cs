@@ -168,8 +168,8 @@ public class SceneGameDataManager : MonoBehaviour
             data.unlockedUpgradeNodeIds = new List<string>(this.unlockedUpgradeNodeIds);
         }
 
-        SaveSystem.Save(data);       
-        Debug.Log("<color=green>1. 파일 저장 완료</color>");
+        SaveSystem.Save(data);
+        Utils.DebugLog("<color=green>1. 파일 저장 완료</color>");
     }
 
     public void LoadGame()
@@ -274,7 +274,7 @@ public class SceneGameDataManager : MonoBehaviour
             if (creditService != null)
             {
                 creditService?.SetCredit(currentGold);
-                Debug.Log($"<color=gold>[Load] CreditService 데이터 복구 완료: {currentGold}</color>");
+                Utils.DebugLog($"<color=gold>[Load] CreditService 데이터 복구 완료: {currentGold}</color>");
             }
 
             RestorePendingCredits();
@@ -316,7 +316,7 @@ public class SceneGameDataManager : MonoBehaviour
         }
         catch ( System.Exception e)
         {
-            Debug.LogError($"[LoadError] 복구 중 에러 발생: {e.Message}");
+            Utils.DebugLogError($"[LoadError] 복구 중 에러 발생: {e.Message}");
         }
         finally
         {

@@ -11,7 +11,7 @@ public class AchievementsManager : MonoBehaviour
 
     private System.Action<AchievementSO> onAchievementUnlocked;
 
-    public void SubscribeonAchievementUnlocked(Action<AchievementSO> action )
+    public void SubscribeonAchievementUnlocked(Action<AchievementSO> action)
     {
         onAchievementUnlocked += action;
     }
@@ -30,8 +30,8 @@ public class AchievementsManager : MonoBehaviour
         }
         else
         {
-            Destroy(gameObject);            
-        }        
+            Destroy(gameObject);
+        }
     }
 
     //게임 시작시 메모리 상의 데이터 초기화
@@ -39,7 +39,7 @@ public class AchievementsManager : MonoBehaviour
     {
         foreach (var achievement in achievements)
         {
-            if(achievement != null)
+            if (achievement != null)
                 achievement.isUnlocked = false;
         }
     }
@@ -47,18 +47,18 @@ public class AchievementsManager : MonoBehaviour
     //세이브매니저 호출하는 함수로 업적 달성 저장을 불러오기
     public void InitializeAchievements(List<string> savedIDs)
     {
-        unlockIDs = new HashSet<string> (savedIDs);
+        unlockIDs = new HashSet<string>(savedIDs);
 
-        foreach(var a in achievements)
+        foreach (var a in achievements)
         {
-            a.isUnlocked = unlockIDs.Contains (a.id);
+            a.isUnlocked = unlockIDs.Contains(a.id);
         }
     }
 
     //세이브 데이터용 함수로 HashSet내부 데이터를 외부에서 읽을 수 있게 변환하는 함수
     public List<string> GetUnlockedIds()
     {
-        return new List<string> (unlockIDs);
+        return new List<string>(unlockIDs);
     }
 
     //업적 달성조건에 부합하면 달성함수 호출
@@ -88,16 +88,16 @@ public class AchievementsManager : MonoBehaviour
         SceneGameDataManager.instance.SaveGame();
 
         Utils.DebugLog($"업적달성: {a.title}");
-        
+
         onAchievementUnlocked?.Invoke(a);
     }
 
     public void ResetAllSO()
     {
-        unlockIDs.Clear ();
+        unlockIDs.Clear();
         foreach (var a in achievements)
         {
-            if(a != null)
+            if (a != null)
             {
                 a.isUnlocked = false;
 #if UNITY_EDITOR

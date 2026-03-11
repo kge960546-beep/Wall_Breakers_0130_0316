@@ -22,7 +22,7 @@ public class CreditDisplayUI : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log("[CreditDisplayUI] Start called");
+        Utils.DebugLog("[CreditDisplayUI] Start called");
         ValidateSetup();
         InitializeCreditService();
     }
@@ -30,11 +30,11 @@ public class CreditDisplayUI : MonoBehaviour
     {
         if(creditText == null)
         {
-            Debug.LogError("[CreditDisplayUI] CreditText is Not assigned!");
+            Utils.DebugLogError("[CreditDisplayUI] CreditText is Not assigned!");
         }
         else
         {
-            Debug.Log($"[CreditDisplayUI] CreditText assigned: {creditText.gameObject.name}");
+            Utils.DebugLog($"[CreditDisplayUI] CreditText assigned: {creditText.gameObject.name}");
             // 초기 텍스트 설정 (테스트용)
             creditText.text = "0";
         }
@@ -53,7 +53,7 @@ public class CreditDisplayUI : MonoBehaviour
 
         if (creditService == null)
         {
-            Debug.LogError("[CreditDisplayUI] CreditService is Not assigned!");
+            Utils.DebugLogError("[CreditDisplayUI] CreditService is Not assigned!");
             return;
         }
 

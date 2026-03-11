@@ -25,7 +25,7 @@ public class RegionUnlockUI : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log("[RegionUnlockUI] Start called");
+        Utils.DebugLog("[RegionUnlockUI] Start called");
         ValidateSetup();
         Hide();
 
@@ -41,26 +41,26 @@ public class RegionUnlockUI : MonoBehaviour
     {
         if (uiPanel == null)
         {
-            Debug.LogError("[RegionUnlockUI] UI Panel is NOT assigned!");
+            Utils.DebugLogError("[RegionUnlockUI] UI Panel is NOT assigned!");
         }
         else
         {
-            Debug.Log($"[RegionUnlockUI] UI Panel assigned: {uiPanel.name}");
+            Utils.DebugLog($"[RegionUnlockUI] UI Panel assigned: {uiPanel.name}");
         }
 
         if (regionNameText == null)
-            Debug.LogWarning("[RegionUnlockUI] RegionNameText is not assigned");
+            Utils.DebugLogWarning("[RegionUnlockUI] RegionNameText is not assigned");
         if (descriptionText == null)
-            Debug.LogWarning("[RegionUnlockUI] DescriptionText is not assigned");
+            Utils.DebugLogWarning("[RegionUnlockUI] DescriptionText is not assigned");
         if (creditsRequiredText == null)
-            Debug.LogWarning("[RegionUnlockUI] CreditsRequiredText is not assigned");
+            Utils.DebugLogWarning("[RegionUnlockUI] CreditsRequiredText is not assigned");
         if (unlockButton == null)
-            Debug.LogWarning("[RegionUnlockUI] UnlockButton is not assigned");
+            Utils.DebugLogWarning("[RegionUnlockUI] UnlockButton is not assigned");
     }
 
     public void Show(RegionData regionData, RegionUnlockService service, RegionUnlockZone zone, Vector3 worldPosition)
     {
-        Debug.Log($"[RegionUnlockUI] Show called for {regionData.regionName} at position {worldPosition}");
+        Utils.DebugLog($"[RegionUnlockUI] Show called for {regionData.regionName} at position {worldPosition}");
 
         currentRegionData = regionData;
         unlockService = service;
@@ -70,14 +70,14 @@ public class RegionUnlockUI : MonoBehaviour
         transform.position = worldPosition + uiOffset;
 
         uiPanel.SetActive(true);
-        Debug.Log($"[RegionUnlockUI] UI Panel activated: {uiPanel.activeSelf}");
+        Utils.DebugLog($"[RegionUnlockUI] UI Panel activated: {uiPanel.activeSelf}");
 
         UpdateDisplay();
     }
 
     public void Hide()
     {
-        Debug.Log("[RegionUnlockUI] Hide called");
+        Utils.DebugLog("[RegionUnlockUI] Hide called");
 
         if (uiPanel != null)
         {
@@ -111,7 +111,7 @@ public class RegionUnlockUI : MonoBehaviour
     {
         if (currentRegionData == null)
         {
-            Debug.LogWarning("[RegionUnlockUI] Cannot update display - currentRegionData is null");
+            Utils.DebugLogWarning("[RegionUnlockUI] Cannot update display - currentRegionData is null");
             return;
         }
 
@@ -199,7 +199,7 @@ public class RegionUnlockUI : MonoBehaviour
 
     private void OnUnlockButtonClicked()
     {
-        Debug.Log("[RegionUnlockUI] Unlock button clicked");
+        Utils.DebugLog("[RegionUnlockUI] Unlock button clicked");
 
         if (currentZone != null)
         {
@@ -207,7 +207,7 @@ public class RegionUnlockUI : MonoBehaviour
         }
         else
         {
-            Debug.LogError("[RegionUnlockUI] currentZone is null!");
+            Utils.DebugLogError("[RegionUnlockUI] currentZone is null!");
         }
     }
 }

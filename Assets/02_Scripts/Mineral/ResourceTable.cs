@@ -131,7 +131,7 @@ public class ResourceTable : MonoBehaviour
     {
         if (mineralPrefab == null)
         {
-            Debug.LogError($"{gameObject.name}의 mineralPrefab이 비어있습니다!");
+            Utils.DebugLogError($"{gameObject.name}의 mineralPrefab이 비어있습니다!");
             return;
         }
 
@@ -147,7 +147,7 @@ public class ResourceTable : MonoBehaviour
 
             if (item == null)
             {
-                Debug.LogError("PoolManager에서 아이템을 가져오지 못했습니다.");
+                Utils.DebugLogError("PoolManager에서 아이템을 가져오지 못했습니다.");
                 continue;
             }
 

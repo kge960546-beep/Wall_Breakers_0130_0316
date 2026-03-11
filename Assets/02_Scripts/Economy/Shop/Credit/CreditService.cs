@@ -36,7 +36,7 @@ public class CreditService
 
         if (OnCreditsChanged == null)
         {
-            Debug.LogWarning("[CreditService] OnCreditsChanged has NO subscribers!");
+            Utils.DebugLogWarning("[CreditService] OnCreditsChanged has NO subscribers!");
         }
         else
         {

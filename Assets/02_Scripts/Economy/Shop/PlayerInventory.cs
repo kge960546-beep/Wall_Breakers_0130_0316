@@ -44,7 +44,7 @@ public class PlayerInventory : MonoBehaviour
 
         if (creditService != null)
         {
-            Debug.Log("[CreditCollector] CreditService successfully initialized");
+            Utils.DebugLog("[CreditCollector] CreditService successfully initialized");
         }
         else
         {
@@ -56,9 +56,9 @@ public class PlayerInventory : MonoBehaviour
     public void AddItem(ItemDataSO itemData, int quantity)
     {
         inventory.AddInventory(itemData, quantity);
-#if UNITY_EDITOR
-        Debug.Log($"È¹µæ  ÀÌ¸§: {itemData.itemName} °¹¼ö {quantity} ÃÑ: {inventory.Items[itemData]}");
-#endif
+
+        Utils.DebugLog($"È¹µæ  ÀÌ¸§: {itemData.itemName} °¹¼ö {quantity} ÃÑ: {inventory.Items[itemData]}");
+
 
         //var existingItem = items.Find(i => i.itemData == itemData);
         //
@@ -116,11 +116,11 @@ public class PlayerInventory : MonoBehaviour
         if (creditService != null)
         {
             creditService.AddCredit(amount);
-            Debug.Log($"Credits added: {amount}. Total: {creditService.credits}");
+            Utils.DebugLog($"Credits added: {amount}. Total: {creditService.credits}");
         }
         else
         {
-            Debug.LogError("CreditService is null!");
+            Utils.DebugLogError("CreditService is null!");
         }
     }
 

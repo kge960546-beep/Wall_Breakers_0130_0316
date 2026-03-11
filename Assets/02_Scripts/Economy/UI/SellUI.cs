@@ -26,7 +26,7 @@ public class SellUI : MonoBehaviour
 
         if (GameManager.Instance == null)
         {
-            Debug.LogWarning("GameManager not ready yet, retrying...");
+            Utils.DebugLogWarning("GameManager not ready yet, retrying...");
             Invoke(nameof(InitalizeCreditService), 0.1f);
             return;
         }
@@ -39,11 +39,11 @@ public class SellUI : MonoBehaviour
             isInitalized = true;
             //초기 크레딧 표시
             UpdateTotalCredits();
-            Debug.Log("[SellUI] creditService successfully initalized in SellUI");
+            Utils.DebugLog("[SellUI] creditService successfully initalized in SellUI");
         }
         else
         {
-            Debug.LogError("[SellUI] CreditService not found in SellUI!");
+            Utils.DebugLogError("[SellUI] CreditService not found in SellUI!");
             //재시도
             Invoke(nameof(InitalizeCreditService), 0.1f);
         }

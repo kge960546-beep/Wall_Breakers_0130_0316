@@ -93,11 +93,11 @@ public class GuidePanel : MonoBehaviour
     /// </summary>
     public void OnClickPanel()
     {
-        Debug.Log("GuidePanel Button Clicked");
+        Utils.DebugLog("GuidePanel Button Clicked");
 
         if (!GuideManager.Instance.IsCurrentStepComplete())
         {
-            Debug.Log("Guide step not complete");
+            Utils.DebugLog("Guide step not complete");
             return;
         }
 

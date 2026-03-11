@@ -25,7 +25,7 @@ public class RegionUnlockZone : MonoBehaviour
     {
         if (regionData == null)
         {
-            Debug.LogError("[RegionUnlockZone] RegionData is NOT assigned!");
+            Utils.DebugLogError("[RegionUnlockZone] RegionData is NOT assigned!");
         }
         else
         {
@@ -34,7 +34,7 @@ public class RegionUnlockZone : MonoBehaviour
 
         if (unlockUI == null)
         {
-            Debug.LogError("[RegionUnlockZone] RegionUnlockUI is NOT assigned!");
+            Utils.DebugLogError("[RegionUnlockZone] RegionUnlockUI is NOT assigned!");
         }
         else
         {
@@ -43,12 +43,12 @@ public class RegionUnlockZone : MonoBehaviour
 
         if (regionGate == null)
         {
-            Debug.LogWarning("[RegionUnlockZone] RegionGate is NOT assigned (optional)");
+            Utils.DebugLogWarning("[RegionUnlockZone] RegionGate is NOT assigned (optional)");
         }
 
         if (uiSpawnPoint == null)
         {
-            Debug.LogWarning("[RegionUnlockZone] UI Spawn Point not assigned, using zone position");
+            Utils.DebugLogWarning("[RegionUnlockZone] UI Spawn Point not assigned, using zone position");
             uiSpawnPoint = transform;
         }
     }
@@ -57,7 +57,7 @@ public class RegionUnlockZone : MonoBehaviour
     {
         if (GameManager.Instance == null)
         {
-            Debug.LogWarning("[RegionUnlockZone] GameManager not ready, retrying...");
+            Utils.DebugLogWarning("[RegionUnlockZone] GameManager not ready, retrying...");
             Invoke(nameof(InitializeService), 0.1f);
             return;
         }
@@ -74,7 +74,7 @@ public class RegionUnlockZone : MonoBehaviour
         }
         else
         {
-            Debug.LogError("[RegionUnlockZone] Failed to get RegionUnlockService, retrying...");
+            Utils.DebugLogError("[RegionUnlockZone] Failed to get RegionUnlockService, retrying...");
             Invoke(nameof(InitializeService), 0.1f);
         }
     }
@@ -113,13 +113,13 @@ public class RegionUnlockZone : MonoBehaviour
     {
         if (unlockService == null)
         {
-            Debug.LogWarning("[RegionUnlockZone] Cannot update gate - unlockService is null");
+            Utils.DebugLogWarning("[RegionUnlockZone] Cannot update gate - unlockService is null");
             return;
         }
 
         if (regionGate == null)
         {
-            Debug.LogWarning("[RegionUnlockZone] Cannot update gate - regionGate is null");
+            Utils.DebugLogWarning("[RegionUnlockZone] Cannot update gate - regionGate is null");
             return;
         }
 
@@ -138,52 +138,52 @@ public class RegionUnlockZone : MonoBehaviour
         {
             if (playerInZone)
             {
-                Debug.LogWarning("[RegionUnlockZone] Player already in zone!");
+                Utils.DebugLogWarning("[RegionUnlockZone] Player already in zone!");
                 return;
             }
 
             playerInZone = true;
-            Debug.Log($"[RegionUnlockZone] ✓ Player ENTERED Region {regionData.regionId} unlock zone");
+            Utils.DebugLog($"[RegionUnlockZone] ✓ Player ENTERED Region {regionData.regionId} unlock zone");
 
             if (unlockService == null)
             {
-                Debug.LogError("[RegionUnlockZone] unlockService is NULL!");
+                Utils.DebugLogError("[RegionUnlockZone] unlockService is NULL!");
                 return;
             }
 
             // 이미 해금된 경우 UI 표시 안 함
             if (unlockService.IsRegionUnlocked(regionData.regionId))
             {
-                Debug.Log($"[RegionUnlockZone] Region {regionData.regionId} already unlocked - not showing UI");
+                Utils.DebugLog($"[RegionUnlockZone] Region {regionData.regionId} already unlocked - not showing UI");
                 return;
             }
 
             // UI 표시
             if (unlockUI == null)
             {
-                Debug.LogError("[RegionUnlockZone] unlockUI is NULL!");
+                Utils.DebugLogError("[RegionUnlockZone] unlockUI is NULL!");
                 return;
             }
 
-            Debug.Log($"[RegionUnlockZone] Showing UI at position: {uiSpawnPoint.position}");
+            Utils.DebugLog($"[RegionUnlockZone] Showing UI at position: {uiSpawnPoint.position}");
             unlockUI.Show(regionData, unlockService, this, uiSpawnPoint.position);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log($"[RegionUnlockZone] OnTriggerExit: {other.gameObject.name}, Tag: {other.tag}");
+        Utils.DebugLog($"[RegionUnlockZone] OnTriggerExit: {other.gameObject.name}, Tag: {other.tag}");
 
         if (other.CompareTag("Player"))
         {
             if (!playerInZone)
             {
-                Debug.LogWarning("[RegionUnlockZone] Player was not in zone!");
+                Utils.DebugLogWarning("[RegionUnlockZone] Player was not in zone!");
                 return;
             }
 
             playerInZone = false;
-            Debug.Log($"[RegionUnlockZone] ✓ Player EXITED Region {regionData.regionId} unlock zone");
+            Utils.DebugLog($"[RegionUnlockZone] ✓ Player EXITED Region {regionData.regionId} unlock zone");
 
             if (unlockUI != null)
             {
@@ -194,17 +194,17 @@ public class RegionUnlockZone : MonoBehaviour
 
     public void AttemptUnlock()
     {
-        Debug.Log($"[RegionUnlockZone] AttemptUnlock called for Region {regionData?.regionId}");
+        Utils.DebugLog($"[RegionUnlockZone] AttemptUnlock called for Region {regionData?.regionId}");
 
         if (unlockService == null)
         {
-            Debug.LogError("[RegionUnlockZone] Cannot unlock - unlockService is null!");
+            Utils.DebugLogError("[RegionUnlockZone] Cannot unlock - unlockService is null!");
             return;
         }
 
         if (regionData == null)
         {
-            Debug.LogError("[RegionUnlockZone] Cannot unlock - regionData is null!");
+            Utils.DebugLogError("[RegionUnlockZone] Cannot unlock - regionData is null!");
             return;
         }
 
@@ -212,11 +212,11 @@ public class RegionUnlockZone : MonoBehaviour
 
         if (success)
         {
-            Debug.Log($"[RegionUnlockZone] ✓✓✓ Successfully unlocked Region {regionData.regionId}!");
+            Utils.DebugLog($"[RegionUnlockZone] ✓✓✓ Successfully unlocked Region {regionData.regionId}!");
         }
         else
         {
-            Debug.LogWarning($"[RegionUnlockZone] ✗ Failed to unlock Region {regionData.regionId}");
+            Utils.DebugLogWarning($"[RegionUnlockZone] ✗ Failed to unlock Region {regionData.regionId}");
         }
     }
 }

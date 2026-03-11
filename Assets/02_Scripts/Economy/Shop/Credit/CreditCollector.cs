@@ -27,12 +27,12 @@ public class CreditCollector : MonoBehaviour
     {
         if (creditSpawner == null)
         {
-            Debug.LogError("[CreditCollector] CreditSpawner is NOT assigned!");
+            Utils.DebugLogError("[CreditCollector] CreditSpawner is NOT assigned!");
         }
 
         if (collectUI == null)
         {
-            Debug.LogError("[CreditCollector] CreditCollectUI is NOT assigned!");
+            Utils.DebugLogError("[CreditCollector] CreditCollectUI is NOT assigned!");
         }
     }
 
@@ -48,7 +48,7 @@ public class CreditCollector : MonoBehaviour
 
         if (creditService != null)
         {
-            Debug.Log("[CreditCollector] CreditService successfully initialized");
+            Utils.DebugLog("[CreditCollector] CreditService successfully initialized");
         }
         else
         {
@@ -58,17 +58,18 @@ public class CreditCollector : MonoBehaviour
 
     public void StartCollecting()
     {
-        Debug.Log($"[CreditCollector] StartCollecting called. Current state: {isCollecting}");
+        Utils.DebugLog($"[CreditCollector] StartCollecting called. Current state: {isCollecting}");
 
         if (isCollecting)
         {
-            Debug.LogWarning("[CreditCollector] Already collecting!");
+            Utils.DebugLogWarning("[CreditCollector] Already collecting!");
             return;
         }
+        
 
         if (creditSpawner == null || collectUI == null)
         {
-            Debug.LogError("[CreditCollector] Cannot start - missing references!");
+            Utils.DebugLogError("[CreditCollector] Cannot start - missing references!");
             return;
         }
 
@@ -76,16 +77,16 @@ public class CreditCollector : MonoBehaviour
         collectUI.Show();
         collectCoroutine = StartCoroutine(CollectCycle());
 
-        Debug.Log("[CreditCollector] ✓ Collection STARTED");
+        Utils.DebugLog("[CreditCollector] ✓ Collection STARTED");
     }
 
     public void StopCollecting()
     {
-        Debug.Log($"[CreditCollector] StopCollecting called. Current state: {isCollecting}");
+        Utils.DebugLog($"[CreditCollector] StopCollecting called. Current state: {isCollecting}");
 
         if (!isCollecting)
         {
-            Debug.LogWarning("[CreditCollector] Not collecting!");
+            Utils.DebugLogWarning("[CreditCollector] Not collecting!");
             return;
         }
 
@@ -102,7 +103,7 @@ public class CreditCollector : MonoBehaviour
             collectUI.Hide();
         }
 
-        Debug.Log("[CreditCollector] ✓ Collection STOPPED");
+        Utils.DebugLog("[CreditCollector] ✓ Collection STOPPED");
     }
     private IEnumerator CollectCycle()
     {
@@ -148,7 +149,7 @@ public class CreditCollector : MonoBehaviour
     {
         if (isCollecting)
         {
-            Debug.Log("[CreditCollector] Component disabled, forcing stop");
+            Utils.DebugLog("[CreditCollector] Component disabled, forcing stop");
             StopCollecting();
         }
     }

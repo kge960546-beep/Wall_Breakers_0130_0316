@@ -55,13 +55,13 @@ public class MiningEffectController : MonoBehaviour
 
         if(destoryEffectPrefab == null)
         {
-            Debug.LogWarning("Destroy Effect Prefab is not assigned");
+            Utils.DebugLogWarning("Destroy Effect Prefab is not assigned");
             return;
         }
 
         if(PoolManager.instance == null)
         {
-            Debug.LogError("PoolManager instance not found");
+            Utils.DebugLogError("PoolManager instance not found");
             return;
         }
 

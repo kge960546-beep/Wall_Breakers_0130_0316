@@ -31,7 +31,7 @@ public class UpgradeUIButton : MonoBehaviour,
         // 노드 찾기
         if (graphBuilder.DAG.TryGetNode(targetSO.upgradeID, out node) == false)
         {
-            Debug.LogError("노드 찾기 실패: " + targetSO.upgradeID);
+            Utils.DebugLogError("노드 찾기 실패: " + targetSO.upgradeID);
         }
 
         // CreditService 연결
@@ -41,7 +41,7 @@ public class UpgradeUIButton : MonoBehaviour,
 
             if (creditService == null)
             {
-                Debug.LogError("[UpgradeUIButton] CreditService 연결 실패");
+                Utils.DebugLogError("[UpgradeUIButton] CreditService 연결 실패");
             }
         }
 

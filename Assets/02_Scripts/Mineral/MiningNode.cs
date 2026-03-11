@@ -271,7 +271,7 @@ public class MiningNode : MonoBehaviour
                 string sectionAchievementID = $"Section_{sectionIndex}_Mine";
                 int currentSectionTotal = SceneGameDataManager.instance.sectionMineralCount[sectionIndex];
 
-                Debug.Log($"[1.노드] ID: {sectionAchievementID}, 현재 캔 개수: {currentSectionTotal}");
+                Utils.DebugLog($"[1.노드] ID: {sectionAchievementID}, 현재 캔 개수: {currentSectionTotal}");
 
                 AchievementsManager.instance.ProgressAchievement(sectionAchievementID, currentSectionTotal);
             }

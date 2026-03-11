@@ -74,7 +74,9 @@ namespace DigitalOpus.MB.Examples
 
             if (GUILayout.Button("Combine textures & build combined mesh using coroutine"))
             {
+#if UNITY_EDITOR
                 Debug.Log("Starting to bake textures on frame " + Time.frameCount);
+#endif
                 MB3_MeshBaker meshbaker = target.GetComponentInChildren<MB3_MeshBaker>();
                 MB3_TextureBaker textureBaker = target.GetComponent<MB3_TextureBaker>();
 
@@ -99,7 +101,9 @@ namespace DigitalOpus.MB.Examples
 
         void OnBuiltAtlasesSuccess()
         {
+#if UNITY_EDITOR
             Debug.Log("Calling success callback. baking meshes");
+#endif
             MB3_MeshBaker meshbaker = target.GetComponentInChildren<MB3_MeshBaker>();
             MB3_TextureBaker textureBaker = target.GetComponent<MB3_TextureBaker>();
             //elapsedTime = Time.realtimeSinceStartup - t1;
@@ -115,7 +119,9 @@ namespace DigitalOpus.MB.Examples
                     meshbaker.Apply();
                 }
             }
+#if UNITY_EDITOR
             Debug.Log("Completed baking textures on frame " + Time.frameCount);
+#endif
         }
     }
 }

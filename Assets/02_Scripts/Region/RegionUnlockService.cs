@@ -16,7 +16,7 @@ public class RegionUnlockService
         Instance = this;
         unlockedRegions.Add(1);
         LoadUnlockedRegions();
-        Debug.Log("[RegionUnlockService] Service created. Region 1 unlocked by default.");
+        Utils.DebugLog("[RegionUnlockService] Service created. Region 1 unlocked by default.");
 
     }
 
@@ -42,13 +42,13 @@ public class RegionUnlockService
     {
         if(IsRegionUnlocked(regionId))
         {
-            Debug.Log($"[RegionUnlockService] Region {regionId} already unlocked");
+            Utils.DebugLog($"[RegionUnlockService] Region {regionId} already unlocked");
             return false;
         }
 
         if(regionId > 1 && !IsRegionUnlocked(regionId - 1))
         {
-            Debug.Log($"[RegionUnlockService] Previous region {regionId - 1} must be Unlocked first");
+            Utils.DebugLog($"[RegionUnlockService] Previous region {regionId - 1} must be Unlocked first");
             return false;
         }
 
@@ -56,7 +56,7 @@ public class RegionUnlockService
 
         if (creditService.credits < regionData.unlockRequirement.requiredCredits)
         {
-            Debug.Log($"[RegionUnlockService] Not enough credits: {creditService.credits}/{regionData.unlockRequirement.requiredCredits}");
+            Utils.DebugLog($"[RegionUnlockService] Not enough credits: {creditService.credits}/{regionData.unlockRequirement.requiredCredits}");
             return false;
         }
 
@@ -67,7 +67,7 @@ public class RegionUnlockService
 
             if (currentAmount < itemReq.requiredAmount)
             {
-                Debug.Log($"[RegionUnlockedService] Not enough {itemReq.itemData.itemName}: {currentAmount}/{itemReq.requiredAmount}");
+                Utils.DebugLog($"[RegionUnlockedService] Not enough {itemReq.itemData.itemName}: {currentAmount}/{itemReq.requiredAmount}");
                 return false;
             }
         }
@@ -87,7 +87,7 @@ public class RegionUnlockService
         if(creditsToDeduct >0)
         {
             creditService.AddCredit((int)-creditsToDeduct);
-            Debug.Log($"[RegionUnlockService] Deducted {creditsToDeduct} credits");
+            Utils.DebugLog($"[RegionUnlockService] Deducted {creditsToDeduct} credits");
         }
 
         // 아이템 차감
@@ -96,7 +96,7 @@ public class RegionUnlockService
             bool removed = PlayerInventory.Instance.RemoveItem(itemReq.itemData, itemReq.requiredAmount);
             if(removed)
             {
-                Debug.Log($"[RegionUnlockService] Deducted {itemReq.requiredAmount}x {itemReq.itemData.itemName}");
+                Utils.DebugLog($"[RegionUnlockService] Deducted {itemReq.requiredAmount}x {itemReq.itemData.itemName}");
             }
         }
 
@@ -114,7 +114,7 @@ public class RegionUnlockService
             GuideManager.Instance?.AddProgress(GuideActionType.UnlockSection2);
         }
 
-        Debug.Log($"[RegionUnlockService] Region {regionId} unlocked");
+        Utils.DebugLog($"[RegionUnlockService] Region {regionId} unlocked");
         return true;
     }
 
@@ -141,7 +141,7 @@ public class RegionUnlockService
             }
         }
 
-        Debug.Log($"[RegionUnlockService] Loaded unlocked regions: {data}");
+        Utils.DebugLog($"[RegionUnlockService] Loaded unlocked regions: {data}");
     }   
 
     public bool[] GetUnlockedStates(int totalUnlockSections)
@@ -162,6 +162,6 @@ public class RegionUnlockService
         unlockedRegions.Clear();
         unlockedRegions.Add(1); // 첫 지역만 유지
         SaveUnlockedRegions();
-        Debug.Log("[RegionUnlockService] All regions reset");
+        Utils.DebugLog("[RegionUnlockService] All regions reset");
     }
 }

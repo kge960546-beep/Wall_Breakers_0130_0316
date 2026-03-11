@@ -17,7 +17,7 @@ public class ToolsEquip : MonoBehaviour
         fsm = GetComponent<PlayerFSM>();
 
         if (fsm == null)
-            Debug.LogError("PlayerFSM 없음");
+            Utils.DebugLogError("PlayerFSM 없음");
 
     }
     private void OnEnable()
@@ -25,7 +25,7 @@ public class ToolsEquip : MonoBehaviour
         fsm.OnMiningStarted += EquipPickaxe;
         fsm.OnMiningEnded += UnequipPickaxe;
 
-        Debug.Log("ToolsEquip 이벤트 등록");
+        Utils.DebugLog("ToolsEquip 이벤트 등록");
     }
 
     private void OnDisable()
@@ -33,7 +33,7 @@ public class ToolsEquip : MonoBehaviour
         fsm.OnMiningStarted -= EquipPickaxe;
         fsm.OnMiningEnded -= UnequipPickaxe;
 
-        Debug.Log("ToolsEquip 이벤트 해제");
+        Utils.DebugLog("ToolsEquip 이벤트 해제");
     }
 
     public void EquipPickaxe()
@@ -51,7 +51,7 @@ public class ToolsEquip : MonoBehaviour
         trailController = currentPickaxe.GetComponent<PickaxeTrailController>();
 
         if (trailController == null)
-            Debug.LogError("TrailController 없음");
+            Utils.DebugLogError("TrailController 없음");
 
         trailController.TrailOn();
 
@@ -85,7 +85,7 @@ public class ToolsEquip : MonoBehaviour
 
         if (trailController == null)
         {
-            Debug.Log("trailController NULL");
+            Utils.DebugLog("trailController NULL");
             return;
         }
 
