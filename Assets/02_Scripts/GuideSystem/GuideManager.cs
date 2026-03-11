@@ -99,6 +99,12 @@ public class GuideManager : MonoBehaviour
         GuideStepSO nextStep = CurrentStep;
 
         guidePanel.Show(nextStep, progressMap[nextStep]);
+
+        if(SceneGameDataManager.instance != null)
+        {
+            SceneGameDataManager.instance.SaveGame();
+            Utils.DebugLog($"가이드 {currentIndex}단계 진입 저장완료");
+        }
     }
 
     void GiveReward(GuideStepSO step)
@@ -138,5 +144,53 @@ public class GuideManager : MonoBehaviour
     public bool IsGuideFinished()
     {
         return currentIndex >= guideSteps.Count;
+    }
+
+    //가이드 현재 상황 저장, 불러오기, 초기화
+    public GuideSaveData GetSaveData()
+    {
+        GuideSaveData data = new GuideSaveData();
+        data.currentIndex = this.currentIndex;
+        data.progressList = new List<int>();
+
+        foreach(var step in guideSteps)
+        {
+            int value = progressMap.ContainsKey(step) ? progressMap[step] : 0;
+            data.progressList.Add(progressMap[step]);
+        }    
+        return data;
+    }
+    public void LoadGuideSaveData(int savedIndex, List<int> savedProgress)
+    {
+        this.currentIndex = savedIndex;     
+        progressMap.Clear();
+
+        for(int i = 0; i < guideSteps.Count; i++)
+        {
+            int progress = (savedProgress != null && i < savedProgress.Count) ? savedProgress[i] : 0;
+            progressMap.Add(guideSteps[i], progress);
+        }
+
+        if(!IsGuideFinished())
+        {
+            guidePanel.Show(CurrentStep, progressMap[CurrentStep]);
+        }
+        else
+        {
+            guidePanel.Hide();
+        }
+    }
+
+    public void ResetGuideData()
+    {
+        currentIndex = 0;
+        progressMap.Clear();
+
+        foreach(var step in guideSteps)
+        {
+            progressMap.Add(step, 0);
+        }
+
+        guidePanel.Show(CurrentStep, 0);
     }
 }

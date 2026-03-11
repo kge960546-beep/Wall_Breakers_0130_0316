@@ -32,6 +32,10 @@ public class SceneGameDataManager : MonoBehaviour
     #endregion
     public List<string> savedAchievements = new List<string>();
 
+    [Header("가이드 퀘스트")]
+    public int guideCurrentIndex;
+    public List<int> guideSaveData = new List<int>();
+
     private bool isPendingLoad = false;
 
     private void Awake()
@@ -130,6 +134,13 @@ public class SceneGameDataManager : MonoBehaviour
             AchievementsManager.instance.ResetAllSO();
         }
 
+        this.guideCurrentIndex = 0;
+        this.guideSaveData.Clear();
+        if(GuideManager.Instance != null)
+        {
+            GuideManager.Instance.ResetGuideData();
+        }
+
         Utils.DebugLog("데이터 초기화 후 씬 재시작함");
     }
 
@@ -148,9 +159,19 @@ public class SceneGameDataManager : MonoBehaviour
         data.sectionProcessMineralCount = (int[])this.sectionProcessMineralCount.Clone();
         data.unCollectedMoney = this.unCollectedMoney;
         data.unlockedSections = (bool[])this.unlockedSections.Clone(); //배열은 복제해서 저장하는게 좋음
-        data.sectionFillAmount = (int[])this.sectionFillAmount.Clone();
-
+        data.sectionFillAmount = (int[])this.sectionFillAmount.Clone();        
+        
         data.achievementProgess = AchievementsManager.instance.GetUnlockedIds();
+
+        if(GuideManager.Instance != null)
+        {
+            var guideData = GuideManager.Instance.GetSaveData();
+            this.guideCurrentIndex = guideData.currentIndex;
+            this.guideSaveData = guideData.progressList;
+        }
+
+        data.guideCurrentIndex = this.guideCurrentIndex;
+        data.guideSaveData = new List<int>(this.guideSaveData);
 
         if (UpgradeGraphBuilder.instance != null)
         {
@@ -209,6 +230,9 @@ public class SceneGameDataManager : MonoBehaviour
         this.savedAchievements = data.achievementProgess;
 
         this.unlockedUpgradeNodeIds = new List<string>(data.unlockedUpgradeNodeIds);
+
+        this.guideCurrentIndex = data.guideCurrentIndex;
+        this.guideSaveData = new List<int>(data.guideSaveData);
     }
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -311,6 +335,11 @@ public class SceneGameDataManager : MonoBehaviour
 
             UpgradeUILoad();
             #endregion
+
+            if(GuideManager.Instance != null)
+            {
+                GuideManager.Instance.LoadGuideSaveData(this.guideCurrentIndex, this.guideSaveData);
+            }
             ResourceTableLoad();
             ProcessTableLoad();
         }
