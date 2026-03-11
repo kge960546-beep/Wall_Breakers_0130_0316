@@ -133,4 +133,10 @@ public class GuideManager : MonoBehaviour
     {
         return progressMap[CurrentStep] >= CurrentStep.targetCount;
     }
+
+    // 가이드 끝났는지 여부
+    public bool IsGuideFinished()
+    {
+        return currentIndex >= guideSteps.Count;
+    }
 }

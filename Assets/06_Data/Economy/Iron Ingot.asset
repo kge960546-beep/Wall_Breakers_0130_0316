@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: 7
   itemName: "\uAE08\uACE0"
-  itemType: 1
+  itemType: 0
   sellPrice: 300
-  sellDuration: 2
+  sellDuration: 1
   inputAmountPerProcess: 0
   processedResult: {fileID: 0}
   backPackRotationOffset: {x: 0, y: 90, z: 0}

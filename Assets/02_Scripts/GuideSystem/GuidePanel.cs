@@ -34,13 +34,20 @@ public class GuidePanel : MonoBehaviour
 
     [SerializeField] float moveDuration = 0.6f;
 
+    [SerializeField] private CanvasGroup canvasGroup;
+    [SerializeField] private float fadeDuration = 0.25f;
+
     private GuideStepSO currentStep;
+
+
 
     /// <summary>
     /// 가이드 표시
     /// </summary>
     public void Show(GuideStepSO step, int currentCount)
     {
+        canvasGroup.alpha = 1f;
+
         currentStep = step;
 
         iconImage.sprite = step.icon;
@@ -159,7 +166,7 @@ public class GuidePanel : MonoBehaviour
 
         yield return new WaitForSeconds(scatterDuration);
 
-        // Bezier 동시에
+        // Bezier
         for (int i = 0; i < coins.Count; i++)
         {
             Vector2 scatter = scatterTargets[i];
@@ -167,8 +174,10 @@ public class GuidePanel : MonoBehaviour
             Vector2 control = (scatter + end) * 0.5f + Vector2.up * 200f;
 
             StartCoroutine(
-                UITween.MoveBezierUI(coins[i], scatter, control, end, moveDuration)
+                MoveCoinSequence(coins[i], scatter, control, end)
             );
+
+            yield return new WaitForSeconds(0.08f); // 핵심 (코인 출발 간격)
         }
 
         yield return new WaitForSeconds(moveDuration);
@@ -176,6 +185,26 @@ public class GuidePanel : MonoBehaviour
         foreach (var coin in coins)
             Destroy(coin.gameObject);
 
+        // 패널 FadeOut
+        yield return StartCoroutine(
+            UITween.Fade(canvasGroup, 1f, 0f, fadeDuration)
+        );
+
+        // 다음 가이드 스텝으로 전환 
         GuideManager.Instance.CompleteCurrentStep();
+
+        if (GuideManager.Instance.IsGuideFinished() == false)
+        {
+            yield return StartCoroutine(
+                UITween.Fade(canvasGroup, 0f, 1f, fadeDuration)
+            );
+        }
+    }
+
+    IEnumerator MoveCoinSequence(RectTransform coin, Vector2 start, Vector2 control, Vector2 end)
+    {
+        yield return StartCoroutine(
+            UITween.MoveBezierUI(coin, start, control, end, moveDuration)
+        );
     }
 }
