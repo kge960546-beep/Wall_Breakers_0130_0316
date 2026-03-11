@@ -38,14 +38,6 @@ public class CreditDebugSetter : MonoBehaviour
 
         creditService = GameManager.Instance.GetService<CreditService>();
         Debug.Log("CreditService = " + creditService);
-
-        if (creditService != null)
-        {
-            creditService.SetCredit(debugCreditAmount);
-        }
-        else
-        {
-        }
     }
 
 #if UNITY_EDITOR

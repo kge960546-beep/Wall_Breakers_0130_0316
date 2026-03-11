@@ -16,7 +16,7 @@ MonoBehaviour:
   itemName: "\uBC14\uC704\uBCBD\uB3CC"
   itemType: 1
   sellPrice: 20
-  sellDuration: 3
+  sellDuration: 1
   inputAmountPerProcess: 0
   processedResult: {fileID: 0}
   backPackRotationOffset: {x: 0, y: 90, z: 0}
