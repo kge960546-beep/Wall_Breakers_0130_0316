@@ -4,8 +4,8 @@ using UnityEngine.UI;
 
 public class GuidePanelToggle : MonoBehaviour
 {
-    [Header("Target")]
     [SerializeField] private RectTransform guidePanel;
+    [SerializeField] private RectTransform toggleButton;
 
     [Header("Animation")]
     [SerializeField] private float duration = 0.25f;
@@ -14,11 +14,13 @@ public class GuidePanelToggle : MonoBehaviour
     private bool isAnimating = false;
 
     private Button button;
+    private Vector2 originalPos;
 
     private void Awake()
     {
         button = GetComponent<Button>();
         button.onClick.AddListener(OnClickToggle);
+        originalPos = guidePanel.anchoredPosition;
     }
 
     private void OnClickToggle()
@@ -35,9 +37,41 @@ public class GuidePanelToggle : MonoBehaviour
     {
         isAnimating = true;
 
-        yield return UITween.Scale(guidePanel, Vector3.one, Vector3.zero, duration);
+        Vector2 startPos = guidePanel.anchoredPosition;
+
+        Vector2 buttonLocal;
+
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            guidePanel.parent as RectTransform,
+            RectTransformUtility.WorldToScreenPoint(null, toggleButton.position),
+            null,
+            out buttonLocal
+        );
+
+        Vector2 offset = buttonLocal - startPos;
+
+        float time = 0f;
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            float t = time / duration;
+
+            float scale = Mathf.Lerp(1f, 0f, t);
+
+            guidePanel.localScale = Vector3.one * scale;
+
+            guidePanel.anchoredPosition = startPos + offset * (1f - scale);
+
+            yield return null;
+        }
+
+        guidePanel.localScale = Vector3.zero;
+        guidePanel.anchoredPosition = buttonLocal;
 
         guidePanel.gameObject.SetActive(false);
+
+        guidePanel.anchoredPosition = originalPos;
 
         isOpen = false;
         isAnimating = false;
@@ -49,9 +83,39 @@ public class GuidePanelToggle : MonoBehaviour
 
         guidePanel.gameObject.SetActive(true);
 
+        Vector2 buttonLocal;
+
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            guidePanel.parent as RectTransform,
+            RectTransformUtility.WorldToScreenPoint(null, toggleButton.position),
+            null,
+            out buttonLocal
+        );
+
+        Vector2 startPos = originalPos;
+        Vector2 offset = buttonLocal - startPos;
+
+        guidePanel.anchoredPosition = buttonLocal;
         guidePanel.localScale = Vector3.zero;
 
-        yield return UITween.Scale(guidePanel, Vector3.zero, Vector3.one, duration);
+        float time = 0f;
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            float t = time / duration;
+
+            float scale = Mathf.Lerp(0f, 1f, t);
+
+            guidePanel.localScale = Vector3.one * scale;
+
+            guidePanel.anchoredPosition = startPos + offset * (1f - scale);
+
+            yield return null;
+        }
+
+        guidePanel.localScale = Vector3.one;
+        guidePanel.anchoredPosition = originalPos;
 
         isOpen = true;
         isAnimating = false;
