@@ -5,18 +5,6 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/01_Scenes/TestMapNavMesh.unity
-    guid: 1dd73a1640a29e64e91426c41a039968
-  - enabled: 0
-    path: Assets/01_Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 0
-    path: Assets/01_Scenes/Won 2.unity
-    guid: aa50fb9611e3bc440b37192772cce9e0
-  - enabled: 0
-    path: Assets/01_Scenes/TestMapAStar.unity
-    guid: f0ee44e4bcfa17d47bc81f53013bad2a
   - enabled: 1
     path: Assets/01_Scenes/MainUI.unity
     guid: 32b143d4799ff744b8d00f71403f7783

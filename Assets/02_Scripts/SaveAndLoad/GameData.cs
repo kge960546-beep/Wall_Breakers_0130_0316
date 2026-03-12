@@ -16,6 +16,7 @@ public class GameData
     public int unCollectedMoney;
 
     [Header("섹션해금유무, 섹션해금에 들어간 자원수량")]
+    public List<int> unlockedRegionList;
     public bool[] unlockedSections = new bool[5];
     public int[] sectionFillAmount = new int[100];
 

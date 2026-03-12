@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class SaveSystem : MonoBehaviour
 {
-    private static readonly string SavePath = Path.Combine(Application.persistentDataPath, "Save.json");
+    private static  string SavePath => Path.Combine(Application.persistentDataPath, "Save.json");
 
     public static void Save(GameData data, bool prettuprint = true)
     {
@@ -42,5 +42,8 @@ public class SaveSystem : MonoBehaviour
         {
             Utils.DebugLog("[SaveSystem] 삭제할 저장 파일이 없습니다");
         }
+        PlayerPrefs.DeleteAll();
+
+        PlayerPrefs.Save();
     }
 }
