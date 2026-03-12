@@ -16,7 +16,7 @@ public class UpgradeUIManager : MonoBehaviour
 
     [SerializeField] private GameObject regionLockedText;
 
-    [SerializeField] private CanvasGroup adCanvasGroup; // 광고 UI 입력 차단용
+    
 
     private int currentSectionIndex = 0;
     private RegionUnlockService regionUnlockService;
@@ -62,9 +62,7 @@ public class UpgradeUIManager : MonoBehaviour
         if (openRoutine != null)
             StopCoroutine(openRoutine);
 
-        openRoutine = StartCoroutine(OpenPanelFlow(rect));
-
-        adCanvasGroup.blocksRaycasts = false;
+        openRoutine = StartCoroutine(OpenPanelFlow(rect));        
     }
 
     // 패널 닫기
@@ -83,9 +81,7 @@ public class UpgradeUIManager : MonoBehaviour
         sectionPanels[currentSectionIndex].SetActive(false);
 
         if (regionLockedText != null)
-            regionLockedText.SetActive(false);
-
-        adCanvasGroup.blocksRaycasts = true;
+            regionLockedText.SetActive(false);        
     }
 
     // ===============================

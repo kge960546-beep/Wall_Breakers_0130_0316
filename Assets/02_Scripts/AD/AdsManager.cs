@@ -19,7 +19,7 @@ public class AdsManager : MonoBehaviour
     [Header("닫기 버튼 활성화 시간")]
     [SerializeField] private float closeButtonDelay = 10f;
 
-    [SerializeField] private CanvasGroup upgradeCanvasGroup;
+    
 
     private AdRewardData pendingReward;
     private Coroutine closeButtonRoutine;
@@ -49,7 +49,7 @@ public class AdsManager : MonoBehaviour
         // UI 초기화
         adPanel.SetActive(true);
         closeButton.SetActive(false);
-        upgradeCanvasGroup.blocksRaycasts = false;
+        
 
         // 효과음, 브금 일시정지
         if (SFXManager.instance != null)
@@ -87,7 +87,7 @@ public class AdsManager : MonoBehaviour
         // UI 닫기
         adPanel.SetActive(false);
         closeButton.SetActive(false);
-        upgradeCanvasGroup.blocksRaycasts = true;
+        
 
         // 브금이랑 효과음 재개
         if (SFXManager.instance != null)
