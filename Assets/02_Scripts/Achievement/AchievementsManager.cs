@@ -63,16 +63,18 @@ public class AchievementsManager : MonoBehaviour
 
     //업적 달성조건에 부합하면 달성함수 호출
     public void ProgressAchievement(string id, int amount)
-    {
-        if (unlockIDs.Contains(id)) return;
-
-        AchievementSO achieve = achievements.Find(a => a.id == id);
-
-        if (achieve != null)
+    {     
+        foreach(var achieve in achievements)
         {
-            if (amount >= achieve.targetValue)
+            if (achieve == null) continue;
+
+            if(achieve.id.Contains(id) && !unlockIDs.Contains(achieve.id))
             {
-                UnlockAchievement(achieve);
+
+                if (amount >= achieve.targetValue)
+                {
+                    UnlockAchievement(achieve);
+                }
             }
         }
     }
@@ -85,7 +87,8 @@ public class AchievementsManager : MonoBehaviour
         unlockIDs.Add(a.id);
         a.isUnlocked = true;
 
-        SceneGameDataManager.instance.SaveGame();
+        if(SceneGameDataManager.instance != null)
+            SceneGameDataManager.instance.SaveGame();
 
         Utils.DebugLog($"업적달성: {a.title}");
 
