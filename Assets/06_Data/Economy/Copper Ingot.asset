@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: 5
   itemName: "\uAD6C\uB9AC\uBC30\uD130\uB9AC"
-  itemType: 0
+  itemType: 1
   sellPrice: 75
   sellDuration: 1
   inputAmountPerProcess: 0
   processedResult: {fileID: 0}
-  backPackRotationOffset: {x: 0, y: 90, z: 0}
-  mineralPrefab: {fileID: 919132149155446097, guid: ecc0a486916caa34faefc78445de1b0d,
+  backPackRotationOffset: {x: 90, y: 90, z: 180}
+  mineralPrefab: {fileID: 919132149155446097, guid: ff36484358ddd7c4f8715e282cca63f0,
     type: 3}
   icon: {fileID: 21300000, guid: 32334ccdb96c5484a8f325cec005c88d, type: 3}
