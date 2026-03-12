@@ -24,17 +24,18 @@ public class SceneGameDataManager : MonoBehaviour
     public int unCollectedMoney;
 
     [Header("섹션해금유무, 섹션해금에 들어간 자원수량")]
+    public List<int> unlockedRegionList = new List<int>();
     public bool[] unlockedSections;
     public int[] sectionFillAmount;
 
     [Header("업그래이드 리스트")]
     public List<string> unlockedUpgradeNodeIds = new List<string>();
-    #endregion
     public List<string> savedAchievements = new List<string>();
 
     [Header("가이드 퀘스트")]
     public int guideCurrentIndex;
     public List<int> guideSaveData = new List<int>();
+    #endregion
 
     private bool isPendingLoad = false;
 
@@ -97,6 +98,9 @@ public class SceneGameDataManager : MonoBehaviour
             for (int i = 0; i < sectionProcessMineralCount.Length; i++) sectionProcessMineralCount[i] = 0;
         }
 
+        this.unlockedRegionList.Clear();
+        this.unlockedRegionList.Add(1);
+
         if (unlockedSections != null)
         {
             for (int i = 0; i < unlockedSections.Length; i++)
@@ -112,7 +116,7 @@ public class SceneGameDataManager : MonoBehaviour
 
         if (RegionUnlockService.Instance != null)
         {
-            RegionUnlockService.Instance.LoadUnlockedRegions();
+            RegionUnlockService.Instance.ManagerLink(this.unlockedRegionList);            
         }
 
         this.unlockedUpgradeNodeIds.Clear();
@@ -162,6 +166,8 @@ public class SceneGameDataManager : MonoBehaviour
         data.sectionFillAmount = (int[])this.sectionFillAmount.Clone();        
         
         data.achievementProgess = AchievementsManager.instance.GetUnlockedIds();
+
+        data.unlockedRegionList = new List<int>(this.unlockedRegionList);
 
         if(GuideManager.Instance != null)
         {
@@ -214,6 +220,24 @@ public class SceneGameDataManager : MonoBehaviour
             ApplyDataVariable(data);
             StartCoroutine(SceneLoadSaveData());
         }
+        else if(PlayerPrefs.HasKey("UnlockedRegions"))
+        {
+            string oldData = PlayerPrefs.GetString("UnlockedRegions", "1");
+            string[] ids = oldData.Split(',');
+
+            this.unlockedRegionList.Clear();
+            foreach(var id in ids)
+            {
+                if (int.TryParse(id, out int rest))
+                    this.unlockedRegionList.Add(rest);
+            }
+
+            PlayerPrefs.DeleteKey("UnlockedRegions");
+            PlayerPrefs.Save();
+
+            SaveGame();
+            StartCoroutine(SceneLoadSaveData());
+        }
     }
 
     void ApplyDataVariable(GameData data)
@@ -229,10 +253,21 @@ public class SceneGameDataManager : MonoBehaviour
 
         this.savedAchievements = data.achievementProgess;
 
-        this.unlockedUpgradeNodeIds = new List<string>(data.unlockedUpgradeNodeIds);
-
+        if(data.unlockedUpgradeNodeIds != null)
+        {
+            this.unlockedUpgradeNodeIds = new List<string>(data.unlockedUpgradeNodeIds);
+        }
+        
         this.guideCurrentIndex = data.guideCurrentIndex;
-        this.guideSaveData = new List<int>(data.guideSaveData);
+        if(data.guideSaveData != null)
+        {
+            this.guideSaveData = new List<int>(data.guideSaveData);
+        }        
+
+        if(data.unlockedRegionList != null)
+        {
+            this.unlockedRegionList = new List<int>(data.unlockedRegionList);
+        }
     }
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -276,7 +311,7 @@ public class SceneGameDataManager : MonoBehaviour
             #region 섹션해금
             if (RegionUnlockService.Instance != null)
             {
-                RegionUnlockService.Instance.LoadUnlockedRegions();
+                RegionUnlockService.Instance.ManagerLink(this.unlockedRegionList);                
             }
 
             RegionUnlockZone[] allzones = FindObjectsByType<RegionUnlockZone>(FindObjectsSortMode.None);
@@ -370,7 +405,7 @@ public class SceneGameDataManager : MonoBehaviour
         if (RegionUnlockService.Instance != null)
         {
             this.unlockedSections = RegionUnlockService.Instance.GetUnlockedStates(5);
-            RegionUnlockService.Instance.SaveUnlockedRegions();
+             this.unlockedRegionList =RegionUnlockService.Instance.GetUnlockList();            
         }
     }
 

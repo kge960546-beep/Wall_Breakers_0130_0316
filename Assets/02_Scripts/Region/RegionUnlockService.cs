@@ -120,9 +120,14 @@ public class RegionUnlockService
 
     public void SaveUnlockedRegions()
     {
-        string data = string.Join(",", unlockedRegions);
-        PlayerPrefs.SetString("UnlockedRegions", data);
-        PlayerPrefs.Save();
+        if(SceneGameDataManager.instance != null)
+        {
+            SceneGameDataManager.instance.SaveUnlockSection();
+            SceneGameDataManager.instance.SaveGame();
+        }
+        //string data = string.Join(",", unlockedRegions);
+        //PlayerPrefs.SetString("UnlockedRegions", data);
+        //PlayerPrefs.Save();
         //Debug.Log($"[RegionUnlockService]");
     }
 
@@ -152,6 +157,26 @@ public class RegionUnlockService
             states[i] = unlockedRegions.Contains(i + 1);
         }
         return states;
+    }
+
+    public void ManagerLink(List<int> managerLink)
+    {
+        unlockedRegions.Clear();
+
+        if(managerLink != null && managerLink.Count > 0)
+        {
+            foreach (int id in managerLink)
+                unlockedRegions.Add(id);
+        }
+        else
+        {
+            unlockedRegions.Add(1);
+        }
+        Utils.DebugLog("저장 데이터 동기화 함");
+    }
+    public List<int> GetUnlockList()
+    {
+        return new List<int>(unlockedRegions);
     }
 
     /// <summary>
