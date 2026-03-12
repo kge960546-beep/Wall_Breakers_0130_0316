@@ -1,6 +1,5 @@
-using UnityEngine;
 using System.Collections;
-using System.Linq;
+using UnityEngine;
 
 public class UpgradeUIManager : MonoBehaviour
 {
@@ -41,6 +40,10 @@ public class UpgradeUIManager : MonoBehaviour
     // 패널 열기
     public void OpenUpgradePanel()
     {
+        foreach (var pan in sectionPanels)
+        {
+            if (pan.activeSelf == true) return;
+        }
         if (sectionPanels.Length == 0) return;
 
         if (regionLockedText != null)
@@ -72,7 +75,7 @@ public class UpgradeUIManager : MonoBehaviour
         if (openRoutine != null)
             StopCoroutine(openRoutine);
 
-        if(SFXManager.instance != null)
+        if (SFXManager.instance != null)
         {
             SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting 2", Camera.main.transform.position);
         }

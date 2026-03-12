@@ -50,25 +50,25 @@ public class PlayerMove : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Move();        
+        Move();
     }
 
     public void Footsteps()
     {
         Vector2 horizontalSound = new Vector2(rb.velocity.x, rb.velocity.z);
 
-        if(horizontalSound.magnitude > 0.1f)
+        if (horizontalSound.magnitude > 0.1f)
         {
             footstepTimer -= Time.fixedDeltaTime;
 
-            if(footstepTimer <= 0)
+            if (footstepTimer <= 0)
             {
                 SFXManager.instance.PlayOnSFX("Footstep2", transform.position);
 
                 //걷는속도에따라 효과음 조절
                 float currentStepInterval = FootstepInterval / (moveSpeed / baseMoveSpeed);
                 footstepTimer = currentStepInterval;
-            }         
+            }
         }
         else
         {
@@ -78,7 +78,7 @@ public class PlayerMove : MonoBehaviour
 
     public void FootstepsSound()
     {
-        if(rb.velocity.magnitude > 0.1f)
+        if (rb.velocity.magnitude > 0.1f)
         {
             SFXManager.instance.PlayOnSFX("Footstep2", transform.position);
         }

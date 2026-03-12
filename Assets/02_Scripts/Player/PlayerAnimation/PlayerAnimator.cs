@@ -117,9 +117,9 @@ public class PlayerAnimator : MonoBehaviour
     /// </summary>
     private void HandleMiningTrail()
     {
-        if(fsm.CurrentStateType != PlayerStateType.Mining)
+        if (fsm.CurrentStateType != PlayerStateType.Mining)
         {
-            if(trailActive)
+            if (trailActive)
             {
                 toolsEquip.TrailOff();
                 trailActive = false;
@@ -129,7 +129,7 @@ public class PlayerAnimator : MonoBehaviour
 
         AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
 
-        if (!state.IsName("Chopping")) 
+        if (!state.IsName("Chopping"))
             return;
 
         float time = state.normalizedTime;
@@ -141,7 +141,7 @@ public class PlayerAnimator : MonoBehaviour
         // 실제 타격 구간
         bool shouldTrail = time >= 0f && time <= 0.3f;
 
-        if(shouldTrail && !trailActive)
+        if (shouldTrail && !trailActive)
         {
             toolsEquip.TrailOn();
             trailActive = true;

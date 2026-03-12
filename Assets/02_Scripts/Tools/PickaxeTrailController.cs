@@ -8,7 +8,7 @@ public class PickaxeTrailController : MonoBehaviour
     {
         trail = GetComponentInChildren<TrailRenderer>();
 
-        if(trail == null)
+        if (trail == null)
         {
             Debug.LogError("TrailRenderer ¾øÀ½");
             return;
@@ -22,7 +22,7 @@ public class PickaxeTrailController : MonoBehaviour
         Debug.Log("Trail On");
 
         trail.Clear();
-        trail.emitting =true;
+        trail.emitting = true;
     }
 
     public void TrailOff()

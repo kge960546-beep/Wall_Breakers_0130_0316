@@ -1,5 +1,4 @@
 using UnityEngine;
-using System;
 
 /// <summary>
 /// 자동 운반인 컨트롤러
@@ -10,7 +9,7 @@ public class CarrierController : MonoBehaviour
     [Header("ID")]
     [SerializeField] private string targetID;
 
-    private bool isUnlocked;
+    [SerializeField] private bool isUnlocked;
 
     public bool IsUnlocked => isUnlocked;
 

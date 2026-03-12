@@ -15,38 +15,38 @@ public class RegionGate : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log($"[RegionGate] Start - Gate objects count: {gateObjects?.Length ?? 0}");
+        Utils.DebugLog($"[RegionGate] Start - Gate objects count: {gateObjects?.Length ?? 0}");
         ValidateSetup();
     }
     private void ValidateSetup()
     {
         if (gateObjects == null || gateObjects.Length == 0)
         {
-            Debug.LogWarning("[RegionGate] No Gate objects assigned!");
+            Utils.DebugLogWarning("[RegionGate] No Gate objects assigned!");
         }
         else
         {
-            Debug.Log($"[RegionGate] Gate objects assigned:");
+            Utils.DebugLog($"[RegionGate] Gate objects assigned:");
             for (int i = 0; i < gateObjects.Length; i++)
             {
                 if (gateObjects[i] != null)
                 {
-                    Debug.Log($" [{i}] {gateObjects[i].name} - Active: {gateObjects[i].activeSelf}");
+                    Utils.DebugLog($" [{i}] {gateObjects[i].name} - Active: {gateObjects[i].activeSelf}");
                 }
                 else
                 {
-                    Debug.LogWarning($"  [{i}] NULL gate object!");
+                    Utils.DebugLogWarning($"  [{i}] NULL gate object!");
                 }
             }
         }
     }
     public void SetGateState(bool open)
     {
-        Debug.Log($"[RegionGate] SetGateState called: {open} (current state: {isOpen})");
+        //Debug.Log($"[RegionGate] SetGateState called: {open} (current state: {isOpen})");
 
         if (isOpen == open)
         {
-            Debug.Log("[RegionGate] Gate already in requested state, ignoring");
+            //Debug.Log("[RegionGate] Gate already in requested state, ignoring");
             return;
         }
 
@@ -54,12 +54,12 @@ public class RegionGate : MonoBehaviour
 
         if (useAnimation && open)
         {
-            Debug.Log("[RegionGate] Opening gate with animation");
+            //Debug.Log("[RegionGate] Opening gate with animation");
             StartCoroutine(OpenGateAnimation());
         }
         else
         {
-            Debug.Log($"[RegionGate] Setting gate objects active: {!open}");
+            Utils.DebugLog($"[RegionGate] Setting gate objects active: {!open}");
             SetGateObjectsActive(!open);
         }
 
@@ -68,15 +68,15 @@ public class RegionGate : MonoBehaviour
         //    lockIcon.SetActive(!open);
         //}
 
-        Debug.Log($"[RegionGate] Gate {(open ? "opende" : "closed")}");
+        //Debug.Log($"[RegionGate] Gate {(open ? "opende" : "closed")}");
     }
     private void SetGateObjectsActive(bool active)
     {
-        Debug.Log($"[RegionGate] SetGateObjectsActive: {active}");
+        //Debug.Log($"[RegionGate] SetGateObjectsActive: {active}");
 
         if (gateObjects == null)
         {
-            Debug.LogError("[RegionGate] gateObjects array is NULL!");
+            Utils.DebugLogError("[RegionGate] gateObjects array is NULL!");
             return;
         }
 
@@ -85,11 +85,11 @@ public class RegionGate : MonoBehaviour
             if (gateObjects[i] != null)
             {
                 gateObjects[i].SetActive(active);
-                Debug.Log($"[RegionGate] Gate object [{i}] {gateObjects[i].name} set to: {active}");
+                Utils.DebugLog($"[RegionGate] Gate object [{i}] {gateObjects[i].name} set to: {active}");
             }
             else
             {
-                Debug.LogWarning($"[RegionGate] Gate object at index {i} is NULL!");
+                Utils.DebugLogWarning($"[RegionGate] Gate object at index {i} is NULL!");
             }
         }
     }
@@ -130,14 +130,14 @@ public class RegionGate : MonoBehaviour
     [ContextMenu("Test Open Gate")]
     public void TestOpenGate()
     {
-        Debug.Log("[RegionGate] Test: Opening gate");
+        Utils.DebugLog("[RegionGate] Test: Opening gate");
         SetGateState(true);
     }
 
     [ContextMenu("Test Close Gate")]
     public void TestCloseGate()
     {
-        Debug.Log("[RegionGate] Test: Closing gate");
+        Utils.DebugLog("[RegionGate] Test: Closing gate");
         SetGateState(false);
     }
     #endregion

@@ -1,6 +1,4 @@
 // 아무 작업도 안 하는 기본 상태
-using UnityEngine;
-
 public class FreeState : IPlayerState
 {
     public PlayerStateType StateType => PlayerStateType.Free;

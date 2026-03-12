@@ -1,5 +1,3 @@
-using System;
-
 public class SellLogEntry
 {
     public float time;

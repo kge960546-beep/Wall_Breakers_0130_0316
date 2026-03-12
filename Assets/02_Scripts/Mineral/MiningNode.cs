@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -64,7 +63,7 @@ public class MiningNode : MonoBehaviour
 
     private int baseMineAmount = 1;
     private int bonusPlayerMineAmount;   // 플레이어 전용
-                                         
+
     private int bonusMinerMineAmount;    // 광부 전용
 
     private void Awake()
@@ -240,7 +239,7 @@ public class MiningNode : MonoBehaviour
 
     private void Mine(int totalAmount)
     {
-        Debug.Log("Mine called at time: " + Time.time);
+        //Debug.Log("Mine called at time: " + Time.time);
 
         // 채굴 타격 이펙트 추가
         if (effectController != null)
@@ -270,6 +269,9 @@ public class MiningNode : MonoBehaviour
 
                 string sectionAchievementID = $"Section_{sectionIndex}_Mine";
                 int currentSectionTotal = SceneGameDataManager.instance.sectionMineralCount[sectionIndex];
+
+                Utils.DebugLog($"[1.노드] ID: {sectionAchievementID}, 현재 캔 개수: {currentSectionTotal}");
+
                 AchievementsManager.instance.ProgressAchievement(sectionAchievementID, currentSectionTotal);
             }
         }
@@ -290,10 +292,10 @@ public class MiningNode : MonoBehaviour
                 miningUI.CloseUI();
             }
             // 광물 파괴 이펙트 추가
-            if(effectController != null)
+            if (effectController != null)
             {
                 effectController.PlayDestroy(mineralPoint.position);
-            }            
+            }
 
             foreach (GameObject mineral in mineMineral)
                 mineral.SetActive(false);

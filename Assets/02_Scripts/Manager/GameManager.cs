@@ -1,7 +1,6 @@
-using UnityEngine;
 using System;
 using System.Collections.Generic;
-using UnityEngine.Rendering.Universal;
+using UnityEngine;
 
 /// <summary>
 /// GameManager
@@ -81,18 +80,18 @@ public class GameManager : MonoBehaviour
     #region Service
     private void RegisterServices()
     {
-        RegisterService(new CreditService());        
+        RegisterService(new CreditService());
         Utils.DebugLog("[GameManager] CreditService registed successfully");
 
-        RegisterService(new RegionUnlockService());        
+        RegisterService(new RegionUnlockService());
         Utils.DebugLog("[GameManager] RegionUnlockService registed successfully");
     }
     private void RegisterService<T>(T service)
     {
         var type = typeof(T);
 
-        if(services.ContainsKey(type))
-        {            
+        if (services.ContainsKey(type))
+        {
             Utils.DebugLogWarning($"[GameManager] Service already registed: {type}");
             return;
         }
@@ -103,9 +102,9 @@ public class GameManager : MonoBehaviour
     {
         var type = typeof(T);
 
-        if(services.TryGetValue(type, out var service))
+        if (services.TryGetValue(type, out var service))
             return (T)service;
-        
+
         Utils.DebugLogError($"[GameManger] Service not found : {type}");
         return default;
     }

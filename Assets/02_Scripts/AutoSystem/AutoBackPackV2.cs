@@ -101,6 +101,6 @@ public class AutoBackPackV2 : MonoBehaviour
 
         maxCapacity = baseCapacity + bonusCapacity;
 
-        Debug.Log($"[AutoBackPackV2:{targetID}] 최대 적재량 적용 → {maxCapacity}");
+        Utils.DebugLog($"[AutoBackPackV2:{targetID}] 최대 적재량 적용 → {maxCapacity}");
     }
 }

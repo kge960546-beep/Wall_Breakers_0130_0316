@@ -1,15 +1,15 @@
 using UnityEngine;
 
 public class UpgradeSyncScript : MonoBehaviour
-{ 
+{
     public void UpgradeSuccess()
     {
-        if(UpgradeEffectManager.Instance != null)
+        if (UpgradeEffectManager.Instance != null)
         {
             UpgradeEffectManager.Instance.RecalculateAllEffects();
         }
 
-        if(SceneGameDataManager.instance != null)
+        if (SceneGameDataManager.instance != null)
         {
             SceneGameDataManager.instance.SaveGame();
         }

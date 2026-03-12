@@ -30,7 +30,7 @@ public class LoadingSceneController : MonoBehaviour
 
             return instance;
         }
-    }    
+    }
 
     /// <summary>
     /// 모든씬에서 특별한 설정 없이 불러오기
@@ -47,7 +47,7 @@ public class LoadingSceneController : MonoBehaviour
     [SerializeField] private CanvasGroup canvasGroup;       //페이드 인 아웃 효과를 주기위한 그룹
     [SerializeField] private Image progressBar;             //로딩이 얼마나 되었는지 보여주느귀한 이미지
     [SerializeField] private TextMeshProUGUI toolTipLabel;  //로딩 화면 도중 정보를 텍스트로 제공하기 위한 툴팁 라벨
-   
+
     [SerializeField][TextArea] String[] toolTips;           //제공할 툴팁을 미리 정한다.
     private string loadSceneName;
 
@@ -56,17 +56,17 @@ public class LoadingSceneController : MonoBehaviour
 
     private void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
-            instance=this;
+            instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        else if(instance != this)
+        else if (instance != this)
         {
             Destroy(gameObject);
-        }        
+        }
     }
-        
+
     /// <summary>
     /// 싱글턴을 이용하여 외부에서 호출하여 씬을 로드
     /// action을 추가하여 씬을 완전히 로드한 후 한 프레임이 지난 LateStart 시점에 함수를 호출  
@@ -84,7 +84,7 @@ public class LoadingSceneController : MonoBehaviour
         if (toolTips.Length > 0)
         {
             toolTipLabel.text = toolTips[UnityEngine.Random.Range(0, toolTips.Length)];
-        }       
+        }
 
         StartCoroutine(LoadSceneProcessCo());
     }
@@ -186,7 +186,7 @@ public class LoadingSceneController : MonoBehaviour
 
         if (!isFadeIn)
         {
-            StartCoroutine(LateStartCo());            
-        }     
+            StartCoroutine(LateStartCo());
+        }
     }
 }

@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 public class SFXManager : MonoBehaviour
@@ -12,6 +11,7 @@ public class SFXManager : MonoBehaviour
     private Dictionary<string, AudioClip> sfxClipDic;
     AudioSource bgmPlayer;
     AudioSource sfxPlayer;
+    [SerializeField] GameObject sfxPrefab;
 
     [SerializeField] AudioClip[] audioClips;
 
@@ -24,13 +24,14 @@ public class SFXManager : MonoBehaviour
     [Range(0f, 1f)] public float sfxVolume = 0.5f;
 
     bool isSFXBlocked = false;
+    bool is3D = true;
 
     // BGM 코루틴 저장용
     Coroutine bgmRoutine;
 
     private void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
@@ -40,7 +41,7 @@ public class SFXManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }   
+    }
 
     void Init()
     {
@@ -55,10 +56,9 @@ public class SFXManager : MonoBehaviour
         sfxPlayer.spatialBlend = 1.0f;
 
         sfxClipDic = new Dictionary<string, AudioClip>();
-
-        if(audioClips != null)
+        if (audioClips != null)
         {
-            foreach(var clip in audioClips)
+            foreach (var clip in audioClips)
             {
                 sfxClipDic[clip.name] = clip;
             }
@@ -74,12 +74,14 @@ public class SFXManager : MonoBehaviour
 
         if (sfxClipDic.TryGetValue(soundName, out var clip))
         {
-            GameObject tr = new GameObject("PlaySFX" + soundName);
+            GameObject tr = PoolManager.instance.Get(sfxPrefab, soundPos, Quaternion.identity);
             tr.transform.position = soundPos;
-            AudioSource source = tr.AddComponent<AudioSource>();
+            AudioSource source = tr.GetComponent<AudioSource>();
+
             source.clip = clip;
             source.volume = sfxVolume;
 
+            source.dopplerLevel = 0.0f;
             source.spatialBlend = 1.0f;
             source.minDistance = 5.0f;
             source.maxDistance = 50f;
@@ -89,11 +91,11 @@ public class SFXManager : MonoBehaviour
 
             float playTime = (duration > 0) ? duration : clip.length;
 
-            StartCoroutine(DestroySFX(tr, source, playTime));
+            StartCoroutine(ReturnSFX(tr, source, playTime));
         }
     }
 
-    IEnumerator DestroySFX(GameObject tr, AudioSource source, float time)
+    IEnumerator ReturnSFX(GameObject tr, AudioSource source, float time)
     {
         yield return new WaitForSeconds(time);
 
@@ -101,13 +103,13 @@ public class SFXManager : MonoBehaviour
 
         float fadeTime = 0.1f;
         float startVol = source.volume;
-        while(source != null && source.volume > 0)
+        while (source != null && source.volume > 0)
         {
             source.volume -= startVol * (Time.deltaTime / fadeTime);
             yield return null;
         }
 
-        Destroy(tr);
+        PoolManager.instance.ReturnIt(sfxPrefab, tr);
     }
 
     public void BlockSFX(bool isblock)
@@ -118,7 +120,7 @@ public class SFXManager : MonoBehaviour
     {
         if (sfxClipDic.TryGetValue(soundName, out var clip))
         {
-            if(bgmPlayer.clip == clip && bgmPlayer.isPlaying) return;
+            if (bgmPlayer.clip == clip && bgmPlayer.isPlaying) return;
 
             bgmPlayer.clip = clip;
             bgmPlayer.Play();
@@ -148,7 +150,7 @@ public class SFXManager : MonoBehaviour
         {
             string currentBGM = bgmPlayList[currentBGMIndex];
 
-            if(sfxClipDic.TryGetValue(currentBGM, out var clip))
+            if (sfxClipDic.TryGetValue(currentBGM, out var clip))
             {
                 bgmPlayer.clip = clip;
                 bgmPlayer.Play();

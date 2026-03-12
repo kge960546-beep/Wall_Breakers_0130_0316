@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -12,7 +10,7 @@ public class TestGoldUI : MonoBehaviour
 
     private void Update()
     {
-        if(long.TryParse(inputField.text, out number))
+        if (long.TryParse(inputField.text, out number))
         {
             goldText.text = NotateNumber.ChangeNumber(number);
         }

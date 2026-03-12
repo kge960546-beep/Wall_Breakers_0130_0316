@@ -1,8 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 
 public class GuidePanel : MonoBehaviour
@@ -93,14 +93,18 @@ public class GuidePanel : MonoBehaviour
     /// </summary>
     public void OnClickPanel()
     {
-        Debug.Log("GuidePanel Button Clicked");
+        Utils.DebugLog("GuidePanel Button Clicked");
 
         if (!GuideManager.Instance.IsCurrentStepComplete())
         {
-            Debug.Log("Guide step not complete");
+            Utils.DebugLog("Guide step not complete");
             return;
         }
 
+        if (SFXManager.instance != null)
+        {
+            SFXManager.instance.PlayOnSFX("2GideReward", Camera.main.transform.position);
+        }
         StartCoroutine(RewardSequence());
     }
 
@@ -143,6 +147,7 @@ public class GuidePanel : MonoBehaviour
 
             RectTransform rect = icon.GetComponent<RectTransform>();
             rect.anchoredPosition = start;
+
 
             coins.Add(rect);
         }

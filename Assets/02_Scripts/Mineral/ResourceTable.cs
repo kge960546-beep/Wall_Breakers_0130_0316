@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ResourceTable : MonoBehaviour
 {
-     List<Transform> resourceInTable = new List<Transform>();
+    List<Transform> resourceInTable = new List<Transform>();
     [SerializeField] Transform tablePos; //테이블 위치
     [SerializeField] float itemHeight = 0.3f; //아이템 높이 간격
 
@@ -33,7 +33,7 @@ public class ResourceTable : MonoBehaviour
 
     private void OnEnable()
     {
-    
+
     }
     private IEnumerator Start()
     {
@@ -46,7 +46,7 @@ public class ResourceTable : MonoBehaviour
         }
         else
         {
-            
+
         }
     }
 
@@ -131,7 +131,7 @@ public class ResourceTable : MonoBehaviour
     {
         if (mineralPrefab == null)
         {
-            Debug.LogError($"{gameObject.name}의 mineralPrefab이 비어있습니다!");
+            Utils.DebugLogError($"{gameObject.name}의 mineralPrefab이 비어있습니다!");
             return;
         }
 
@@ -141,13 +141,13 @@ public class ResourceTable : MonoBehaviour
             PoolManager.instance.ReturnIt(mineralPrefab, obj);
         }
 
-        for(int i = 0; i < amount; i++)
+        for (int i = 0; i < amount; i++)
         {
             GameObject item = PoolManager.instance.Get(mineralPrefab, tablePos.position, tablePos.rotation);
 
             if (item == null)
             {
-                Debug.LogError("PoolManager에서 아이템을 가져오지 못했습니다.");
+                Utils.DebugLogError("PoolManager에서 아이템을 가져오지 못했습니다.");
                 continue;
             }
 

@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class ToolsEquip : MonoBehaviour
@@ -17,7 +14,7 @@ public class ToolsEquip : MonoBehaviour
         fsm = GetComponent<PlayerFSM>();
 
         if (fsm == null)
-            Debug.LogError("PlayerFSM 없음");
+            Utils.DebugLogError("PlayerFSM 없음");
 
     }
     private void OnEnable()
@@ -25,7 +22,7 @@ public class ToolsEquip : MonoBehaviour
         fsm.OnMiningStarted += EquipPickaxe;
         fsm.OnMiningEnded += UnequipPickaxe;
 
-        Debug.Log("ToolsEquip 이벤트 등록");
+        Utils.DebugLog("ToolsEquip 이벤트 등록");
     }
 
     private void OnDisable()
@@ -33,12 +30,12 @@ public class ToolsEquip : MonoBehaviour
         fsm.OnMiningStarted -= EquipPickaxe;
         fsm.OnMiningEnded -= UnequipPickaxe;
 
-        Debug.Log("ToolsEquip 이벤트 해제");
+        Utils.DebugLog("ToolsEquip 이벤트 해제");
     }
 
     public void EquipPickaxe()
     {
-        if(currentPickaxe != null)
+        if (currentPickaxe != null)
         {
             currentPickaxe.SetActive(true);
             return;
@@ -51,7 +48,7 @@ public class ToolsEquip : MonoBehaviour
         trailController = currentPickaxe.GetComponent<PickaxeTrailController>();
 
         if (trailController == null)
-            Debug.LogError("TrailController 없음");
+            Utils.DebugLogError("TrailController 없음");
 
         trailController.TrailOn();
 
@@ -70,7 +67,7 @@ public class ToolsEquip : MonoBehaviour
     {
         if (currentPickaxe == null) return;
 
-        if(trailController != null)
+        if (trailController != null)
         {
             trailController.TrailOff();
         }
@@ -81,11 +78,11 @@ public class ToolsEquip : MonoBehaviour
     // trail 이벤트
     public void TrailOn()
     {
-        Debug.Log("Trail On 호출됨");
+        //Debug.Log("Trail On 호출됨");
 
         if (trailController == null)
         {
-            Debug.Log("trailController NULL");
+            Utils.DebugLog("trailController NULL");
             return;
         }
 
@@ -93,7 +90,7 @@ public class ToolsEquip : MonoBehaviour
     }
     public void TrailOff()
     {
-        Debug.Log("Trail Off 호출됨");
+        //Debug.Log("Trail Off 호출됨");
 
         trailController.TrailOff();
     }

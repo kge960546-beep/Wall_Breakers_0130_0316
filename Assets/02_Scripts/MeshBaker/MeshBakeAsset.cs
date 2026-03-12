@@ -15,13 +15,11 @@ public class MeshBakeAsset : MonoBehaviour
 
     //mesh란 무엇인가?
     // ㄴ물체의 형태를 정의하는 데이터 집합으로 쉽게 말해 3D모델의 뼈대와 피부
-   
+
     public void BakeLevel()
     {
         CombineMesh();
-
         StartCoroutine(WaitGridBake());
-
     }
 
     IEnumerator WaitGridBake()
@@ -36,11 +34,11 @@ public class MeshBakeAsset : MonoBehaviour
         }
     }
 
-   
+
     public void CombineMesh()
-    {        
+    {
         MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
-       
+
         foreach (var filter in meshFilters)
         {
             if (filter.gameObject != gameObject)
@@ -49,13 +47,13 @@ public class MeshBakeAsset : MonoBehaviour
                 break;
             }
         }
-       
+
         CombineInstance[] instances = new CombineInstance[meshFilters.Length];
 
         Matrix4x4 myTransform = transform.worldToLocalMatrix;
 
         int actualCount = 0;
-        
+
         for (int i = 0; i < meshFilters.Length; i++)
         {
             if (meshFilters[i].gameObject == gameObject || meshFilters[i].sharedMesh == null) continue;
@@ -66,10 +64,10 @@ public class MeshBakeAsset : MonoBehaviour
             {
                 GetComponent<MeshRenderer>().sharedMaterial = meshFilters[i].GetComponent<MeshRenderer>().sharedMaterial;
             }
-                        
+
             instances[actualCount] = new CombineInstance
-            {                
-                mesh = meshFilter.sharedMesh,                
+            {
+                mesh = meshFilter.sharedMesh,
                 transform = myTransform * meshFilter.transform.localToWorldMatrix,
             };
 
@@ -84,19 +82,19 @@ public class MeshBakeAsset : MonoBehaviour
         System.Array.Copy(instances, finalInstances, actualCount);
 
         Mesh combinedMesh = new Mesh();
-        
+
         combinedMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-        
+
         combinedMesh.CombineMeshes(finalInstances);
-        
+
         gameObject.GetComponent<MeshFilter>().sharedMesh = combinedMesh;
-       
+
         MeshCollider meshCollider = GetComponent<MeshCollider>();
         if (meshCollider == null)
         {
             meshCollider = gameObject.AddComponent<MeshCollider>();
         }
-        
+
         meshCollider.sharedMesh = null;
         meshCollider.sharedMesh = combinedMesh;
 

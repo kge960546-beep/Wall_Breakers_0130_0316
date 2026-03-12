@@ -1,5 +1,3 @@
-using UnityEngine;
-
 // ฝฦดย ม฿ ป๓ลย
 public class PickingUpState : IPlayerState
 {

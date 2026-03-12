@@ -65,13 +65,13 @@ public class SellManager : MonoBehaviour
     private void ValidateSetup()
     {
         if (shopData == null)
-            Debug.LogError("[SellManager] ShopData is NOT assigned!");
+            Utils.DebugLogError("[SellManager] ShopData is NOT assigned!");
 
         if (sellUI == null)
-            Debug.LogError("[SellManager] SellUI is NOT assigned!");
+            Utils.DebugLogError("[SellManager] SellUI is NOT assigned!");
 
         if (creditSpawner == null)
-            Debug.LogError("[SellManager] CreditSpawner is NOT assigned!");
+            Utils.DebugLogError("[SellManager] CreditSpawner is NOT assigned!");
     }
 
     public void StartSelling()
@@ -113,7 +113,7 @@ public class SellManager : MonoBehaviour
             MineralItem mineral = topItem.GetComponent<MineralItem>();
             ItemDataSO itemData = mineral.mineralData;
 
-            float sellDuration = itemData.sellDuration * shopData.GetSpeedMultiplier()*0.3f;
+            float sellDuration = itemData.sellDuration * shopData.GetSpeedMultiplier() * 0.3f;
 
             // ---------------------------
             // 판매 보너스 계산 분기

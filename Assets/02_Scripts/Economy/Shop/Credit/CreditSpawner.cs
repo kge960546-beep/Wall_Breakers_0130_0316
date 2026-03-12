@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class CreditSpawner : MonoBehaviour
@@ -23,7 +22,7 @@ public class CreditSpawner : MonoBehaviour
     }
     private void ValidateSetup()
     {
-        if(creditPrefab == null)
+        if (creditPrefab == null)
         {
             Debug.LogError("[CreditSpawner] CreditPrefab is Not assigned in Inspector!");
         }
@@ -32,7 +31,7 @@ public class CreditSpawner : MonoBehaviour
             Debug.Log($"[CreditSpawner] CreditPrefab assigned: {creditPrefab.name}");
 
             CreditObject creditComponent = creditPrefab.GetComponent<CreditObject>();
-            if(creditComponent == null)
+            if (creditComponent == null)
             {
                 Debug.LogError("[CreditSpawner] CreditPrefab doesn't have CrditObject component");
             }
@@ -42,7 +41,7 @@ public class CreditSpawner : MonoBehaviour
             }
         }
 
-        if(spawnPoint == null)
+        if (spawnPoint == null)
         {
             Debug.LogError("[CreditSpawner] SpawnPoint is Not assigned in Inspector!");
         }
@@ -106,7 +105,7 @@ public class CreditSpawner : MonoBehaviour
 
     public void RemoveCredit(CreditObject credit)
     {
-        if(spawnedCredits.Contains(credit))
+        if (spawnedCredits.Contains(credit))
         {
             spawnedCredits.Remove(credit);
             Destroy(credit.gameObject);
@@ -114,9 +113,9 @@ public class CreditSpawner : MonoBehaviour
     }
     public void ClearAllCredits()
     {
-        foreach(var credit in spawnedCredits)
+        foreach (var credit in spawnedCredits)
         {
-            if(credit != null)
+            if (credit != null)
                 Destroy(credit.gameObject);
         }
         spawnedCredits.Clear();

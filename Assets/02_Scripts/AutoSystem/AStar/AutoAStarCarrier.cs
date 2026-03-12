@@ -49,11 +49,11 @@ public class AutoAStarCarrier : MonoBehaviour
         {
             autoBackPack = GetComponent<AutoBackPack>();
         }
-        
+
     }
     private void OnEnable()
     {
-        Debug.Log("Carrier Enable");
+        Utils.DebugLog("Carrier Enable");
         if (UpgradeEffectManager.Instance != null)
         {
             UpgradeEffectManager.Instance.OnCarrierMoveSpeedChanged += HandleMoveSpeed;
@@ -62,7 +62,7 @@ public class AutoAStarCarrier : MonoBehaviour
 
     private void OnDisable()
     {
-        Debug.Log("Carrier Disable");
+        Utils.DebugLog("Carrier Disable");
 
         if (UpgradeEffectManager.Instance != null)
         {
@@ -75,14 +75,14 @@ public class AutoAStarCarrier : MonoBehaviour
     // =========================
     private void HandleMoveSpeed(string id, float bonus)
     {
-        Debug.Log($"이벤트 수신! id:{id} / 내 id:{targetID} / bonus:{bonus}");
+        Utils.DebugLog($"이벤트 수신! id:{id} / 내 id:{targetID} / bonus:{bonus}");
 
         if (id != targetID) return;
 
         bonusMoveSpeed = bonus;
         moveSpeed = baseMoveSpeed * (1f + bonusMoveSpeed);
 
-        Debug.Log($"적용됨 → {moveSpeed}");
+        Utils.DebugLog($"적용됨 → {moveSpeed}");
     }
 
     private void FixedUpdate()
@@ -247,5 +247,5 @@ public class AutoAStarCarrier : MonoBehaviour
             Gizmos.color = Color.blue;
             Gizmos.DrawWireCube(processingMachine.position, Vector3.one * 0.5f);
         }
-    }   
+    }
 }

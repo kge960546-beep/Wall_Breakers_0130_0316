@@ -9,6 +9,7 @@ public class ResourcesManager : MonoBehaviour
     [SerializeField] GameObject ironPrefab;
     [SerializeField] GameObject goldPrefab;
     [SerializeField] GameObject moneyPrefab;
+    [SerializeField] GameObject soundPrefab;
 
     private void Start()
     {
@@ -18,6 +19,7 @@ public class ResourcesManager : MonoBehaviour
         PoolManager.instance.CreatePool(ironPrefab, 100);
         PoolManager.instance.CreatePool(goldPrefab, 100);
         PoolManager.instance.CreatePool(moneyPrefab, 100);
+        PoolManager.instance.CreatePool(soundPrefab, 100);
 
         Utils.DebugLog("풀링 완료");
     }

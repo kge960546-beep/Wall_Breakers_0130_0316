@@ -1,6 +1,5 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class CreditCollectUI : MonoBehaviour
 {
@@ -22,7 +21,7 @@ public class CreditCollectUI : MonoBehaviour
     {
         if (isInitalized) return;
 
-        if(GameManager.Instance == null)
+        if (GameManager.Instance == null)
         {
             Invoke(nameof(InitializeCreditService), 0.1f);
             return;
@@ -30,10 +29,10 @@ public class CreditCollectUI : MonoBehaviour
 
         creditService = GameManager.Instance.GetService<CreditService>();
 
-        if(creditService != null)
+        if (creditService != null)
         {
             creditService.OnCreditsChanged += HandleCreditsUpdated;
-            isInitalized= true;
+            isInitalized = true;
             UpdateTotalCredits();
         }
         else
@@ -43,7 +42,7 @@ public class CreditCollectUI : MonoBehaviour
     }
     private void OnDestroy()
     {
-        if(creditService != null)
+        if (creditService != null)
         {
             creditService.OnCreditsChanged -= HandleCreditsUpdated;
         }
@@ -56,7 +55,7 @@ public class CreditCollectUI : MonoBehaviour
     {
         uiPanel.SetActive(true);
 
-        if(!isInitalized)
+        if (!isInitalized)
         {
             InitializeCreditService();
         }
@@ -68,7 +67,7 @@ public class CreditCollectUI : MonoBehaviour
     }
     public void UpdateDisplay(int collectingAmount, int remainingCount)
     {
-        if(collectingAmount > 0)
+        if (collectingAmount > 0)
         {
             collectingText.text = $"{collectingAmount} »πµÊ";
             remainingText.text = $"≥≤¿∫ ∞ÒµÂ»πµÊ :{remainingCount}";
@@ -81,7 +80,7 @@ public class CreditCollectUI : MonoBehaviour
     }
     public void UpdateTotalCredits()
     {
-        if(creditService != null && totalCreditsText != null)
+        if (creditService != null && totalCreditsText != null)
         {
             string formattedCredits = NotateNumber.ChangeNumber(creditService.credits);
             totalCreditsText.text = $"√— ∞ÒµÂ: {formattedCredits}";

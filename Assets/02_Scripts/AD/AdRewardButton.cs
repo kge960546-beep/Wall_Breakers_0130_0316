@@ -12,7 +12,7 @@ public class AdRewardButton : MonoBehaviour
 
         AdsManager.Instance.RequestRewardAd(rewardData);
 
-        if(SceneGameDataManager.instance != null)
+        if (SceneGameDataManager.instance != null)
         {
             int rewardAmount = Mathf.RoundToInt(rewardData.value);
             SceneGameDataManager.instance.currentGold += rewardAmount;

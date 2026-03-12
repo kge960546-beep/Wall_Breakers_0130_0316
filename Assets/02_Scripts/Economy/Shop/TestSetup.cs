@@ -20,6 +20,6 @@ public class TestSetup : MonoBehaviour
         PlayerInventory.Instance.AddItem(copperIngot, 2);
         PlayerInventory.Instance.AddItem(silverIngot, 1);
 
-        Debug.Log("Test inventory setup complete");
+        Utils.DebugLog("Test inventory setup complete");
     }
 }

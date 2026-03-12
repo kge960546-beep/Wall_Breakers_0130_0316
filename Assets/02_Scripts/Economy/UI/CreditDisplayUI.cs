@@ -1,4 +1,3 @@
-using System.Net.NetworkInformation;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,19 +21,19 @@ public class CreditDisplayUI : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log("[CreditDisplayUI] Start called");
+        Utils.DebugLog("[CreditDisplayUI] Start called");
         ValidateSetup();
         InitializeCreditService();
     }
     private void ValidateSetup()
     {
-        if(creditText == null)
+        if (creditText == null)
         {
-            Debug.LogError("[CreditDisplayUI] CreditText is Not assigned!");
+            Utils.DebugLogError("[CreditDisplayUI] CreditText is Not assigned!");
         }
         else
         {
-            Debug.Log($"[CreditDisplayUI] CreditText assigned: {creditText.gameObject.name}");
+            Utils.DebugLog($"[CreditDisplayUI] CreditText assigned: {creditText.gameObject.name}");
             // 초기 텍스트 설정 (테스트용)
             creditText.text = "0";
         }
@@ -53,7 +52,7 @@ public class CreditDisplayUI : MonoBehaviour
 
         if (creditService == null)
         {
-            Debug.LogError("[CreditDisplayUI] CreditService is Not assigned!");
+            Utils.DebugLogError("[CreditDisplayUI] CreditService is Not assigned!");
             return;
         }
 
@@ -77,7 +76,7 @@ public class CreditDisplayUI : MonoBehaviour
     {
         targetValue = newCredits;
 
-        if(!useAnimation)
+        if (!useAnimation)
         {
             currentDiplayValue = targetValue;
             UpdateDisplay();
@@ -86,7 +85,7 @@ public class CreditDisplayUI : MonoBehaviour
     private void Update()
     {
         // 애니메이션 사용 시 부드럽게 증가
-        if(useAnimation && currentDiplayValue != targetValue)
+        if (useAnimation && currentDiplayValue != targetValue)
         {
             // 차이에 비례한 속도로 증가
             long difference = targetValue - currentDiplayValue;
@@ -104,9 +103,9 @@ public class CreditDisplayUI : MonoBehaviour
             {
                 currentDiplayValue -= increment;
 
-                if(currentDiplayValue < targetValue)
-                { 
-                    currentDiplayValue = targetValue; 
+                if (currentDiplayValue < targetValue)
+                {
+                    currentDiplayValue = targetValue;
                 }
             }
 
@@ -116,7 +115,7 @@ public class CreditDisplayUI : MonoBehaviour
     }
     private void UpdateDisplay()
     {
-        if(creditText != null)
+        if (creditText != null)
         {
             string formattedNumber = NotateNumber.ChangeNumber(currentDiplayValue);
             creditText.text = formattedNumber;

@@ -25,7 +25,9 @@ public static class AutoDatabaseCreator
 
         if (type == null)
         {
+#if UNITY_EDITOR
             Debug.LogError($"Database 타입 없음: {dbName}");
+#endif
             return null;
         }
 
@@ -34,8 +36,9 @@ public static class AutoDatabaseCreator
         var newDB = ScriptableObject.CreateInstance(type);
         AssetDatabase.CreateAsset(newDB, dbPath);
         AssetDatabase.SaveAssets();
-
+#if UNITY_EDITOR
         Debug.Log($"자동 DB 생성: {dbName}");
+#endif
 
         return newDB;
     }

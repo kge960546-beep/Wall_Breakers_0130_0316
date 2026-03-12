@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CreditZone : MonoBehaviour
@@ -15,30 +13,30 @@ public class CreditZone : MonoBehaviour
 
     private void ValidateSetup()
     {
-        if(creditCollector == null)
+        if (creditCollector == null)
         {
-            Debug.LogError("[CreditZone] CreditCollector is Not assigned!");
+            Utils.DebugLogError("[CreditZone] CreditCollector is Not assigned!");
         }
         else
         {
-            Debug.Log("[CreditZone] CreditCollector is properly assigned!");
+            Utils.DebugLog("[CreditZone] CreditCollector is properly assigned!");
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"[CreditZone] OntriggerEnter detected: {other.gameObject.name}, Tag{other.tag}");
+        Utils.DebugLog($"[CreditZone] OntriggerEnter detected: {other.gameObject.name}, Tag{other.tag}");
 
-        if(other.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
-            if(playerInZone)
+            if (playerInZone)
             {
-                Debug.LogWarning("[CreditZone] Player already in Credit Zone!");
+                Utils.DebugLogWarning("[CreditZone] Player already in Credit Zone!");
                 return;
             }
 
             playerInZone = true;
-            Debug.Log("[CreditZone] Player Entered Credit Zone");
+            Utils.DebugLog("[CreditZone] Player Entered Credit Zone");
 
             if (creditCollector != null)
             {
@@ -49,20 +47,20 @@ public class CreditZone : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log($"[CreditZone] OnTriggerExit detected: {other.gameObject.name}, Tag: {other.tag}");
+        Utils.DebugLog($"[CreditZone] OnTriggerExit detected: {other.gameObject.name}, Tag: {other.tag}");
 
-        if(other.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
-            if(!playerInZone)
+            if (!playerInZone)
             {
-                Debug.LogWarning("[CreditZone] Player was not in zone!");
+                Utils.DebugLogWarning("[CreditZone] Player was not in zone!");
                 return;
             }
 
             playerInZone = false;
-            Debug.Log("[CreditZone] Player exited Credit Zone!");
+            Utils.DebugLog("[CreditZone] Player exited Credit Zone!");
 
-            if(creditCollector != null)
+            if (creditCollector != null)
             {
                 creditCollector.StopCollecting();
             }
@@ -74,9 +72,9 @@ public class CreditZone : MonoBehaviour
     /// </summary>
     private void OnDisable()
     {
-        if(playerInZone && creditCollector != null)
+        if (playerInZone && creditCollector != null)
         {
-            Debug.Log("[CreditZone] Zone disableed, sropping collection");
+            Utils.DebugLog("[CreditZone] Zone disableed, sropping collection");
             creditCollector.StopCollecting();
 
             playerInZone = false;

@@ -29,6 +29,8 @@ public class SettingsPanelController : MonoBehaviour
 
     public void Open()
     {
+        if (settingsPanel.activeSelf == true) return;
+
         if (SFXManager.instance != null)
         {
             SFXManager.instance.PlayOnSFX("683097__florianreichelt__bubble-bursting 2", Camera.main.transform.position);
@@ -38,10 +40,12 @@ public class SettingsPanelController : MonoBehaviour
 
         StopAllCoroutines();
         StartCoroutine(OpenAnimation());
+
     }
 
     IEnumerator OpenAnimation()
     {
+
         Vector2 end = panelRect.anchoredPosition;
 
         Vector2 start;

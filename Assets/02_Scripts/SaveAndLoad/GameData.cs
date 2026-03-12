@@ -25,4 +25,8 @@ public class GameData
 
     [Header("업적 저장 리스트")]
     public List<string> achievementProgess = new List<string>();
+
+    [Header("가이드 퀘스트")]
+    public int guideCurrentIndex;
+    public List<int> guideSaveData;
 }

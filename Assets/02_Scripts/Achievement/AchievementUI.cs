@@ -17,7 +17,10 @@ public class AchievementUI : MonoBehaviour
     [SerializeField] Transform endPoint;
     [SerializeField] float slideSpeed;
     [SerializeField] float stayTime;
-    
+
+    private Queue<AchievementSO> achievementSOs = new Queue<AchievementSO>();
+    private bool isShowing = false;
+    private WaitForSeconds wait = new WaitForSeconds(0.2f);
 
     private void OnEnable()
     {
@@ -29,30 +32,27 @@ public class AchievementUI : MonoBehaviour
     }
     void Start()
     {
-        achievementUIpanel.SetActive(false);
+        //achievementUIpanel.SetActive(false);
     }
 
     //최종적으로 업적 달성시 이벤트구동으로 UI로직을 불러오는 함수
     public void ShowPanel(AchievementSO data)
     {
         Utils.DebugLog("UI수신성공" + data.title);
-        StopAllCoroutines();
 
-        if(SFXManager.instance != null)
+        achievementSOs.Enqueue(data);
+
+        if (!isShowing)
         {
-            SFXManager.instance.PlayOnSFX("541980__rob_marion__gasp_chimes_success_3", Camera.main.transform.position);
+            StartCoroutine(ProcessQueue());
         }
 
-        titleText.text = data.title;
-        descriptionText.text = data.description;
-
-        StartCoroutine(PanelAmin());
-    }   
+    }
 
     //이벤트 구독 실행순서 오류로 싱글톤보다 먼저 실행되게 하지않기
     IEnumerator WaitSubscribe()
     {
-        if(AchievementsManager.instance == null)
+        while (AchievementsManager.instance == null)
         {
             yield return null;
         }
@@ -61,35 +61,63 @@ public class AchievementUI : MonoBehaviour
         Utils.DebugLog("업적매니저 구동 성공");
     }
 
+    IEnumerator ProcessQueue()
+    {
+        isShowing = true;
+
+        while (achievementSOs.Count > 0)
+        {
+            AchievementSO currentData = achievementSOs.Dequeue();
+
+            titleText.text = currentData.title;
+            descriptionText.text = currentData.description;
+
+            if (SFXManager.instance != null)
+            {
+                SFXManager.instance.PlayOnSFX("541980__rob_marion__gasp_chimes_success_3", Camera.main.transform.position);
+            }
+
+            yield return StartCoroutine(PanelAmin());
+
+            yield return wait;
+        }
+
+        isShowing = false;
+    }
+
     //UI가 어떤식으로 움직이는지 정한 함수
     IEnumerator PanelAmin()
     {
-        achievementUIpanel.SetActive(true);
+        //achievementUIpanel.SetActive(true);
 
         float elapsed = 0.0f;
         float duration = slideSpeed > 0 ? slideSpeed : 0.5f;
         float wait = stayTime > 0 ? stayTime : 2.0f;
 
-        Vector3 startPos = startPoint.position;
-        Vector3 endPos = endPoint.position;
+        Vector3 startPos = startPoint.GetComponent<RectTransform>().anchoredPosition;
+        Vector3 endPos = endPoint.GetComponent<RectTransform>().anchoredPosition;
 
-        while(elapsed < duration)
+        RectTransform panelRect = achievementUIpanel.GetComponent<RectTransform>();
+
+        while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            achievementUIpanel.transform.position = Vector3.Lerp(startPos, endPos, elapsed / duration);
+            panelRect.anchoredPosition = Vector3.Lerp(startPos, endPos, elapsed / duration);
             yield return null;
         }
 
         yield return new WaitForSeconds(wait);
 
         elapsed = 0.0f;
-        while(elapsed < duration)
+        while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            achievementUIpanel.transform.position = Vector3.Lerp(endPos, startPos, elapsed / duration);
+            panelRect.anchoredPosition = Vector3.Lerp(endPos, startPos, elapsed / duration);
             yield return null;
         }
 
-        achievementUIpanel.SetActive(false);
+
+
+        //achievementUIpanel.SetActive(false);
     }
 }

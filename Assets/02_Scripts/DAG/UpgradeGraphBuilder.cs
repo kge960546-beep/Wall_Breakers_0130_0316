@@ -15,8 +15,8 @@ public class UpgradeGraphBuilder : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        
-        for (int i = 0; i < sections.Count; i++)        
+
+        for (int i = 0; i < sections.Count; i++)
         {
             BuildSection(sections[i], i); ;
         }
