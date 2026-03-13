@@ -10,6 +10,7 @@ public class ResourcesManager : MonoBehaviour
     [SerializeField] GameObject goldPrefab;
     [SerializeField] GameObject moneyPrefab;
     [SerializeField] GameObject soundPrefab;
+    [SerializeField] GameObject destroyVFXPrefab;
 
     private void Start()
     {
@@ -20,6 +21,7 @@ public class ResourcesManager : MonoBehaviour
         PoolManager.instance.CreatePool(goldPrefab, 100);
         PoolManager.instance.CreatePool(moneyPrefab, 100);
         PoolManager.instance.CreatePool(soundPrefab, 100);
+        PoolManager.instance.CreatePool(destroyVFXPrefab, 15);
 
         Utils.DebugLog("풀링 완료");
     }
