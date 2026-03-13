@@ -71,12 +71,6 @@ public class MiningEffectController : MonoBehaviour
             Quaternion.identity
             );
 
-        StartCoroutine(ReturnPool());
-    }
-    IEnumerator ReturnPool()
-    {
-        yield return null;
-
-        PoolManager.instance.ReturnIt(destoryEffectPrefab, gameObject);
-    }
+        
+    }   
 }

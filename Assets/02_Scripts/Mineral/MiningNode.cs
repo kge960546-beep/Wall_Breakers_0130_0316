@@ -44,6 +44,7 @@ public class MiningNode : MonoBehaviour
     [Header("VFX")]
     [SerializeField] private MiningEffectController effectController;
     [SerializeField] private Transform mineralPoint;
+    [SerializeField] private Transform destroyPoint;
 
     private float mineTimer;
 
@@ -240,13 +241,18 @@ public class MiningNode : MonoBehaviour
     private void Mine(int totalAmount)
     {
         //Debug.Log("Mine called at time: " + Time.time);
+        bool isLastHit = (currentMineCount + totalAmount >= maxMineCount);
 
         // 채굴 타격 이펙트 추가
-        if (effectController != null)
+        if (!isLastHit)
         {
-            effectController.PlayHit(mineralPoint.position);
-        }
-        SFXManager.instance.PlayOnSFX("mineralMiner", transform.position);
+            if (effectController != null)
+            {
+                effectController.PlayHit(mineralPoint.position);
+            }
+
+            SFXManager.instance.PlayOnSFX("mineralMiner", transform.position);
+        }      
 
         for (int i = 0; i < totalAmount; i++)
         {
@@ -278,6 +284,10 @@ public class MiningNode : MonoBehaviour
 
         if (currentMineCount == maxMineCount)
         {
+            if (effectController != null)
+            {
+                effectController.PlayDestroy(destroyPoint.position);
+            }
             SFXManager.instance.PlayOnSFX("Break2", transform.position);
 
             // 1. 점유 상태 해제
