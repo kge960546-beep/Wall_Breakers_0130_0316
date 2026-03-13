@@ -105,6 +105,8 @@ public class GuideManager : MonoBehaviour
             SceneGameDataManager.instance.SaveGame();
             Utils.DebugLog($"가이드 {currentIndex}단계 진입 저장완료");
         }
+
+        guidePanel.UpdateProgress(progressMap[nextStep]);
     }
 
     void GiveReward(GuideStepSO step)
