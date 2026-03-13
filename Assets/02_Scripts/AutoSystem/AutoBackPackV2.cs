@@ -17,6 +17,7 @@ public class AutoBackPackV2 : MonoBehaviour
 
     [Header("Upgrade ID")]
     [SerializeField] private string targetID;   // CarrierB와 동일하게
+    public string TargetID => targetID;
 
     private int baseCapacity;
     private int bonusCapacity;
@@ -57,6 +58,12 @@ public class AutoBackPackV2 : MonoBehaviour
 
             Vector3 targetPos = backPackPos.position + Vector3.up * itemHeight * i;
             Quaternion targetRot = backPackPos.rotation;
+
+            MineralItem mineralItem = current.GetComponent<MineralItem>();
+            if(mineralItem != null && mineralItem.mineralData != null)
+            {
+                targetRot *= Quaternion.Euler(mineralItem.mineralData.backPackRotationOffset);
+            }
 
             current.position = Vector3.Lerp(current.position, targetPos, Time.deltaTime * 10f);
             current.rotation = Quaternion.Lerp(current.rotation, targetRot, Time.deltaTime * 10f);

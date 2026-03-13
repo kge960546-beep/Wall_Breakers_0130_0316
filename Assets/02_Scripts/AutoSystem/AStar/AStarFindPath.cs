@@ -41,7 +41,8 @@ public class AStarFindPath : MonoBehaviour
         //아직 평가할 후보 노드들
         var openSet = new PriorityQueue<Vector2Int>();
 
-        //경로 역추적을 위한 딕셔너리, 각 노드의 gScore와 fScore를 저장하는 딕셔너리, 이미 평가된 노드를 저장하는 집합
+        //경로 역추적을 위한 딕셔너리, 각 노드의 gScore와 fScore를 저장하는 딕셔너리
+        //이미 평가된 노드를 저장하는 집합
         var cameFrom = new Dictionary<Vector2Int, Vector2Int>();
 
         //gScore는 시작점에서 해당 노드까지의 실제 비용, fScore는 gScore에 휴리스틱 비용을 더한 값

@@ -40,6 +40,7 @@ public class ProcessResource : MonoBehaviour
     private int bonusProcessedCapacity;
 
     [SerializeField] private string processingAreaID;
+    [SerializeField] private string autoSystemID;
 
     [Header("UI Reference")]
     [SerializeField] private ProcessorUI processorUI;
@@ -107,8 +108,16 @@ public class ProcessResource : MonoBehaviour
         for (int i = 0; i < list.Count; i++)
         {
             Vector3 targetPos = basePos.position + Vector3.up * itemHeight * i;
+            Quaternion targetRot = basePos.rotation;
+
+            MineralItem mineralItem = list[i].GetComponent<MineralItem>();
+            if(mineralItem != null && mineralItem.mineralData != null)
+            {
+                targetRot *= Quaternion.Euler(mineralItem.mineralData.backPackRotationOffset);
+            }
+
             list[i].position = Vector3.Lerp(list[i].position, targetPos, Time.deltaTime * 10f);
-            list[i].rotation = Quaternion.Lerp(list[i].rotation, basePos.rotation, Time.deltaTime * 10f);
+            list[i].rotation = Quaternion.Lerp(list[i].rotation, targetRot, Time.deltaTime * 10f);
         }
     }
 
@@ -289,12 +298,15 @@ public class ProcessResource : MonoBehaviour
         if (autoBackPackV2 != null)
         {
             // 가공품 픽업
-            if (!autoBackPackV2.IsFullBackPack() && processingTable.Count > 0)
+            if(autoBackPackV2.TargetID == this.autoSystemID)
             {
-                GameObject processed = GiveProcessedItem();
-                if (processed != null)
-                    autoBackPackV2.AddResource(processed);
-            }
+                if (!autoBackPackV2.IsFullBackPack() && processingTable.Count > 0)
+                {
+                    GameObject processed = GiveProcessedItem();
+                    if (processed != null)
+                        autoBackPackV2.AddResource(processed);
+                }
+            }           
 
             return; // V2는 여기서 끝
         }

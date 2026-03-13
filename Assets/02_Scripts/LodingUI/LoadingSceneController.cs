@@ -73,7 +73,7 @@ public class LoadingSceneController : MonoBehaviour
     /// </summary>
     /// <param name="sceneName"></param>
     /// <param name="action"></param>
-    public void LoadScene(string sceneName, Action? action = null)
+    public void LoadScene(string sceneName, Action action = null)
     {
         gameObject.SetActive(true);
         loadSceneName = sceneName;
