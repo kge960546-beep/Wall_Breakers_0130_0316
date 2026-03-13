@@ -193,6 +193,8 @@ public class GuidePanel : MonoBehaviour
             UITween.Fade(canvasGroup, 1f, 0f, fadeDuration)
         );
 
+        isProcessingReward = false;
+
         // 다음 가이드 스텝으로 전환 
         GuideManager.Instance.CompleteCurrentStep();
 
@@ -203,7 +205,6 @@ public class GuidePanel : MonoBehaviour
             );
         }
 
-        isProcessingReward = false;
     }
 
     IEnumerator MoveCoinSequence(RectTransform coin, Vector2 start, Vector2 control, Vector2 end)
