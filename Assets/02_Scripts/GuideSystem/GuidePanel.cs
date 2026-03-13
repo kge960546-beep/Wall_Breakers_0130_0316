@@ -38,6 +38,7 @@ public class GuidePanel : MonoBehaviour
     [SerializeField] private float fadeDuration = 0.25f;
 
     private GuideStepSO currentStep;
+    private bool isProcessingReward = false;
 
 
 
@@ -83,8 +84,9 @@ public class GuidePanel : MonoBehaviour
     /// </summary>
     void UpdateButtonState(int currentCount)
     {
-        bool ready = currentCount >= currentStep.targetCount;
+        if (isProcessingReward) return;
 
+        bool ready = currentCount >= currentStep.targetCount;
         panelButton.interactable = ready;
     }
 
@@ -93,18 +95,16 @@ public class GuidePanel : MonoBehaviour
     /// </summary>
     public void OnClickPanel()
     {
-        Utils.DebugLog("GuidePanel Button Clicked");
+        if (isProcessingReward) return;
 
         if (!GuideManager.Instance.IsCurrentStepComplete())
-        {
-            Utils.DebugLog("Guide step not complete");
             return;
-        }
 
-        if (SFXManager.instance != null)
-        {
-            SFXManager.instance.PlayOnSFX("2GideReward", Camera.main.transform.position);
-        }
+        isProcessingReward = true;
+        panelButton.interactable = false;
+
+        SFXManager.instance?.PlayOnSFX("2GideReward", Camera.main.transform.position);
+
         StartCoroutine(RewardSequence());
     }
 
@@ -118,8 +118,6 @@ public class GuidePanel : MonoBehaviour
 
     IEnumerator RewardSequence()
     {
-        panelButton.interactable = false;
-
         List<RectTransform> coins = new List<RectTransform>();
 
         Vector2 start;
@@ -204,6 +202,8 @@ public class GuidePanel : MonoBehaviour
                 UITween.Fade(canvasGroup, 0f, 1f, fadeDuration)
             );
         }
+
+        isProcessingReward = false;
     }
 
     IEnumerator MoveCoinSequence(RectTransform coin, Vector2 start, Vector2 control, Vector2 end)
