@@ -10,6 +10,19 @@
   - None (original files used as provided).
   - If modified: (e.g., trimmed / looped / normalized / converted format)
 
+하이퍼 캐쥬얼 Wall Breaker 입니다.
+
+팀프로젝트
+
+팀명 : Wall Breaker
+기획 : 권정민
+QA : 임재석
+개발자 : 권구언(팀장), 원로건, 양지훈
+
+프로젝트 기간 : 2026.01.30 ~ 2026.03.16
+
+사용 툴 : Unity Engine 2022.3.18f1, Microsoft Visual Studio Community 2022, Github, Sourcetree
+
 
 # 1. 커밋 메시지 기본 구조
 
